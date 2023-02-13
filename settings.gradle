@@ -13,4 +13,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "NiftySlider"
-include ':app'
+include ':simple'
