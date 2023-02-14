@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="NiftySlider">
+        <item name="android:value">0</item>
+        <item name="android:valueFrom">0</item>
+        <item name="android:valueTo">1</item>
+        <item name="trackColor">@color/default_track_color</item>
+        <item name="trackColorInactive">@color/default_track_inactive_color</item>
+        <item name="trackHeight">24dp</item>
+    </style>
+</resources>

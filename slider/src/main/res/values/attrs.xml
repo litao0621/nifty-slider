@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="NiftySlider">
+        <attr name="android:value" />
+        <attr name="android:valueFrom" />
+        <attr name="android:valueTo" />
+        <attr name="trackColor" format="color" />
+        <attr name="trackSecondaryColor" format="color"/>
+        <attr name="trackColorInactive" format="color" />
+        <attr name="trackHeight" format="dimension"/>
+
+    </declare-styleable>
+</resources>
