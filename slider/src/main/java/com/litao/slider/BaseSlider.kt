@@ -8,47 +8,56 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorInt
+import androidx.annotation.Dimension
 import androidx.annotation.IntRange
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
+import androidx.core.graphics.withTranslation
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import kotlin.math.max
 
 /**
  * @author : litao
  * @date   : 2023/2/13 16:21
  */
-abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0)
-    : View(context, attrs, defStyleAttr) {
+abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
+    View(context, attrs, defStyleAttr) {
 
-    var trackPaint: Paint
-    var trackSecondaryPaint: Paint
-    var inactiveTrackPaint: Paint
+    private var trackPaint: Paint
+    private var trackSecondaryPaint: Paint
+    private var inactiveTrackPaint: Paint
 
 
     private lateinit var trackColor: ColorStateList
     private lateinit var trackSecondaryColor: ColorStateList
     private lateinit var trackColorInactive: ColorStateList
 
+    private val defaultThumbDrawable = MaterialShapeDrawable()
+    private var thumbRadius = 0
+
     private val trackRectF = RectF()
 
-    var valueFrom = 0f
-    var valueTo = 0f
-    var value = 0f
+    private var valueFrom = 0f
+    private var valueTo = 0f
+    private var value = 0f
 
-    var viewHeight = 0
+    private var viewHeight = 0
 
-    var trackHeight = 0
+    private var trackHeight = 0
         set(@IntRange(from = 0) value) {
-            if (value != field){
+            if (value != field) {
                 field = value
                 invalidateTrack()
                 updateViewLayout()
             }
         }
 
-    var trackWidth = 0
+    private var trackWidth = 0
 
-    companion object{
+    companion object {
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
     }
 
@@ -66,7 +75,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             style = Paint.Style.FILL
         }
 
-        processAttributes(context,attrs,defStyleAttr)
+
+        defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
+
+        processAttributes(context, attrs, defStyleAttr)
 
     }
 
@@ -76,15 +88,38 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             valueTo = getFloat(R.styleable.NiftySlider_android_valueTo, 1.0f)
             value = getFloat(R.styleable.NiftySlider_android_value, 0.0f)
 
-            trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight,0)
+            trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
 
             val trackColorList = getColorStateList(R.styleable.NiftySlider_trackColor)
-            setTrackTintList(trackColorList?:AppCompatResources.getColorStateList(context,R.color.default_track_color))
+            setTrackTintList(
+                trackColorList ?: AppCompatResources.getColorStateList(
+                    context,
+                    R.color.default_track_color
+                )
+            )
             val trackSecondaryColor = getColorStateList(R.styleable.NiftySlider_trackSecondaryColor)
-            setTrackSecondaryTintList(trackSecondaryColor?:AppCompatResources.getColorStateList(context,R.color.default_track_color))
+            setTrackSecondaryTintList(
+                trackSecondaryColor ?: AppCompatResources.getColorStateList(
+                    context,
+                    R.color.default_track_color
+                )
+            )
             val trackInactiveColorList = getColorStateList(R.styleable.NiftySlider_trackColorInactive)
-            setTrackInactiveTintList(trackInactiveColorList?:AppCompatResources.getColorStateList(context,R.color.default_track_inactive_color))
+            setTrackInactiveTintList(
+                trackInactiveColorList ?: AppCompatResources.getColorStateList(
+                    context,
+                    R.color.default_track_inactive_color
+                )
+            )
 
+
+
+            setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
+            setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
+            setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
+            setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
+            setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
+            setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
         }
     }
 
@@ -100,30 +135,40 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         updateTrackWidth(w)
     }
 
+    override fun drawableStateChanged() {
+        super.drawableStateChanged()
+        trackPaint.color = getColorForState(trackColor)
+        trackSecondaryPaint.color = getColorForState(trackSecondaryColor)
+        inactiveTrackPaint.color = getColorForState(trackColorInactive)
+        if (defaultThumbDrawable.isStateful) {
+            defaultThumbDrawable.state = drawableState
+        }
+    }
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val yCenter = measuredHeight/2f
+        val yCenter = measuredHeight / 2f
         val width = measuredWidth
-        drawInactiveTrack(canvas,width,yCenter)
-        if (value > valueFrom){
-            drawTrack(canvas,width,yCenter)
+        drawInactiveTrack(canvas, width, yCenter)
+        if (value > valueFrom) {
+            drawTrack(canvas, width, yCenter)
         }
 
-
+        drawThumb(canvas, trackWidth, yCenter)
     }
 
     fun drawTrack(canvas: Canvas, width: Int, yCenter: Float) {
         trackRectF.set(
             0f + paddingLeft,
-            yCenter - trackHeight/2f,
+            yCenter - trackHeight / 2f,
             paddingLeft + trackWidth * percentValue(value),
-            yCenter + trackHeight/2f
+            yCenter + trackHeight / 2f
         )
         canvas.drawRoundRect(
             trackRectF,
-            trackHeight/2f,
-            trackHeight/2f,
+            trackHeight / 2f,
+            trackHeight / 2f,
             trackPaint
         )
     }
@@ -131,20 +176,29 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun drawInactiveTrack(canvas: Canvas, width: Int, yCenter: Float) {
         trackRectF.set(
             0f + paddingLeft,
-            yCenter - trackHeight/2f,
+            yCenter - trackHeight / 2f,
             width.toFloat() - paddingRight,
-            yCenter + trackHeight/2f
+            yCenter + trackHeight / 2f
         )
         canvas.drawRoundRect(
             trackRectF,
-            trackHeight/2f,
-            trackHeight/2f,
+            trackHeight / 2f,
+            trackHeight / 2f,
             inactiveTrackPaint
         )
     }
 
-    private fun percentValue(value:Float):Float{
-        return (value - valueFrom)/(valueTo - valueFrom)
+    fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
+        canvas.withTranslation(
+            (paddingLeft + (percentValue(value) * width).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
+            yCenter - (defaultThumbDrawable.bounds.height() / 2f)
+        ) {
+            defaultThumbDrawable.draw(canvas)
+        }
+    }
+
+    private fun percentValue(value: Float): Float {
+        return (value - valueFrom) / (valueTo - valueFrom)
     }
 
     private fun invalidateTrack() {
@@ -153,28 +207,30 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 //        trackSecondaryPaint.strokeWidth = trackHeight.toFloat()
     }
 
-    fun updateViewLayout(){
+    fun updateViewLayout() {
         updateTrackWidth(width)
-        if (viewHeightChanged()){
+        if (viewHeightChanged()) {
             requestLayout()
         }
     }
 
 
-
-    fun viewHeightChanged():Boolean{
+    fun viewHeightChanged(): Boolean {
         val topBottomPadding = paddingTop + paddingBottom
         val minHeightWithTrack = topBottomPadding + trackHeight
+        val minHeightWithThumb = topBottomPadding + thumbRadius * 2
 
-        if (minHeightWithTrack == viewHeight){
+        val tempHeight = max(minHeightWithTrack, minHeightWithThumb)
+
+        if (tempHeight == viewHeight) {
             return false
-        }else{
-            viewHeight = minHeightWithTrack
+        } else {
+            viewHeight = tempHeight
             return true
         }
     }
 
-    fun updateTrackWidth(viewWidth:Int){
+    fun updateTrackWidth(viewWidth: Int) {
         trackWidth = max(viewWidth - paddingLeft - paddingRight, 0)
     }
 
@@ -206,13 +262,48 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         invalidate()
     }
 
+    fun setThumbRadius(@IntRange(from = 0) @Dimension radius: Int) {
+        if (radius == thumbRadius) {
+            return
+        }
+        thumbRadius = radius
+        defaultThumbDrawable.shapeAppearanceModel =
+            ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, thumbRadius.toFloat()).build()
+        defaultThumbDrawable.setBounds(0, 0, thumbRadius * 2, thumbRadius * 2)
+        updateViewLayout()
+    }
+
+    fun setThumbTintList(thumbColor: ColorStateList) {
+        if (thumbColor == defaultThumbDrawable.fillColor) {
+            return
+        }
+        defaultThumbDrawable.fillColor = thumbColor
+        invalidate()
+    }
+
+    fun setThumbElevation(elevation: Float) {
+        defaultThumbDrawable.elevation = elevation
+    }
+
+    fun setThumbStrokeColor(thumbStrokeColor: ColorStateList?) {
+        defaultThumbDrawable.strokeColor = thumbStrokeColor
+        postInvalidate()
+    }
+
+    fun setThumbStrokeWidth(thumbStrokeWidth: Float) {
+        defaultThumbDrawable.strokeWidth = thumbStrokeWidth
+        postInvalidate()
+    }
+
+    fun setThumbShadowColor(@ColorInt shadowColor: Int) {
+        defaultThumbDrawable.setShadowColor(shadowColor)
+    }
+
 
     @ColorInt
     fun getColorForState(colorStateList: ColorStateList): Int {
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
     }
-
-
 
 
 }

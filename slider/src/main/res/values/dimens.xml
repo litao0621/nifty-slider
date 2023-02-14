@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="nifty_slider_thumb_radius">10dp</dimen>
+    <dimen name="nifty_slider_thumb_elevation">4dp</dimen>
+    <dimen name="nifty_slider_track_height">4dp</dimen>
+</resources>

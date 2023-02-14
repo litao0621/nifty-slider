@@ -8,6 +8,12 @@
         <attr name="trackSecondaryColor" format="color"/>
         <attr name="trackColorInactive" format="color" />
         <attr name="trackHeight" format="dimension"/>
+        <attr name="thumbColor" format="color"/>
+        <attr name="thumbRadius" format="dimension"/>
+        <attr name="thumbElevation" format="dimension"/>
+        <attr name="thumbStrokeColor" format="color" />
+        <attr name="thumbStrokeWidth" format="dimension" />
+        <attr name="thumbShadowColor" format="color" />
 
     </declare-styleable>
 </resources>
