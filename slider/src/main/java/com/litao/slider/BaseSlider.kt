@@ -6,7 +6,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.IntRange
@@ -14,6 +16,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.withTranslation
+import androidx.core.math.MathUtils
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -40,9 +43,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private val trackRectF = RectF()
 
+
+    private var scaledTouchSlop = 0
+    private var touchDownX = 0f
+    private var isDragging = false
+
     private var valueFrom = 0f
     private var valueTo = 0f
-    private var value = 0f
+    var value = 0f
 
     private var viewHeight = 0
 
@@ -75,6 +83,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             style = Paint.Style.FILL
         }
 
+        scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
         defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 
@@ -304,6 +313,67 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun getColorForState(colorStateList: ColorStateList): Int {
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
     }
+
+    private fun getValueByTouchPos(pos: Float): Float {
+        return pos * (valueTo - valueFrom) + valueFrom
+    }
+
+    private fun getTouchPosByX(touchX: Float):Float{
+        return MathUtils.clamp((touchX - paddingLeft) / trackWidth,0f,1f)
+    }
+
+
+    fun startDrag(event: MotionEvent){
+
+    }
+
+    fun stopDrag(event: MotionEvent){
+
+    }
+
+    fun trackTouchEvent(event: MotionEvent){
+        val touchPos = getTouchPosByX(event.x)
+        value = getValueByTouchPos(touchPos)
+        invalidate()
+    }
+
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!isEnabled){
+            return false
+        }
+
+        val currentX = event.x
+
+        when(event.action){
+            MotionEvent.ACTION_DOWN -> {
+                touchDownX = currentX
+
+                parent.requestDisallowInterceptTouchEvent(true)
+                requestFocus()
+                isDragging = true
+                startDrag(event)
+                trackTouchEvent(event)
+            }
+            MotionEvent.ACTION_MOVE ->{
+
+                isDragging = true
+                trackTouchEvent(event)
+
+            }
+            MotionEvent.ACTION_UP , MotionEvent.ACTION_CANCEL -> {
+                isDragging = false
+                trackTouchEvent(event)
+                stopDrag(event)
+            }
+        }
+
+        isPressed = isDragging
+
+        return true
+    }
+
+
 
 
 }
