@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.IntRange
@@ -20,6 +21,7 @@ import androidx.core.math.MathUtils
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import kotlin.math.abs
 import kotlin.math.max
 
 /**
@@ -322,6 +324,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return MathUtils.clamp((touchX - paddingLeft) / trackWidth,0f,1f)
     }
 
+    private fun isInVerticalScrollingContainer():Boolean{
+        var p = parent
+        while (p is ViewGroup) {
+            val parent = p
+            val canScrollVertically = parent.canScrollVertically(1) || parent.canScrollVertically(-1)
+            if (canScrollVertically && parent.shouldDelayChildPressedState()) {
+                return true
+            }
+            p = p.getParent()
+        }
+        return false
+    }
+
 
     fun startDrag(event: MotionEvent){
 
@@ -349,27 +364,36 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             MotionEvent.ACTION_DOWN -> {
                 touchDownX = currentX
 
-                parent.requestDisallowInterceptTouchEvent(true)
-                requestFocus()
-                isDragging = true
-                startDrag(event)
-                trackTouchEvent(event)
+                if (isInVerticalScrollingContainer()){
+                    //在纵向滑动布局中不处理down事件，优先外层滑动
+                }else {
+                    parent.requestDisallowInterceptTouchEvent(true)
+                    requestFocus()
+                    isDragging = true
+                    startDrag(event)
+                    trackTouchEvent(event)
+                }
             }
             MotionEvent.ACTION_MOVE ->{
-
+                if (!isDragging){
+                    if (isInVerticalScrollingContainer() && abs(currentX-touchDownX) < scaledTouchSlop){
+                        return false
+                    }
+                }
+                parent.requestDisallowInterceptTouchEvent(true)
                 isDragging = true
                 trackTouchEvent(event)
 
             }
             MotionEvent.ACTION_UP , MotionEvent.ACTION_CANCEL -> {
                 isDragging = false
-                trackTouchEvent(event)
+//                trackTouchEvent(event)
                 stopDrag(event)
+                invalidate()
             }
         }
 
         isPressed = isDragging
-
         return true
     }
 
