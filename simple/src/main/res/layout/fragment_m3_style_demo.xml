@@ -2,13 +2,16 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:background="#1a1c17"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider"
+        android:layout_width="match_parent"
+        android:layout_height="148dp"
+        android:padding="16dp"
+        android:value="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
