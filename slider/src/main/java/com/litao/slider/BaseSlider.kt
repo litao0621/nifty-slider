@@ -50,9 +50,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var scaledTouchSlop = 0
     private var touchDownX = 0f
     private var isDragging = false
+    private var isTackingStart = false
 
-    private var valueFrom = 0f
-    private var valueTo = 0f
+    var valueFrom = 0f
+    var valueTo = 0f
     var value = 0f
 
     private var viewHeight = 0
@@ -71,6 +72,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     companion object {
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
     }
+
+
+    abstract fun onStartTacking()
+    abstract fun onStopTacking()
+
+    abstract fun onValueChanged(value: Float,fromUser:Boolean)
 
 
     init {
@@ -123,8 +130,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     R.color.default_track_inactive_color
                 )
             )
-
-
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
@@ -339,17 +344,25 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    fun startDrag(event: MotionEvent){
-
+    private fun startTacking(event: MotionEvent){
+        isTackingStart = true
+        onStartTacking()
     }
 
-    fun stopDrag(event: MotionEvent){
-
+    private fun stopTacking(event: MotionEvent){
+        if (isTackingStart) {
+            onStopTacking()
+        }
+        isTackingStart = false
+        invalidate()
     }
 
-    fun trackTouchEvent(event: MotionEvent){
+
+
+    private fun trackTouchEvent(event: MotionEvent){
         val touchPos = getTouchPosByX(event.x)
         value = getValueByTouchPos(touchPos)
+        onValueChanged(value,true)
         invalidate()
     }
 
@@ -371,7 +384,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     parent.requestDisallowInterceptTouchEvent(true)
                     requestFocus()
                     isDragging = true
-                    startDrag(event)
+                    startTacking(event)
                     trackTouchEvent(event)
                 }
             }
@@ -391,18 +404,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
                 lastTouchEvent?.let {
                     if (it.action == MotionEvent.ACTION_DOWN && isClickTouch(it,event)){
+                        startTacking(event)
                         trackTouchEvent(event)
                     }
                 }
 
-                stopDrag(event)
-                invalidate()
+                stopTacking(event)
+
             }
             MotionEvent.ACTION_CANCEL -> {
                 isDragging = false
-
-                stopDrag(event)
-                invalidate()
+                stopTacking(event)
             }
         }
 
@@ -412,7 +424,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    fun isClickTouch(startEvent:MotionEvent, endEvent:MotionEvent): Boolean {
+    private fun isClickTouch(startEvent:MotionEvent, endEvent:MotionEvent): Boolean {
         val differenceX = abs(startEvent.x - endEvent.x)
         val differenceY = abs(startEvent.y - endEvent.y)
         return !(differenceX > scaledTouchSlop || differenceY > scaledTouchSlop)

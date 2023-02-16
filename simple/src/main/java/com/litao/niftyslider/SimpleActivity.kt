@@ -1,11 +1,10 @@
 package com.litao.niftyslider
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.fragment.app.Fragment
 import com.litao.niftyslider.databinding.ActivitySimpleBinding
+import com.litao.niftyslider.fragment.BasicsDemoFragment
 import com.litao.niftyslider.fragment.M3StyleDemoFragment
 import com.litao.niftyslider.fragment.ScrollContainerDemoFragment
 
@@ -35,9 +34,12 @@ class SimpleActivity : AppCompatActivity() {
 
         val fragment = when (id) {
             Data.ID_1 -> {
-                M3StyleDemoFragment.newInstance()
+                BasicsDemoFragment.newInstance()
             }
             Data.ID_2 -> {
+                M3StyleDemoFragment.newInstance()
+            }
+            Data.ID_3 -> {
                 ScrollContainerDemoFragment.newInstance()
             }
             else -> {
