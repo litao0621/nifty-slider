@@ -46,6 +46,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private val trackRectF = RectF()
 
 
+    private var lastTouchEvent: MotionEvent? = null
     private var scaledTouchSlop = 0
     private var touchDownX = 0f
     private var isDragging = false
@@ -385,19 +386,37 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 trackTouchEvent(event)
 
             }
-            MotionEvent.ACTION_UP , MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP -> {
                 isDragging = false
-//                trackTouchEvent(event)
+
+                lastTouchEvent?.let {
+                    if (it.action == MotionEvent.ACTION_DOWN && isClickTouch(it,event)){
+                        trackTouchEvent(event)
+                    }
+                }
+
+                stopDrag(event)
+                invalidate()
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                isDragging = false
+
                 stopDrag(event)
                 invalidate()
             }
         }
 
         isPressed = isDragging
+        lastTouchEvent = MotionEvent.obtain(event)
         return true
     }
 
 
+    fun isClickTouch(startEvent:MotionEvent, endEvent:MotionEvent): Boolean {
+        val differenceX = abs(startEvent.x - endEvent.x)
+        val differenceY = abs(startEvent.y - endEvent.y)
+        return !(differenceX > scaledTouchSlop || differenceY > scaledTouchSlop)
+    }
 
 
 }
