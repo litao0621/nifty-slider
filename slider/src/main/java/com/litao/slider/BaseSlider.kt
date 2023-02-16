@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.view.WindowInsetsAnimation.Bounds
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.IntRange
@@ -44,6 +45,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var thumbRadius = 0
 
     private val trackRectF = RectF()
+    private var thumbOffset = 0
 
 
     private var lastTouchEvent: MotionEvent? = null
@@ -133,6 +135,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
+            setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds,false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
             setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
@@ -179,7 +182,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         trackRectF.set(
             0f + paddingLeft,
             yCenter - trackHeight / 2f,
-            paddingLeft + trackWidth * percentValue(value),
+            paddingLeft + thumbOffset*2 + (trackWidth - thumbOffset*2) * percentValue(value),
             yCenter + trackHeight / 2f
         )
         canvas.drawRoundRect(
@@ -207,7 +210,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
         canvas.withTranslation(
-            (paddingLeft + (percentValue(value) * width).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
+            (paddingLeft + thumbOffset + (percentValue(value) * (width - thumbOffset*2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
             yCenter - (defaultThumbDrawable.bounds.height() / 2f)
         ) {
             defaultThumbDrawable.draw(canvas)
@@ -228,6 +231,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         updateTrackWidth(width)
         if (viewHeightChanged()) {
             requestLayout()
+        }else{
+            invalidate()
         }
     }
 
@@ -287,6 +292,29 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         defaultThumbDrawable.shapeAppearanceModel =
             ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, thumbRadius.toFloat()).build()
         defaultThumbDrawable.setBounds(0, 0, thumbRadius * 2, thumbRadius * 2)
+        updateViewLayout()
+    }
+
+    /**
+     * Sets whether the thumb within track bounds
+     * 正常模式下滑块thumb是以track的起始位置为中心,thumb较大时左半部分会超出视图边界
+     * 某些样式下，thumb需要控制在track的范围以内，可通过此方法来启用此项功能
+     *
+     * @param isInBounds thumb 是否需要绘制在 track 范围以内
+     */
+    fun setThumbWithinTrackBounds(isInBounds: Boolean){
+
+        val offset = if (isInBounds) {
+            //启用状态下直接使用thumb的半径做为向内偏移的具体数值
+            thumbRadius
+        } else {
+            0
+        }
+
+        if (thumbOffset == offset) {
+            return
+        }
+        thumbOffset = offset
         updateViewLayout()
     }
 
