@@ -8,6 +8,8 @@
         <attr name="trackSecondaryColor" format="color"/>
         <attr name="trackColorInactive" format="color" />
         <attr name="trackHeight" format="dimension"/>
+        <attr name="trackInnerHPadding" format="dimension"/>
+        <attr name="trackInnerVPadding" format="dimension"/>
         <attr name="thumbColor" format="color"/>
         <attr name="thumbRadius" format="dimension"/>
         <attr name="thumbElevation" format="dimension"/>

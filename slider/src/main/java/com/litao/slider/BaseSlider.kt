@@ -10,7 +10,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
-import android.view.WindowInsetsAnimation.Bounds
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.IntRange
@@ -23,6 +22,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.max
 
 /**
@@ -43,9 +43,16 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
     private var thumbRadius = 0
+    private var thumbElevation = 0f
+    private var isThumbWithinTrackBounds = false
 
     private val trackRectF = RectF()
     private var thumbOffset = 0
+
+    private var trackInnerHPadding = 0
+    private var trackInnerVPadding = 0
+
+
 
 
     private var lastTouchEvent: MotionEvent? = null
@@ -140,6 +147,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
             setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
+
+            setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding,-1))
+            setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding,-1))
+
         }
     }
 
@@ -180,9 +191,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun drawTrack(canvas: Canvas, width: Int, yCenter: Float) {
         trackRectF.set(
-            0f + paddingLeft,
+            0f + paddingLeft + trackInnerHPadding,
             yCenter - trackHeight / 2f,
-            paddingLeft + thumbOffset*2 + (trackWidth - thumbOffset*2) * percentValue(value),
+            paddingLeft + trackInnerHPadding + thumbOffset*2 + (trackWidth - thumbOffset*2) * percentValue(value),
             yCenter + trackHeight / 2f
         )
         canvas.drawRoundRect(
@@ -195,9 +206,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun drawInactiveTrack(canvas: Canvas, width: Int, yCenter: Float) {
         trackRectF.set(
-            0f + paddingLeft,
+            0f + paddingLeft + trackInnerHPadding,
             yCenter - trackHeight / 2f,
-            width.toFloat() - paddingRight,
+            width.toFloat() - paddingRight - trackInnerHPadding,
             yCenter + trackHeight / 2f
         )
         canvas.drawRoundRect(
@@ -210,7 +221,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
         canvas.withTranslation(
-            (paddingLeft + thumbOffset + (percentValue(value) * (width - thumbOffset*2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
+            (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset*2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
             yCenter - (defaultThumbDrawable.bounds.height() / 2f)
         ) {
             defaultThumbDrawable.draw(canvas)
@@ -240,7 +251,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun viewHeightChanged(): Boolean {
         val topBottomPadding = paddingTop + paddingBottom
         val minHeightWithTrack = topBottomPadding + trackHeight
-        val minHeightWithThumb = topBottomPadding + thumbRadius * 2
+        val minHeightWithThumb = topBottomPadding + thumbRadius * 2 + trackInnerVPadding * 2
 
         val tempHeight = max(minHeightWithTrack, minHeightWithThumb)
 
@@ -253,7 +264,56 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     fun updateTrackWidth(viewWidth: Int) {
-        trackWidth = max(viewWidth - paddingLeft - paddingRight, 0)
+        trackWidth = max(viewWidth - paddingLeft - paddingRight - trackInnerHPadding*2, 0)
+    }
+
+    /**
+     * Sets the horizontal inner padding of the track.
+     * 主要处理thumb超出部分的视图，使thumb展示正常
+     * 也可以使用 [BaseSlider.setThumbWithinTrackBounds] 来将thumb直接控制在track内部
+     *
+     * @param padding track左右的padding值，
+     */
+    fun setTrackInnerHPadding(padding: Int = -1) {
+        val innerHPadding = if (padding == -1) {
+            if (isThumbWithinTrackBounds){
+                //thumb with in track bounds 模式下只需要要考虑超出阴影视图
+                ceil(thumbElevation).toInt()
+            }else{
+                thumbRadius + ceil(thumbElevation).toInt()
+            }
+
+        } else {
+            padding
+        }
+
+        if (innerHPadding == trackInnerHPadding){
+            return
+        }
+
+        trackInnerHPadding = innerHPadding
+        updateViewLayout()
+    }
+
+    /**
+     * Sets the vertical inner padding of the track.
+     * 主要处理thumb阴影超出部分的视图，使thumb展示正常
+     *
+     * @param padding track左右的padding值，
+     */
+    fun setTrackInnerVPadding(padding:Int){
+        val innerVPadding = if (padding == -1){
+            ceil(thumbElevation).toInt()
+        }else{
+            padding
+        }
+
+        if (innerVPadding == trackInnerVPadding){
+            return
+        }
+
+        trackInnerVPadding = innerVPadding
+        updateViewLayout()
     }
 
 
@@ -304,6 +364,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     fun setThumbWithinTrackBounds(isInBounds: Boolean){
 
+        isThumbWithinTrackBounds = isInBounds
+
         val offset = if (isInBounds) {
             //启用状态下直接使用thumb的半径做为向内偏移的具体数值
             thumbRadius
@@ -315,6 +377,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             return
         }
         thumbOffset = offset
+        setTrackInnerHPadding()
         updateViewLayout()
     }
 
@@ -328,6 +391,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun setThumbElevation(elevation: Float) {
         defaultThumbDrawable.elevation = elevation
+
+        thumbElevation = elevation
     }
 
     fun setThumbStrokeColor(thumbStrokeColor: ColorStateList?) {
@@ -355,7 +420,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     private fun getTouchPosByX(touchX: Float):Float{
-        return MathUtils.clamp((touchX - paddingLeft) / trackWidth,0f,1f)
+        return MathUtils.clamp((touchX - paddingLeft - trackInnerHPadding) / trackWidth,0f,1f)
     }
 
     private fun isInVerticalScrollingContainer():Boolean{
