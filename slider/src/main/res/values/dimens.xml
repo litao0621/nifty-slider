@@ -3,4 +3,5 @@
     <dimen name="nifty_slider_thumb_radius">10dp</dimen>
     <dimen name="nifty_slider_thumb_elevation">4dp</dimen>
     <dimen name="nifty_slider_track_height">4dp</dimen>
+    <dimen name="nifty_slider_halo_radius">24dp</dimen>
 </resources>

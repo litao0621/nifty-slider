@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="NiftySlider">
+    <style name="NiftySlider.Base" parent="android:Widget"/>
+
+    <style name="Widget.NiftySlider" parent="NiftySlider.Base">
         <item name="android:value">0</item>
         <item name="android:valueFrom">0</item>
         <item name="android:valueTo">1</item>
@@ -11,5 +13,7 @@
         <item name="thumbRadius">@dimen/nifty_slider_thumb_radius</item>
         <item name="thumbElevation">@dimen/nifty_slider_thumb_elevation</item>
         <item name="thumbShadowColor">@color/nifty_slider_thumb_shadow_color</item>
+        <item name="haloColor">@color/default_halo_color</item>
+        <item name="haloRadius">@dimen/nifty_slider_halo_radius</item>
     </style>
 </resources>

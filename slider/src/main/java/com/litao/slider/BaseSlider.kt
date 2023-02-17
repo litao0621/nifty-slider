@@ -1,10 +1,13 @@
 package com.litao.slider
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.drawable.RippleDrawable
+import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -14,13 +17,17 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.IntRange
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.withTranslation
 import androidx.core.math.MathUtils
+import com.google.android.material.drawable.DrawableUtils
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
@@ -40,11 +47,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var trackColor: ColorStateList
     private lateinit var trackSecondaryColor: ColorStateList
     private lateinit var trackColorInactive: ColorStateList
+    private lateinit var haloColor: ColorStateList
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
     private var thumbRadius = 0
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
+    private var enableDrawHalo = true
+    private var haloDrawable: RippleDrawable? = null
+    private var haloRadius = 0
 
     private val trackRectF = RectF()
     private var thumbOffset = 0
@@ -117,7 +128,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     private fun processAttributes(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int) {
-        context.withStyledAttributes(attrs, R.styleable.NiftySlider, defStyleAttr, R.style.NiftySlider) {
+        context.withStyledAttributes(attrs, R.styleable.NiftySlider, defStyleAttr, R.style.Widget_NiftySlider) {
             valueFrom = getFloat(R.styleable.NiftySlider_android_valueFrom, 0.0f)
             valueTo = getFloat(R.styleable.NiftySlider_android_valueTo, 1.0f)
             value = getFloat(R.styleable.NiftySlider_android_value, 0.0f)
@@ -156,6 +167,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding,-1))
             setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding,-1))
+            setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo,true))
+            setHaloTintList(getColorStateListOrThrow(R.styleable.NiftySlider_haloColor))
+            setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius,0))
 
         }
     }
@@ -357,7 +371,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         thumbRadius = radius
         defaultThumbDrawable.shapeAppearanceModel =
             ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, thumbRadius.toFloat()).build()
-        defaultThumbDrawable.setBounds(0, 0, thumbRadius * 2, thumbRadius * 2)
+        defaultThumbDrawable.setBounds(
+            0,
+            0,
+            thumbRadius * 2,
+            thumbRadius * 2
+        )
         updateViewLayout()
     }
 
@@ -395,6 +414,34 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         invalidate()
     }
 
+    fun setHaloTintList(haloColor: ColorStateList){
+        if (this::haloColor.isInitialized && this.haloColor == haloColor){
+            return
+        }
+
+        this.haloColor = haloColor
+        if (!shouldDrawCompatHalo() && background is RippleDrawable){
+            (background as RippleDrawable).setColor(haloColor)
+            return
+        }
+
+        invalidate()
+
+    }
+
+    fun setHaloRadius(@IntRange(from = 0) @Dimension radius:Int){
+        if (haloRadius == radius){
+            return
+        }
+
+        haloRadius = radius
+        if (!shouldDrawCompatHalo() && enableDrawHalo && background is RippleDrawable){
+            hookRippleRadius(background as RippleDrawable,haloRadius)
+            return
+        }
+        postInvalidate()
+    }
+
     fun setThumbElevation(elevation: Float) {
         defaultThumbDrawable.elevation = elevation
 
@@ -413,6 +460,37 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun setThumbShadowColor(@ColorInt shadowColor: Int) {
         defaultThumbDrawable.setShadowColor(shadowColor)
+    }
+
+    fun setEnableDrawHalo(enable: Boolean) {
+        enableDrawHalo = enable
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && haloDrawable == null && enable) {
+            background = ContextCompat.getDrawable(context, R.drawable.halo_background)
+            haloDrawable = background as RippleDrawable
+        }
+    }
+
+    private fun updateHaloHotspot(){
+        if (enableDrawHalo) {
+            if (!shouldDrawCompatHalo() && measuredWidth > 0) {
+                if (background is RippleDrawable) {
+                    val haloX =
+                        (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
+                    val haloY = viewHeight / 2
+                    DrawableCompat.setHotspotBounds(
+                        background,
+                        haloX - haloRadius,
+                        haloY - haloRadius,
+                        haloX + haloRadius,
+                        haloY + haloRadius
+                    )
+                }
+            }
+        }
+    }
+
+    fun shouldDrawCompatHalo():Boolean{
+       return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || background !is RippleDrawable
     }
 
 
@@ -462,6 +540,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val touchPos = getTouchPosByX(event.x)
         value = getValueByTouchPos(touchPos)
         onValueChanged(value,true)
+        updateHaloHotspot()
         invalidate()
     }
 
@@ -529,6 +608,24 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val differenceX = abs(startEvent.x - endEvent.x)
         val differenceY = abs(startEvent.y - endEvent.y)
         return !(differenceX > scaledTouchSlop || differenceY > scaledTouchSlop)
+    }
+
+    private fun hookRippleRadius(drawable:RippleDrawable,radius:Int){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            drawable.radius = radius
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                val setMaxRadiusMethod =
+                    RippleDrawable::class.java.getDeclaredMethod("setMaxRadius", Int::class.javaPrimitiveType)
+                setMaxRadiusMethod.invoke(drawable, radius)
+            } catch (e: NoSuchMethodException) {
+                throw IllegalStateException("Couldn't set RippleDrawable radius", e)
+            } catch (e: InvocationTargetException) {
+                throw IllegalStateException("Couldn't set RippleDrawable radius", e)
+            } catch (e: IllegalAccessException) {
+                throw IllegalStateException("Couldn't set RippleDrawable radius", e)
+            }
+        }
     }
 
 

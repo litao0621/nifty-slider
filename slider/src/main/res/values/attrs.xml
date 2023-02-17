@@ -17,6 +17,9 @@
         <attr name="thumbStrokeWidth" format="dimension" />
         <attr name="thumbShadowColor" format="color" />
         <attr name="thumbWithinTrackBounds" format="boolean"/>
+        <attr name="enableDrawHalo" format="boolean"/>
+        <attr name="haloColor" format="color"/>
+        <attr name="haloRadius" format="dimension"/>
 
     </declare-styleable>
 </resources>
