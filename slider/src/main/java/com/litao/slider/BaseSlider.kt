@@ -82,6 +82,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
+    //用户设置的高度
+    private var sourceViewHeight = 0
+    //修正后的真实高度，会根据thumb、thumb shadow、track的高度来进行调整
     private var viewHeight = 0
 
     private var trackHeight = 0
@@ -132,7 +135,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             valueFrom = getFloat(R.styleable.NiftySlider_android_valueFrom, 0.0f)
             valueTo = getFloat(R.styleable.NiftySlider_android_valueTo, 1.0f)
             value = getFloat(R.styleable.NiftySlider_android_value, 0.0f)
-
+            sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height,0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
 
             val trackColorList = getColorStateList(R.styleable.NiftySlider_trackColor)
@@ -278,7 +281,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (tempHeight == viewHeight) {
             return false
         } else {
-            viewHeight = tempHeight
+            viewHeight = max(tempHeight,sourceViewHeight)
             return true
         }
     }

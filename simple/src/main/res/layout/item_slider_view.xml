@@ -8,7 +8,7 @@
         <com.litao.slider.NiftySlider
             android:id="@+id/nifty_slider"
             android:layout_width="match_parent"
-            android:layout_height="148dp"
+            android:layout_height="48dp"
             android:padding="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"

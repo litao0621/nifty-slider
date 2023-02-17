@@ -4,6 +4,7 @@
         <attr name="android:value" />
         <attr name="android:valueFrom" />
         <attr name="android:valueTo" />
+        <attr name="android:layout_height"/>
         <attr name="trackColor" format="color" />
         <attr name="trackSecondaryColor" format="color"/>
         <attr name="trackColorInactive" format="color" />

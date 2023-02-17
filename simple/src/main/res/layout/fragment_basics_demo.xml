@@ -42,7 +42,7 @@
     <com.litao.slider.NiftySlider
         android:id="@+id/nifty_slider"
         android:layout_width="0dp"
-        android:layout_height="148dp"
+        android:layout_height="64dp"
         app:layout_constraintLeft_toRightOf="@+id/from_value_text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/to_value_text"
