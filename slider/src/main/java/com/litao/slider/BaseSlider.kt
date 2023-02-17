@@ -1,6 +1,5 @@
 package com.litao.slider
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
@@ -23,7 +22,6 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.withTranslation
 import androidx.core.math.MathUtils
-import com.google.android.material.drawable.DrawableUtils
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -42,6 +40,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var trackPaint: Paint
     private var trackSecondaryPaint: Paint
     private var inactiveTrackPaint: Paint
+    private var haloPaint: Paint
 
 
     private lateinit var trackColor: ColorStateList
@@ -100,6 +99,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     companion object {
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
+
+        private const val HALO_ALPHA = 63
     }
 
 
@@ -119,6 +120,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         trackSecondaryPaint = Paint(HIGH_QUALITY_FLAGS).apply {
+            style = Paint.Style.FILL
+        }
+
+        haloPaint = Paint(HIGH_QUALITY_FLAGS).apply {
             style = Paint.Style.FILL
         }
 
@@ -209,6 +214,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             drawTrack(canvas, width, yCenter)
         }
 
+        if ((isDragging || isFocused) && isEnabled){
+            drawCompatHaloIfNeed(canvas,trackWidth,yCenter)
+        }
+
         drawThumb(canvas, trackWidth, yCenter)
     }
 
@@ -248,6 +257,23 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             yCenter - (defaultThumbDrawable.bounds.height() / 2f)
         ) {
             defaultThumbDrawable.draw(canvas)
+        }
+    }
+
+    /**
+     * draw compat halo
+     * 绘制thumb光环效果
+     */
+    private fun drawCompatHaloIfNeed(canvas: Canvas, width: Int, yCenter: Float){
+        if (shouldDrawCompatHalo()){
+            val centerX = paddingLeft + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
+
+            //允许光环绘制到边界以外
+            if (parent is ViewGroup){
+                (parent as ViewGroup).clipChildren = false
+            }
+
+            canvas.drawCircle(centerX, yCenter, haloRadius.toFloat(), haloPaint)
         }
     }
 
@@ -426,6 +452,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (!shouldDrawCompatHalo() && background is RippleDrawable){
             (background as RippleDrawable).setColor(haloColor)
             return
+        }
+
+        haloPaint.apply {
+            color = getColorForState(haloColor)
+            alpha = HALO_ALPHA
         }
 
         invalidate()
