@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.litao.niftyslider.databinding.ItemSliderViewBinding
 import com.litao.niftyslider.model.SliderModel
+import com.litao.slider.NiftySlider
 
 /**
  * @author : litao
@@ -48,7 +49,15 @@ class SliderListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class ItemHolder(private val binding: ItemSliderViewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun update(position: Int, model: SliderModel) {
             binding.apply {
+                niftySlider.value = model.value
+                niftySlider.setOnSliderTouchListener(object :NiftySlider.OnSliderTouchListener{
+                    override fun onStartTrackingTouch(slider: NiftySlider) {
+                    }
 
+                    override fun onStopTrackingTouch(slider: NiftySlider) {
+                        model.value = slider.value
+                    }
+                })
             }
         }
     }

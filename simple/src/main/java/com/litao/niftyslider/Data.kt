@@ -51,7 +51,7 @@ object Data {
     fun getTestData():MutableList<SliderModel>{
         val list = mutableListOf<SliderModel>()
         for (i in 1..100){
-            list.add(SliderModel(1))
+            list.add(SliderModel(0.5f))
         }
         return list
     }

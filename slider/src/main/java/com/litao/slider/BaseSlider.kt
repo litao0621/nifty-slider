@@ -64,6 +64,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     var valueFrom = 0f
     var valueTo = 0f
     var value = 0f
+        set(value) {
+            if (value != field) {
+                field = value
+                invalidate()
+            }
+        }
 
     private var viewHeight = 0
 
@@ -486,8 +492,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     if (isInVerticalScrollingContainer() && abs(currentX-touchDownX) < scaledTouchSlop){
                         return false
                     }
+                    parent.requestDisallowInterceptTouchEvent(true)
+                    startTacking(event)
                 }
-                parent.requestDisallowInterceptTouchEvent(true)
+
                 isDragging = true
                 trackTouchEvent(event)
 
