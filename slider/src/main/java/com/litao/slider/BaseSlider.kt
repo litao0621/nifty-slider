@@ -352,7 +352,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun drawTicks(canvas: Canvas, width: Int, yCenter: Float) {
         if (enableStepMode()) {
-            val drawWidth = width - tickRadius * 2
+            val drawWidth = width - thumbOffset * 2 - tickRadius * 2
             val tickCount: Int = ((valueTo - valueFrom) / stepSize + 1).toInt()
             val stepWidth = drawWidth / (tickCount - 1).toFloat()
             val activeWidth = percentValue(value) * width + paddingLeft + trackInnerHPadding + thumbOffset
