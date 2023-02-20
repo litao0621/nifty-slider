@@ -202,6 +202,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (defaultThumbDrawable.isStateful) {
             defaultThumbDrawable.state = drawableState
         }
+        haloPaint.color = getColorForState(haloColor)
+        haloPaint.alpha = HALO_ALPHA
     }
 
 
