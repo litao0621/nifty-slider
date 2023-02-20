@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -63,21 +64,38 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var trackInnerVPadding = 0
 
 
-
-
     private var lastTouchEvent: MotionEvent? = null
     private var scaledTouchSlop = 0
     private var touchDownX = 0f
     private var isDragging = false
     private var isTackingStart = false
 
+    private var hasDirtyData = false
+
     var valueFrom = 0f
+        set(value) {
+            if (field != value){
+                field = value
+                hasDirtyData = true
+                postInvalidate()
+            }
+        }
+
     var valueTo = 0f
+        set(value) {
+            if (field != value){
+                field = value
+                hasDirtyData = true
+                postInvalidate()
+            }
+        }
+
     var value = 0f
         set(value) {
-            if (value != field) {
+            if (field != value) {
                 field = value
-                invalidate()
+                hasDirtyData = true
+                postInvalidate()
             }
         }
 
@@ -90,7 +108,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         set(@IntRange(from = 0) value) {
             if (value != field) {
                 field = value
-                invalidateTrack()
                 updateViewLayout()
             }
         }
@@ -192,6 +209,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         updateTrackWidth(w)
+        updateHaloHotspot()
     }
 
     override fun drawableStateChanged() {
@@ -209,6 +227,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        if (hasDirtyData){
+            validateDirtyData()
+        }
+
         val yCenter = measuredHeight / 2f
         val width = measuredWidth
         drawInactiveTrack(canvas, width, yCenter)
@@ -283,10 +305,39 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return (value - valueFrom) / (valueTo - valueFrom)
     }
 
-    private fun invalidateTrack() {
-//        inactiveTrackPaint.strokeWidth = trackHeight.toFloat()
-//        trackPaint.strokeWidth = trackHeight.toFloat()
-//        trackSecondaryPaint.strokeWidth = trackHeight.toFloat()
+
+    /**
+     * this method is called before the onDraw.make sure parameter is valid
+     * 对可能存在的脏数据进行校验或修正
+     */
+    private fun validateDirtyData(){
+        if (hasDirtyData){
+            validateValueFrom()
+            validateValueTo()
+            validateValue()
+            hasDirtyData = false
+        }
+    }
+
+    private fun validateValueFrom() {
+        if (valueFrom > valueTo) {
+            throw IllegalStateException("valueFrom($valueFrom) must be smaller than valueTo($valueTo)")
+        }
+    }
+
+    private fun validateValueTo() {
+        if (valueTo <= valueFrom) {
+            throw IllegalStateException("valueTo($valueTo) must be greater than valueFrom($valueFrom)")
+        }
+    }
+
+    private fun validateValue() {
+        //value 超出起始结束范围则进行修正
+        if (value < valueFrom) {
+            value = valueFrom
+        } else if (value > valueTo) {
+            value = valueTo
+        }
     }
 
     fun updateViewLayout() {
@@ -513,6 +564,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     val haloX =
                         (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
                     val haloY = viewHeight / 2
+
+                    Log.e("xxxcc","haloX= $haloX,haloY= $haloY， haloRadius = $haloRadius")
                     DrawableCompat.setHotspotBounds(
                         background,
                         haloX - haloRadius,
@@ -577,7 +630,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         value = getValueByTouchPos(touchPos)
         onValueChanged(value,true)
         updateHaloHotspot()
-        invalidate()
+//        invalidate()
     }
 
 
