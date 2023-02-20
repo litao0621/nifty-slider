@@ -34,14 +34,14 @@ class SliderListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-       return list.size
+        return list.size
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentPosition = holder.adapterPosition
         val model = list[currentPosition]
-        if (holder is ItemHolder){
-            holder.update(currentPosition,model)
+        if (holder is ItemHolder) {
+            holder.update(currentPosition, model)
         }
     }
 
@@ -50,7 +50,7 @@ class SliderListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun update(position: Int, model: SliderModel) {
             binding.apply {
                 niftySlider.setValue(model.value)
-                niftySlider.setOnSliderTouchListener(object :NiftySlider.OnSliderTouchListener{
+                niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
                     override fun onStartTrackingTouch(slider: NiftySlider) {
                     }
 

@@ -47,19 +47,19 @@ class ItemStyleAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val currentPosition = holder.adapterPosition
         val model = list[currentPosition]
-        if (holder is ItemHolder){
-            holder.update(currentPosition,model,itemClickListener)
+        if (holder is ItemHolder) {
+            holder.update(currentPosition, model, itemClickListener)
         }
     }
 
 
     class ItemHolder(private val binding: ItemStyleViewBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun update(position: Int, model: StyleModel,itemClickListener: OnItemClickListener?) {
+        fun update(position: Int, model: StyleModel, itemClickListener: OnItemClickListener?) {
             binding.apply {
                 title.text = model.describe
                 itemLayout.setCardBackgroundColor(Color.parseColor(Data.colors.shuffled()[0]))
                 itemLayout.setOnClickListener {
-                    itemClickListener?.onItemClick(position,model)
+                    itemClickListener?.onItemClick(position, model)
                 }
             }
         }

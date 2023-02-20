@@ -34,19 +34,18 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     override fun onValueChanged(value: Float, fromUser: Boolean) {
-        if (enableHapticFeedback && fromUser && enableStepMode()){
+        if (enableHapticFeedback && fromUser && enableStepMode()) {
             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         }
-        valueChangeListener?.onValueChange(this,value,fromUser)
+        valueChangeListener?.onValueChange(this, value, fromUser)
     }
 
 
-
-    fun setOnValueChangeListener(listener:OnValueChangeListener){
+    fun setOnValueChangeListener(listener: OnValueChangeListener) {
         this.valueChangeListener = listener
     }
 
-    fun setOnSliderTouchListener(listener:OnSliderTouchListener){
+    fun setOnSliderTouchListener(listener: OnSliderTouchListener) {
         this.sliderTouchListener = listener
     }
 

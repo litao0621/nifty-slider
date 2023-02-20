@@ -14,7 +14,7 @@ import com.litao.niftyslider.databinding.FragmentScrollContainerDemoBinding
  * @author : litao
  * @date   : 2023/2/15 17:33
  */
-class ScrollContainerDemoFragment:Fragment() {
+class ScrollContainerDemoFragment : Fragment() {
 
     private lateinit var binding: FragmentScrollContainerDemoBinding
 
@@ -36,7 +36,7 @@ class ScrollContainerDemoFragment:Fragment() {
 
         mAdapter = SliderListAdapter()
 
-        with(binding){
+        with(binding) {
             listView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = mAdapter

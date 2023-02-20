@@ -34,18 +34,18 @@ class BasicsDemoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(binding){
+        with(binding) {
             niftySlider.setOnValueChangeListener { slider, value, fromUser ->
-                valueText.text = VALUE_TEXT.format(value.toInt(),value)
+                valueText.text = VALUE_TEXT.format(value.toInt(), value)
             }
 
-            niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener{
+            niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
                 override fun onStartTrackingTouch(slider: NiftySlider) {
-                    Toast.makeText(context,"Start Tracking Touch",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Start Tracking Touch", Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onStopTrackingTouch(slider: NiftySlider) {
-                    Toast.makeText(context,"Stop Tracking Touch",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Stop Tracking Touch", Toast.LENGTH_SHORT).show()
                 }
 
             })
@@ -56,12 +56,12 @@ class BasicsDemoFragment : Fragment() {
 
     }
 
-    private fun setFromValue(value:Float){
+    private fun setFromValue(value: Float) {
         binding.niftySlider.valueFrom = value
         binding.fromValueText.text = value.toInt().toString()
     }
 
-    private fun setToValue(value: Float){
+    private fun setToValue(value: Float) {
         binding.niftySlider.valueTo = value
         binding.toValueText.text = value.toInt().toString()
     }

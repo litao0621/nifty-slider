@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var mAdapter:ItemStyleAdapter? = null
+    private var mAdapter: ItemStyleAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,17 +32,18 @@ class MainActivity : AppCompatActivity() {
             itemClickListener = ItemStyleAdapter.OnItemClickListener { _, model ->
                 startActivity(
                     Intent(
-                    this@MainActivity,
-                    SimpleActivity::class.java).apply {
-                        putExtra(SimpleActivity.EXTRA_ID,model.id)
+                        this@MainActivity,
+                        SimpleActivity::class.java
+                    ).apply {
+                        putExtra(SimpleActivity.EXTRA_ID, model.id)
                     }
                 )
             }
         }
 
-        with(binding){
+        with(binding) {
             listView.apply {
-                layoutManager = GridLayoutManager(this@MainActivity,2)
+                layoutManager = GridLayoutManager(this@MainActivity, 2)
                 adapter = mAdapter
             }
         }

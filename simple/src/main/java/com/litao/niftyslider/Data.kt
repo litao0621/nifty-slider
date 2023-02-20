@@ -14,20 +14,20 @@ object Data {
     const val ID_3 = 3
 
     val styleList = mutableListOf(
-        StyleModel(ID_1,"Basics Demo"),
-        StyleModel(ID_2,"M3 Style"),
-        StyleModel(ID_3,"In scrolling container"),
-        StyleModel(4,"建设中..."),
-        StyleModel(5,"建设中..."),
-        StyleModel(6,"建设中..."),
-        StyleModel(7,"建设中..."),
-        StyleModel(8,"建设中..."),
-        StyleModel(9,"建设中..."),
-        StyleModel(10,"建设中..."),
-        StyleModel(11,"建设中..."),
-        StyleModel(12,"建设中..."),
-        StyleModel(13,"建设中..."),
-        StyleModel(14,"建设中...")
+        StyleModel(ID_1, "Basics Demo"),
+        StyleModel(ID_2, "M3 Style"),
+        StyleModel(ID_3, "In scrolling container"),
+        StyleModel(4, "建设中..."),
+        StyleModel(5, "建设中..."),
+        StyleModel(6, "建设中..."),
+        StyleModel(7, "建设中..."),
+        StyleModel(8, "建设中..."),
+        StyleModel(9, "建设中..."),
+        StyleModel(10, "建设中..."),
+        StyleModel(11, "建设中..."),
+        StyleModel(12, "建设中..."),
+        StyleModel(13, "建设中..."),
+        StyleModel(14, "建设中...")
     )
 
     val colors = mutableListOf(
@@ -48,9 +48,9 @@ object Data {
         "#E65100"
     )
 
-    fun getTestData():MutableList<SliderModel>{
+    fun getTestData(): MutableList<SliderModel> {
         val list = mutableListOf<SliderModel>()
-        for (i in 1..100){
+        for (i in 1..100) {
             list.add(SliderModel(0.5f))
         }
         return list

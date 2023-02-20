@@ -83,7 +83,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     var valueFrom = 0f
         set(value) {
-            if (field != value){
+            if (field != value) {
                 field = value
                 hasDirtyData = true
                 postInvalidate()
@@ -92,7 +92,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     var valueTo = 0f
         set(value) {
-            if (field != value){
+            if (field != value) {
                 field = value
                 hasDirtyData = true
                 postInvalidate()
@@ -115,6 +115,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     //用户设置的高度
     private var sourceViewHeight = 0
+
     //修正后的真实高度，会根据thumb、thumb shadow、track的高度来进行调整
     private var viewHeight = 0
 
@@ -138,7 +139,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     abstract fun onStartTacking()
     abstract fun onStopTacking()
 
-    abstract fun onValueChanged(value: Float,fromUser:Boolean)
+    abstract fun onValueChanged(value: Float, fromUser: Boolean)
 
 
     init {
@@ -179,12 +180,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             valueFrom = getFloat(R.styleable.NiftySlider_android_valueFrom, 0.0f)
             valueTo = getFloat(R.styleable.NiftySlider_android_valueTo, 1.0f)
             value = getFloat(R.styleable.NiftySlider_android_value, 0.0f)
-            stepSize = getFloat(R.styleable.NiftySlider_android_stepSize,0.0f)
+            stepSize = getFloat(R.styleable.NiftySlider_android_stepSize, 0.0f)
 
-            tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible,false)
-            enableHapticFeedback = getBoolean(R.styleable.NiftySlider_enableHapticFeedback,false)
+            tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible, false)
+            enableHapticFeedback = getBoolean(R.styleable.NiftySlider_enableHapticFeedback, false)
 
-            sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height,0)
+            sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height, 0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
 
             setTrackTintList(
@@ -222,19 +223,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
-            setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds,false))
+            setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
             setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
             setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
 
-            setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding,-1))
-            setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding,-1))
-            setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo,true))
+            setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, -1))
+            setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding, -1))
+            setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo, true))
             setHaloTintList(getColorStateListOrThrow(R.styleable.NiftySlider_haloColor))
-            setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius,0))
+            setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius, 0))
 
-            setTickRadius(getDimension(R.styleable.NiftySlider_tickRadius,0.0f))
+            setTickRadius(getDimension(R.styleable.NiftySlider_tickRadius, 0.0f))
 
         }
     }
@@ -269,7 +270,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        if (hasDirtyData){
+        if (hasDirtyData) {
             validateDirtyData()
         }
 
@@ -281,10 +282,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
 
-        drawTicks(canvas,trackWidth,yCenter)
+        drawTicks(canvas, trackWidth, yCenter)
 
-        if ((isDragging || isFocused) && isEnabled){
-            drawCompatHaloIfNeed(canvas,trackWidth,yCenter)
+        if ((isDragging || isFocused) && isEnabled) {
+            drawCompatHaloIfNeed(canvas, trackWidth, yCenter)
         }
 
         drawThumb(canvas, trackWidth, yCenter)
@@ -294,7 +295,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         trackRectF.set(
             0f + paddingLeft + trackInnerHPadding,
             yCenter - trackHeight / 2f,
-            paddingLeft + trackInnerHPadding + thumbOffset*2 + (trackWidth - thumbOffset*2) * percentValue(value),
+            paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(value),
             yCenter + trackHeight / 2f
         )
         canvas.drawRoundRect(
@@ -322,7 +323,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
         canvas.withTranslation(
-            (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset*2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
+            (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
             yCenter - (defaultThumbDrawable.bounds.height() / 2f)
         ) {
             defaultThumbDrawable.draw(canvas)
@@ -333,12 +334,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * draw compat halo
      * 绘制thumb光环效果
      */
-    private fun drawCompatHaloIfNeed(canvas: Canvas, width: Int, yCenter: Float){
-        if (shouldDrawCompatHalo()){
-            val centerX = paddingLeft + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
+    private fun drawCompatHaloIfNeed(canvas: Canvas, width: Int, yCenter: Float) {
+        if (shouldDrawCompatHalo()) {
+            val centerX =
+                paddingLeft + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
 
             //允许光环绘制到边界以外
-            if (parent is ViewGroup){
+            if (parent is ViewGroup) {
                 (parent as ViewGroup).clipChildren = false
             }
 
@@ -374,7 +376,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
-    fun enableStepMode():Boolean{
+    fun enableStepMode(): Boolean {
         return stepSize > 0 && tickVisible
     }
 
@@ -387,8 +389,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * this method is called before the onDraw.make sure parameter is valid
      * 对可能存在的脏数据进行校验或修正
      */
-    private fun validateDirtyData(){
-        if (hasDirtyData){
+    private fun validateDirtyData() {
+        if (hasDirtyData) {
             validateValueFrom()
             validateValueTo()
             validateValue()
@@ -421,7 +423,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         updateTrackWidth(width)
         if (viewHeightChanged()) {
             requestLayout()
-        }else{
+        } else {
             invalidate()
         }
     }
@@ -437,13 +439,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (tempHeight == viewHeight) {
             return false
         } else {
-            viewHeight = max(tempHeight,sourceViewHeight)
+            viewHeight = max(tempHeight, sourceViewHeight)
             return true
         }
     }
 
     fun updateTrackWidth(viewWidth: Int) {
-        trackWidth = max(viewWidth - paddingLeft - paddingRight - trackInnerHPadding*2, 0)
+        trackWidth = max(viewWidth - paddingLeft - paddingRight - trackInnerHPadding * 2, 0)
     }
 
     /**
@@ -455,10 +457,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     fun setTrackInnerHPadding(padding: Int = -1) {
         val innerHPadding = if (padding == -1) {
-            if (isThumbWithinTrackBounds){
+            if (isThumbWithinTrackBounds) {
                 //thumb with in track bounds 模式下只需要要考虑超出阴影视图
                 ceil(thumbElevation).toInt()
-            }else{
+            } else {
                 thumbRadius + ceil(thumbElevation).toInt()
             }
 
@@ -466,7 +468,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             padding
         }
 
-        if (innerHPadding == trackInnerHPadding){
+        if (innerHPadding == trackInnerHPadding) {
             return
         }
 
@@ -480,14 +482,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param padding track左右的padding值，
      */
-    fun setTrackInnerVPadding(padding:Int){
-        val innerVPadding = if (padding == -1){
+    fun setTrackInnerVPadding(padding: Int) {
+        val innerVPadding = if (padding == -1) {
             ceil(thumbElevation).toInt()
-        }else{
+        } else {
             padding
         }
 
-        if (innerVPadding == trackInnerVPadding){
+        if (innerVPadding == trackInnerVPadding) {
             return
         }
 
@@ -571,7 +573,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param isInBounds thumb 是否需要绘制在 track 范围以内
      */
-    fun setThumbWithinTrackBounds(isInBounds: Boolean){
+    fun setThumbWithinTrackBounds(isInBounds: Boolean) {
 
         isThumbWithinTrackBounds = isInBounds
 
@@ -598,13 +600,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         invalidate()
     }
 
-    fun setHaloTintList(haloColor: ColorStateList){
-        if (this::haloColor.isInitialized && this.haloColor == haloColor){
+    fun setHaloTintList(haloColor: ColorStateList) {
+        if (this::haloColor.isInitialized && this.haloColor == haloColor) {
             return
         }
 
         this.haloColor = haloColor
-        if (!shouldDrawCompatHalo() && background is RippleDrawable){
+        if (!shouldDrawCompatHalo() && background is RippleDrawable) {
             (background as RippleDrawable).setColor(haloColor)
             return
         }
@@ -618,14 +620,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     }
 
-    fun setHaloRadius(@IntRange(from = 0) @Dimension radius:Int){
-        if (haloRadius == radius){
+    fun setHaloRadius(@IntRange(from = 0) @Dimension radius: Int) {
+        if (haloRadius == radius) {
             return
         }
 
         haloRadius = radius
-        if (!shouldDrawCompatHalo() && enableDrawHalo && background is RippleDrawable){
-            hookRippleRadius(background as RippleDrawable,haloRadius)
+        if (!shouldDrawCompatHalo() && enableDrawHalo && background is RippleDrawable) {
+            hookRippleRadius(background as RippleDrawable, haloRadius)
             return
         }
         postInvalidate()
@@ -659,7 +661,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
-    private fun updateHaloHotspot(){
+    private fun updateHaloHotspot() {
         if (enableDrawHalo) {
             if (!shouldDrawCompatHalo() && measuredWidth > 0) {
                 if (background is RippleDrawable) {
@@ -679,8 +681,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
-    fun shouldDrawCompatHalo():Boolean{
-       return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || background !is RippleDrawable
+    fun shouldDrawCompatHalo(): Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || background !is RippleDrawable
     }
 
 
@@ -689,8 +691,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
     }
 
-    private fun snapStepPos(pos:Float):Float{
-        if (enableStepMode()){
+    private fun snapStepPos(pos: Float): Float {
+        if (enableStepMode()) {
             val stepCount = ((valueTo - valueFrom) / stepSize).toInt()
             return (pos * stepCount).roundToInt() / stepCount.toFloat()
         }
@@ -702,11 +704,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return position * (valueTo - valueFrom) + valueFrom
     }
 
-    private fun getTouchPosByX(touchX: Float):Float{
-        return MathUtils.clamp((touchX - paddingLeft - trackInnerHPadding) / trackWidth,0f,1f)
+    private fun getTouchPosByX(touchX: Float): Float {
+        return MathUtils.clamp((touchX - paddingLeft - trackInnerHPadding) / trackWidth, 0f, 1f)
     }
 
-    private fun isInVerticalScrollingContainer():Boolean{
+    private fun isInVerticalScrollingContainer(): Boolean {
         var p = parent
         while (p is ViewGroup) {
             val parent = p
@@ -720,12 +722,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    private fun startTacking(event: MotionEvent){
+    private fun startTacking(event: MotionEvent) {
         isTackingStart = true
         onStartTacking()
     }
 
-    private fun stopTacking(event: MotionEvent){
+    private fun stopTacking(event: MotionEvent) {
         if (isTackingStart) {
             onStopTacking()
         }
@@ -738,13 +740,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (this.value != value) {
             this.value = value
             hasDirtyData = true
-            onValueChanged(value,false)
+            onValueChanged(value, false)
             postInvalidate()
         }
     }
 
 
-    private fun trackTouchEvent(event: MotionEvent){
+    private fun trackTouchEvent(event: MotionEvent) {
         val touchPos = getTouchPosByX(event.x)
         val touchValue = getValueByTouchPos(touchPos)
         if (this.value != touchValue) {
@@ -757,19 +759,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!isEnabled){
+        if (!isEnabled) {
             return false
         }
 
         val currentX = event.x
 
-        when(event.action){
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchDownX = currentX
 
-                if (isInVerticalScrollingContainer()){
+                if (isInVerticalScrollingContainer()) {
                     //在纵向滑动布局中不处理down事件，优先外层滑动
-                }else {
+                } else {
                     parent.requestDisallowInterceptTouchEvent(true)
                     requestFocus()
                     isDragging = true
@@ -777,9 +779,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     trackTouchEvent(event)
                 }
             }
-            MotionEvent.ACTION_MOVE ->{
-                if (!isDragging){
-                    if (isInVerticalScrollingContainer() && abs(currentX-touchDownX) < scaledTouchSlop){
+            MotionEvent.ACTION_MOVE -> {
+                if (!isDragging) {
+                    if (isInVerticalScrollingContainer() && abs(currentX - touchDownX) < scaledTouchSlop) {
                         return false
                     }
                     parent.requestDisallowInterceptTouchEvent(true)
@@ -794,7 +796,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 isDragging = false
 
                 lastTouchEvent?.let {
-                    if (it.action == MotionEvent.ACTION_DOWN && isClickTouch(it,event)){
+                    if (it.action == MotionEvent.ACTION_DOWN && isClickTouch(it, event)) {
                         startTacking(event)
                         trackTouchEvent(event)
                     }
@@ -815,13 +817,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    private fun isClickTouch(startEvent:MotionEvent, endEvent:MotionEvent): Boolean {
+    private fun isClickTouch(startEvent: MotionEvent, endEvent: MotionEvent): Boolean {
         val differenceX = abs(startEvent.x - endEvent.x)
         val differenceY = abs(startEvent.y - endEvent.y)
         return !(differenceX > scaledTouchSlop || differenceY > scaledTouchSlop)
     }
 
-    private fun hookRippleRadius(drawable:RippleDrawable,radius:Int){
+    private fun hookRippleRadius(drawable: RippleDrawable, radius: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             drawable.radius = radius
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

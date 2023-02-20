@@ -34,12 +34,17 @@ class M3StyleDemoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        with(binding){
+        with(binding) {
             niftySlider.apply {
                 setTrackTintList(ContextCompat.getColorStateList(context, R.color.m3_demo_track_color)!!)
-                setTrackInactiveTintList(ContextCompat.getColorStateList(context, R.color.m3_demo_track_inactive_color)!!)
+                setTrackInactiveTintList(
+                    ContextCompat.getColorStateList(
+                        context,
+                        R.color.m3_demo_track_inactive_color
+                    )!!
+                )
                 setThumbTintList(ContextCompat.getColorStateList(context, R.color.m3_demo_thumb_color)!!)
-                setThumbShadowColor(ContextCompat.getColor(context,R.color.white))
+                setThumbShadowColor(ContextCompat.getColor(context, R.color.white))
             }
         }
 
