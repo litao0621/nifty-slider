@@ -51,7 +51,7 @@ class BasicsDemoFragment : Fragment() {
             })
         }
 
-        setFromValue(1f)
+        setFromValue(0f)
         setToValue(100f)
 
     }

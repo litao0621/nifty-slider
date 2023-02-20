@@ -4,10 +4,15 @@
         <attr name="android:value" />
         <attr name="android:valueFrom" />
         <attr name="android:valueTo" />
+        <attr name="android:stepSize" />
         <attr name="android:layout_height"/>
         <attr name="trackColor" format="color" />
         <attr name="trackSecondaryColor" format="color"/>
         <attr name="trackColorInactive" format="color" />
+        <attr name="ticksColor" format="color" />
+        <attr name="ticksColorInactive" format="color" />
+        <attr name="ticksVisible" format="boolean" />
+        <attr name="tickRadius" format="dimension" />
         <attr name="trackHeight" format="dimension"/>
         <attr name="trackInnerHPadding" format="dimension"/>
         <attr name="trackInnerVPadding" format="dimension"/>

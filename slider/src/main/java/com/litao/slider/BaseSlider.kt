@@ -8,13 +8,13 @@ import android.graphics.RectF
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -30,6 +30,7 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 /**
  * @author : litao
@@ -40,6 +41,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private var trackPaint: Paint
     private var trackSecondaryPaint: Paint
+    private var ticksPaint: Paint
+    private var inactiveTicksPaint: Paint
     private var inactiveTrackPaint: Paint
     private var haloPaint: Paint
 
@@ -47,6 +50,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var trackColor: ColorStateList
     private lateinit var trackSecondaryColor: ColorStateList
     private lateinit var trackColorInactive: ColorStateList
+    private lateinit var ticksColor: ColorStateList
+    private lateinit var ticksColorInactive: ColorStateList
     private lateinit var haloColor: ColorStateList
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
@@ -56,6 +61,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var enableDrawHalo = true
     private var haloDrawable: RippleDrawable? = null
     private var haloRadius = 0
+    private var tickRadius = 0f
+
 
     private val trackRectF = RectF()
     private var thumbOffset = 0
@@ -99,6 +106,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
+    var stepSize = 0.0f
+        set(value) {
+            if (field != value && value > 0) {
+                field = value
+                hasDirtyData = true
+                postInvalidate()
+            }
+        }
+
+    var tickVisible = false
+
     //用户设置的高度
     private var sourceViewHeight = 0
     //修正后的真实高度，会根据thumb、thumb shadow、track的高度来进行调整
@@ -140,6 +158,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             style = Paint.Style.FILL
         }
 
+        ticksPaint = Paint(HIGH_QUALITY_FLAGS).apply {
+            style = Paint.Style.FILL
+        }
+
+        inactiveTicksPaint = Paint(HIGH_QUALITY_FLAGS).apply {
+            style = Paint.Style.FILL
+        }
+
         haloPaint = Paint(HIGH_QUALITY_FLAGS).apply {
             style = Paint.Style.FILL
         }
@@ -157,30 +183,45 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             valueFrom = getFloat(R.styleable.NiftySlider_android_valueFrom, 0.0f)
             valueTo = getFloat(R.styleable.NiftySlider_android_valueTo, 1.0f)
             value = getFloat(R.styleable.NiftySlider_android_value, 0.0f)
+            stepSize = getFloat(R.styleable.NiftySlider_android_stepSize,0.0f)
+
+            tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible,false)
+
             sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height,0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
 
-            val trackColorList = getColorStateList(R.styleable.NiftySlider_trackColor)
             setTrackTintList(
-                trackColorList ?: AppCompatResources.getColorStateList(
+                getColorStateList(R.styleable.NiftySlider_trackColor) ?: AppCompatResources.getColorStateList(
                     context,
                     R.color.default_track_color
                 )
             )
-            val trackSecondaryColor = getColorStateList(R.styleable.NiftySlider_trackSecondaryColor)
             setTrackSecondaryTintList(
-                trackSecondaryColor ?: AppCompatResources.getColorStateList(
+                getColorStateList(R.styleable.NiftySlider_trackSecondaryColor) ?: AppCompatResources.getColorStateList(
                     context,
                     R.color.default_track_color
                 )
             )
-            val trackInactiveColorList = getColorStateList(R.styleable.NiftySlider_trackColorInactive)
             setTrackInactiveTintList(
-                trackInactiveColorList ?: AppCompatResources.getColorStateList(
+                getColorStateList(R.styleable.NiftySlider_trackColorInactive) ?: AppCompatResources.getColorStateList(
                     context,
                     R.color.default_track_inactive_color
                 )
             )
+
+            setTicksTintList(
+                getColorStateList(R.styleable.NiftySlider_ticksColor) ?: AppCompatResources.getColorStateList(
+                    context,
+                    R.color.default_ticks_color
+                )
+            )
+            setTicksInactiveTintList(
+                getColorStateList(R.styleable.NiftySlider_ticksColorInactive) ?: AppCompatResources.getColorStateList(
+                    context,
+                    R.color.default_ticks_inactive_color
+                )
+            )
+
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
@@ -195,6 +236,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo,true))
             setHaloTintList(getColorStateListOrThrow(R.styleable.NiftySlider_haloColor))
             setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius,0))
+
+            setTickRadius(getDimension(R.styleable.NiftySlider_tickRadius,0.0f))
 
         }
     }
@@ -216,6 +259,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         super.drawableStateChanged()
         trackPaint.color = getColorForState(trackColor)
         trackSecondaryPaint.color = getColorForState(trackSecondaryColor)
+        ticksPaint.color = getColorForState(ticksColor)
+        inactiveTicksPaint.color = getColorForState(ticksColorInactive)
         inactiveTrackPaint.color = getColorForState(trackColorInactive)
         if (defaultThumbDrawable.isStateful) {
             defaultThumbDrawable.state = drawableState
@@ -237,6 +282,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (value > valueFrom) {
             drawTrack(canvas, width, yCenter)
         }
+
+
+        drawTicks(canvas,trackWidth,yCenter)
 
         if ((isDragging || isFocused) && isEnabled){
             drawCompatHaloIfNeed(canvas,trackWidth,yCenter)
@@ -299,6 +347,38 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             canvas.drawCircle(centerX, yCenter, haloRadius.toFloat(), haloPaint)
         }
+    }
+
+
+    private fun drawTicks(canvas: Canvas, width: Int, yCenter: Float) {
+        if (enableStepMode()) {
+            val drawWidth = width - tickRadius * 2
+            val tickCount: Int = ((valueTo - valueFrom) / stepSize + 1).toInt()
+            val stepWidth = drawWidth / (tickCount - 1).toFloat()
+            val activeWidth = percentValue(value) * width + paddingLeft + trackInnerHPadding + thumbOffset
+
+            for (i in 0 until tickCount) {
+                val starLeft = paddingLeft + trackInnerHPadding + thumbOffset + tickRadius
+                val cx = starLeft + i * stepWidth
+
+                val circlePaint = if (cx <= activeWidth) {
+                    ticksPaint
+                } else {
+                    inactiveTicksPaint
+                }
+
+                canvas.drawCircle(
+                    starLeft + i * stepWidth,
+                    yCenter,
+                    tickRadius,
+                    circlePaint
+                )
+            }
+        }
+    }
+
+    private fun enableStepMode():Boolean{
+        return stepSize > 0 && tickVisible
     }
 
     private fun percentValue(value: Float): Float {
@@ -446,6 +526,31 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         invalidate()
     }
 
+    fun setTicksTintList(color: ColorStateList) {
+        if (this::ticksColor.isInitialized && color == ticksColor) {
+            return
+        }
+        ticksColor = color
+        ticksPaint.color = getColorForState(ticksColor)
+        invalidate()
+    }
+
+    fun setTicksInactiveTintList(color: ColorStateList) {
+        if (this::ticksColorInactive.isInitialized && color == ticksColorInactive) {
+            return
+        }
+        ticksColorInactive = color
+        inactiveTicksPaint.color = getColorForState(ticksColorInactive)
+        invalidate()
+    }
+
+    fun setTickRadius(@FloatRange(from = 0.0) @Dimension tickRadius: Float) {
+        if (this.tickRadius != tickRadius) {
+            this.tickRadius = tickRadius
+            postInvalidate()
+        }
+    }
+
     fun setThumbRadius(@IntRange(from = 0) @Dimension radius: Int) {
         if (radius == thumbRadius) {
             return
@@ -565,7 +670,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                         (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
                     val haloY = viewHeight / 2
 
-                    Log.e("xxxcc","haloX= $haloX,haloY= $haloY， haloRadius = $haloRadius")
                     DrawableCompat.setHotspotBounds(
                         background,
                         haloX - haloRadius,
@@ -588,8 +692,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
     }
 
+    private fun snapStepPos(pos:Float):Float{
+        if (enableStepMode()){
+            val stepCount = ((valueTo - valueFrom) / stepSize).toInt()
+            return (pos * stepCount).roundToInt() / stepCount.toFloat()
+        }
+        return pos
+    }
+
     private fun getValueByTouchPos(pos: Float): Float {
-        return pos * (valueTo - valueFrom) + valueFrom
+        val position = snapStepPos(pos)
+        return position * (valueTo - valueFrom) + valueFrom
     }
 
     private fun getTouchPosByX(touchX: Float):Float{

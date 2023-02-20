@@ -8,6 +8,10 @@
         <item name="android:valueTo">1</item>
         <item name="trackColor">@color/default_track_color</item>
         <item name="trackColorInactive">@color/default_track_inactive_color</item>
+        <item name="ticksColor">@color/default_ticks_color</item>
+        <item name="ticksColorInactive">@color/default_ticks_inactive_color</item>
+        <item name="ticksVisible">false</item>
+        <item name="tickRadius">@dimen/nifty_slider_tick_radius</item>
         <item name="trackHeight">@dimen/nifty_slider_track_height</item>
         <item name="thumbColor">@color/default_thumb_color</item>
         <item name="thumbRadius">@dimen/nifty_slider_thumb_radius</item>
