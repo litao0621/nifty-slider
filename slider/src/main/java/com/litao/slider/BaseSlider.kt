@@ -79,6 +79,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private var hasDirtyData = false
 
+    var enableHapticFeedback = false
+
     var valueFrom = 0f
         set(value) {
             if (field != value){
@@ -98,13 +100,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
     var value = 0f
-        set(value) {
-            if (field != value) {
-                field = value
-                hasDirtyData = true
-                postInvalidate()
-            }
-        }
+        private set
 
     var stepSize = 0.0f
         set(value) {
@@ -186,6 +182,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             stepSize = getFloat(R.styleable.NiftySlider_android_stepSize,0.0f)
 
             tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible,false)
+            enableHapticFeedback = getBoolean(R.styleable.NiftySlider_enableHapticFeedback,false)
 
             sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height,0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
@@ -377,7 +374,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
-    private fun enableStepMode():Boolean{
+    fun enableStepMode():Boolean{
         return stepSize > 0 && tickVisible
     }
 
@@ -737,13 +734,25 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
+    fun setValue(value: Float) {
+        if (this.value != value) {
+            this.value = value
+            hasDirtyData = true
+            onValueChanged(value,false)
+            postInvalidate()
+        }
+    }
+
 
     private fun trackTouchEvent(event: MotionEvent){
         val touchPos = getTouchPosByX(event.x)
-        value = getValueByTouchPos(touchPos)
-        onValueChanged(value,true)
-        updateHaloHotspot()
-//        invalidate()
+        val touchValue = getValueByTouchPos(touchPos)
+        if (this.value != touchValue) {
+            value = touchValue
+            onValueChanged(value, true)
+            updateHaloHotspot()
+            invalidate()
+        }
     }
 
 

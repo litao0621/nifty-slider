@@ -2,6 +2,7 @@ package com.litao.slider
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.HapticFeedbackConstants
 
 /**
  * @author : litao
@@ -33,6 +34,9 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     override fun onValueChanged(value: Float, fromUser: Boolean) {
+        if (enableHapticFeedback && fromUser && enableStepMode()){
+            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+        }
         valueChangeListener?.onValueChange(this,value,fromUser)
     }
 

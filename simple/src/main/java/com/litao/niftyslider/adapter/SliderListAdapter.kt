@@ -49,7 +49,7 @@ class SliderListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class ItemHolder(private val binding: ItemSliderViewBinding) : RecyclerView.ViewHolder(binding.root) {
         fun update(position: Int, model: SliderModel) {
             binding.apply {
-                niftySlider.value = model.value
+                niftySlider.setValue(model.value)
                 niftySlider.setOnSliderTouchListener(object :NiftySlider.OnSliderTouchListener{
                     override fun onStartTrackingTouch(slider: NiftySlider) {
                     }
