@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.litao.niftyslider.databinding.FragmentBasicsDemoBinding
+import com.litao.slider.BaseSlider
 import com.litao.slider.NiftySlider
 
 /**
@@ -49,21 +50,34 @@ class BasicsDemoFragment : Fragment() {
                 }
 
             })
+
+            niftySlider2.setOnValueChangeListener { slider, value, fromUser ->
+                valueText.text = VALUE_TEXT.format(value.toInt(), value)
+            }
+
+            niftySlider2.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
+                override fun onStartTrackingTouch(slider: NiftySlider) {
+                    Toast.makeText(context, "Start Tracking Touch", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onStopTrackingTouch(slider: NiftySlider) {
+                    Toast.makeText(context, "Stop Tracking Touch", Toast.LENGTH_SHORT).show()
+                }
+
+            })
+
+            enableSwitch.setOnCheckedChangeListener { button, isChecked ->
+                if (isChecked){
+                    button.text = "enable"
+                }else{
+                    button.text = "disable"
+                }
+                niftySlider.isEnabled = isChecked
+                niftySlider2.isEnabled = isChecked
+            }
         }
 
-        setFromValue(0f)
-        setToValue(100f)
-
     }
 
-    private fun setFromValue(value: Float) {
-        binding.niftySlider.valueFrom = value
-        binding.fromValueText.text = value.toInt().toString()
-    }
-
-    private fun setToValue(value: Float) {
-        binding.niftySlider.valueTo = value
-        binding.toValueText.text = value.toInt().toString()
-    }
 
 }

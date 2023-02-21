@@ -183,7 +183,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             stepSize = getFloat(R.styleable.NiftySlider_android_stepSize, 0.0f)
 
             tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible, false)
-            enableHapticFeedback = getBoolean(R.styleable.NiftySlider_enableHapticFeedback, false)
+            enableHapticFeedback = getBoolean(R.styleable.NiftySlider_android_hapticFeedbackEnabled, false)
 
             sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height, 0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)

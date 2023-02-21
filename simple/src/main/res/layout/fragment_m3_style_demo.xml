@@ -12,9 +12,15 @@
         android:layout_height="148dp"
         android:padding="16dp"
         android:value="0.5"
+        app:trackColor="@color/m3_demo_track_color"
+        app:trackColorInactive="@color/m3_demo_track_inactive_color"
+        app:thumbColor="@color/m3_demo_thumb_color"
+        app:thumbShadowColor="@color/white"
+        app:haloColor="@color/m3_demo_halo_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

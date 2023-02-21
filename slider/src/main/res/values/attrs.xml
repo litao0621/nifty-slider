@@ -26,6 +26,6 @@
         <attr name="enableDrawHalo" format="boolean"/>
         <attr name="haloColor" format="color"/>
         <attr name="haloRadius" format="dimension"/>
-        <attr name="enableHapticFeedback" format="boolean"/>
+        <attr name="android:hapticFeedbackEnabled" format="boolean"/>
     </declare-styleable>
 </resources>
