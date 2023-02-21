@@ -9,4 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="darker_gray">#AAA</color>
     <color name="m3_demo_color">#a8d286</color>
+    <color name="we_read_background_color">#f6f1dc</color>
+    <color name="we_read_theme_color">#444138</color>
+    <color name="we_read_thumb_color">#fbf7eb</color>
 </resources>

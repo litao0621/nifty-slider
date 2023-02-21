@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
@@ -141,6 +142,16 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     abstract fun onValueChanged(value: Float, fromUser: Boolean)
 
+    abstract fun dispatchDrawInactiveTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+    abstract fun drawInactiveTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+
+    abstract fun dispatchDrawTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+    abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+
+
+    abstract fun dispatchDrawThumbBefore(canvas: Canvas, cx: Float, cy: Float): Boolean
+    abstract fun drawThumbAfter(canvas: Canvas, cx: Float, cy: Float)
+
 
     init {
         inactiveTrackPaint = Paint(HIGH_QUALITY_FLAGS).apply {
@@ -185,7 +196,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible, false)
             enableHapticFeedback = getBoolean(R.styleable.NiftySlider_android_hapticFeedbackEnabled, false)
 
-            sourceViewHeight = getDimensionPixelOffset(R.styleable.NiftySlider_android_layout_height, 0)
+            sourceViewHeight = getLayoutDimension(R.styleable.NiftySlider_android_layout_height, 0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
 
             setTrackTintList(
@@ -303,12 +314,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(value),
             yCenter + trackHeight / 2f
         )
-        canvas.drawRoundRect(
-            trackRectF,
-            trackHeight / 2f,
-            trackHeight / 2f,
-            trackPaint
-        )
+
+        if (!dispatchDrawTrackBefore(canvas, trackRectF, yCenter)) {
+            canvas.drawRoundRect(
+                trackRectF,
+                trackHeight / 2f,
+                trackHeight / 2f,
+                trackPaint
+            )
+        }
+
+        drawTrackAfter(canvas, trackRectF, yCenter)
     }
 
     /**
@@ -321,12 +337,18 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             width.toFloat() - paddingRight - trackInnerHPadding,
             yCenter + trackHeight / 2f
         )
-        canvas.drawRoundRect(
-            trackRectF,
-            trackHeight / 2f,
-            trackHeight / 2f,
-            inactiveTrackPaint
-        )
+
+        if (!dispatchDrawInactiveTrackBefore(canvas, trackRectF, yCenter)) {
+
+            canvas.drawRoundRect(
+                trackRectF,
+                trackHeight / 2f,
+                trackHeight / 2f,
+                inactiveTrackPaint
+            )
+        }
+
+        drawInactiveTrackAfter(canvas, trackRectF, yCenter)
     }
 
     /**
@@ -334,12 +356,16 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 在[setThumbWithinTrackBounds]模式下，thumb会向内缩进[thumbRadius]距离
      */
     private fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
-        canvas.withTranslation(
-            (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f,
-            yCenter - (defaultThumbDrawable.bounds.height() / 2f)
-        ) {
-            defaultThumbDrawable.draw(canvas)
+        val cx =
+            (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f
+        val cy = yCenter - (defaultThumbDrawable.bounds.height() / 2f)
+        if (!dispatchDrawThumbBefore(canvas, cx, cy)) {
+            canvas.withTranslation(cx, cy) {
+                defaultThumbDrawable.draw(canvas)
+            }
         }
+
+        drawThumbAfter(canvas, cx, cy)
     }
 
     /**
@@ -347,7 +373,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 绘制滑块的光环效果
      */
     private fun drawCompatHaloIfNeed(canvas: Canvas, width: Int, yCenter: Float) {
-        if (shouldDrawCompatHalo()) {
+        if (shouldDrawCompatHalo() && enableDrawHalo) {
             val centerX =
                 paddingLeft + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
 
@@ -899,8 +925,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         isTackingStart = false
         invalidate()
     }
-
-
 
 
     private fun updateHaloHotspot() {

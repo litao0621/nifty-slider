@@ -7,6 +7,7 @@ import com.litao.niftyslider.databinding.ActivitySimpleBinding
 import com.litao.niftyslider.fragment.BasicsDemoFragment
 import com.litao.niftyslider.fragment.M3StyleDemoFragment
 import com.litao.niftyslider.fragment.ScrollContainerDemoFragment
+import com.litao.niftyslider.fragment.WeReadDemoFragment
 
 /**
  * @author : litao
@@ -41,6 +42,9 @@ class SimpleActivity : AppCompatActivity() {
             }
             Data.ID_3 -> {
                 ScrollContainerDemoFragment.newInstance()
+            }
+            Data.ID_4 -> {
+                WeReadDemoFragment.newInstance()
             }
             else -> {
                 null
