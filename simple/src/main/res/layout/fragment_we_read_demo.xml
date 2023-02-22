@@ -43,10 +43,35 @@
         app:thumbWithinTrackBounds="true"
         app:enableDrawHalo="false"
         android:layout_marginTop="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/nifty_slider3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nifty_slider" />
+
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:value="22"
+        android:valueFrom="16"
+        android:valueTo="28"
+        app:trackHeight="36dp"
+        app:thumbRadius="18dp"
+        app:thumbTextSize="12sp"
+        app:thumbText="边距"
+        android:hapticFeedbackEnabled="true"
+        app:thumbTextColor="@color/we_read_theme_color"
+        app:thumbColor="@color/we_read_thumb_color"
+        android:stepSize="1"
+        app:thumbWithinTrackBounds="true"
+        app:enableDrawHalo="false"
+        android:layout_marginTop="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nifty_slider2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -131,10 +131,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
-    private var trackWidth = 0
+    var trackWidth = 0
 
     companion object {
-        var DEBUG_MODE = true
+        var DEBUG_MODE = false
 
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
 
@@ -254,9 +254,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
             setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
-            setThumbText(getString(R.styleable.NiftySlider_thumbText)?:"")
-            setThumbTextTintList(getColorStateList(R.styleable.NiftySlider_thumbTextColor)?: ColorStateList.valueOf(Color.WHITE))
-            setThumbTextSize(getDimension(R.styleable.NiftySlider_thumbTextSize,10f))
+            setThumbText(getString(R.styleable.NiftySlider_thumbText) ?: "")
+            setThumbTextTintList(
+                getColorStateList(R.styleable.NiftySlider_thumbTextColor) ?: ColorStateList.valueOf(
+                    Color.WHITE
+                )
+            )
+            setThumbTextSize(getDimension(R.styleable.NiftySlider_thumbTextSize, 10f))
             setThumbTextBold(getBoolean(R.styleable.NiftySlider_thumbTextBold, false))
 
             setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, -1))
@@ -310,9 +314,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val yCenter = measuredHeight / 2f
         val width = measuredWidth
         drawInactiveTrack(canvas, width, yCenter)
-        if (value > valueFrom) {
-            drawTrack(canvas, width, yCenter)
-        }
+        drawTrack(canvas, width, yCenter)
 
 
         drawTicks(canvas, trackWidth, yCenter)
@@ -325,9 +327,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         drawThumb(canvas, trackWidth, yCenter)
     }
 
-    private fun drawDebugArea(canvas: Canvas){
+    private fun drawDebugArea(canvas: Canvas) {
         val offset = 1
-        if (DEBUG_MODE){
+        if (DEBUG_MODE) {
             debugPaint.color = Color.RED
             canvas.drawRect(
                 0f + offset,
@@ -339,15 +341,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             debugPaint.color = Color.BLUE
             canvas.drawLine(
                 0f,
-                canvas.height/2f,
+                canvas.height / 2f,
                 canvas.width.toFloat(),
-                canvas.height/2f,
+                canvas.height / 2f,
                 debugPaint
             )
             canvas.drawLine(
-                canvas.width/2f,
+                canvas.width / 2f,
                 0f,
-                canvas.width/2f,
+                canvas.width / 2f,
                 canvas.height.toFloat(),
                 debugPaint
             )
@@ -368,12 +370,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         )
 
         if (!dispatchDrawTrackBefore(canvas, trackRectF, yCenter)) {
-            canvas.drawRoundRect(
-                trackRectF,
-                trackHeight / 2f,
-                trackHeight / 2f,
-                trackPaint
-            )
+            if (value > valueFrom) {
+                canvas.drawRoundRect(
+                    trackRectF,
+                    trackHeight / 2f,
+                    trackHeight / 2f,
+                    trackPaint
+                )
+            }
         }
 
         drawTrackAfter(canvas, trackRectF, yCenter)
@@ -716,7 +720,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.thumbText
      */
-    fun setThumbText(text: String?){
+    fun setThumbText(text: String?) {
         if (this.thumbText != text) {
             this.thumbText = text
             postInvalidate()
@@ -822,15 +826,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.thumbTextSize
      */
-    fun setThumbTextSize(size: Float){
-        if (thumbTextPaint.textSize != size){
+    fun setThumbTextSize(size: Float) {
+        if (thumbTextPaint.textSize != size) {
             thumbTextPaint.textSize = size
             invalidate()
         }
     }
 
-    fun setThumbTextBold(isBold: Boolean){
-        if (thumbTextPaint.isFakeBoldText != isBold){
+    fun setThumbTextBold(isBold: Boolean) {
+        if (thumbTextPaint.isFakeBoldText != isBold) {
             thumbTextPaint.isFakeBoldText = isBold
             invalidate()
         }

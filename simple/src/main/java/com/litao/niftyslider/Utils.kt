@@ -1,9 +1,11 @@
 package com.litao.niftyslider
 
 import android.content.Context
+import android.content.res.Resources
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import kotlin.math.roundToInt
 
 /**
  * @author : litao
@@ -16,9 +18,15 @@ object Utils {
         return color and 0x00ffffff or ((alpha * origin).toInt() shl 24)
     }
 
-    fun dpToPx(context: Context, @Dimension(unit = Dimension.DP) dp: Int): Float {
-        val r = context.resources
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics)
+    fun dpToPx(@Dimension(unit = Dimension.DP) dp: Int): Int {
+        val r = Resources.getSystem()
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics).roundToInt()
     }
+
+    fun dpToPxF(@Dimension(unit = Dimension.DP) dp: Float): Float {
+        val r = Resources.getSystem()
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.displayMetrics)
+    }
+
 
 }
