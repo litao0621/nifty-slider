@@ -1,6 +1,7 @@
 package com.litao.slider.effect
 
 import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.RectF
 import com.litao.slider.NiftySlider
 import com.litao.slider.SliderEffect
@@ -10,6 +11,10 @@ import com.litao.slider.SliderEffect
  * @date   : 2023/2/21 15:18
  */
 open class BaseEffect : SliderEffect<NiftySlider> {
+
+    companion object{
+        const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
+    }
 
     override fun onStartTacking(slider: NiftySlider) {
     }

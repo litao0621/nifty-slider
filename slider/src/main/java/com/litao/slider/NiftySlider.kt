@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
+import kotlin.math.roundToInt
 
 /**
  * @author : litao
@@ -15,14 +16,20 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
 
 
     private var valueChangeListener: OnValueChangeListener? = null
+    private var intValueChangeListener: OnIntValueChangeListener? = null
     private var sliderTouchListener: OnSliderTouchListener? = null
 
     var effect: SliderEffect<NiftySlider>? = null
+
+    private var lastChangedValue = -1
 
     fun interface OnValueChangeListener {
         fun onValueChange(slider: NiftySlider, value: Float, fromUser: Boolean)
     }
 
+    fun interface OnIntValueChangeListener {
+        fun onValueChange(slider: NiftySlider, value: Int, fromUser: Boolean)
+    }
 
     interface OnSliderTouchListener {
         fun onStartTrackingTouch(slider: NiftySlider)
@@ -43,6 +50,14 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
         if (enableHapticFeedback && fromUser && enableStepMode()) {
             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
         }
+
+        val intValue = value.roundToInt()
+
+        if (lastChangedValue != intValue){
+            lastChangedValue = intValue
+            intValueChangeListener?.onValueChange(this,intValue,fromUser)
+        }
+
         valueChangeListener?.onValueChange(this, value, fromUser)
         effect?.onValueChanged(this, value, fromUser)
     }
@@ -74,6 +89,10 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
 
     fun setOnValueChangeListener(listener: OnValueChangeListener) {
         this.valueChangeListener = listener
+    }
+
+    fun setOnIntValueChangeListener(listener: OnIntValueChangeListener) {
+        this.intValueChangeListener = listener
     }
 
     fun setOnSliderTouchListener(listener: OnSliderTouchListener) {

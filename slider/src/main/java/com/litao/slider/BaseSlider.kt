@@ -2,10 +2,7 @@ package com.litao.slider
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.RectF
+import android.graphics.*
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.util.AttributeSet
@@ -17,6 +14,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
+import androidx.annotation.Nullable
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.getColorStateListOrThrow
@@ -45,7 +43,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var ticksPaint: Paint
     private var inactiveTicksPaint: Paint
     private var inactiveTrackPaint: Paint
+    private var thumbTextPaint: Paint
     private var haloPaint: Paint
+    private var debugPaint: Paint
 
 
     private lateinit var trackColor: ColorStateList
@@ -53,12 +53,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var trackColorInactive: ColorStateList
     private lateinit var ticksColor: ColorStateList
     private lateinit var ticksColorInactive: ColorStateList
+    private lateinit var thumbTextColor: ColorStateList
     private lateinit var haloColor: ColorStateList
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
     private var thumbRadius = 0
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
+    private var thumbText: String? = null
+
     private var enableDrawHalo = true
     private var haloDrawable: RippleDrawable? = null
     private var haloRadius = 0
@@ -131,6 +134,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var trackWidth = 0
 
     companion object {
+        var DEBUG_MODE = true
+
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
 
         private const val HALO_ALPHA = 63
@@ -174,8 +179,18 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             style = Paint.Style.FILL
         }
 
+        thumbTextPaint = Paint(HIGH_QUALITY_FLAGS).apply {
+            style = Paint.Style.FILL
+            textAlign = Paint.Align.CENTER
+        }
+
         haloPaint = Paint(HIGH_QUALITY_FLAGS).apply {
             style = Paint.Style.FILL
+        }
+
+        debugPaint = Paint().apply {
+            style = Paint.Style.STROKE
+            strokeWidth = 1f
         }
 
         scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
@@ -239,6 +254,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
             setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
+            setThumbText(getString(R.styleable.NiftySlider_thumbText)?:"")
+            setThumbTextTintList(getColorStateList(R.styleable.NiftySlider_thumbTextColor)?: ColorStateList.valueOf(Color.WHITE))
+            setThumbTextSize(getDimension(R.styleable.NiftySlider_thumbTextSize,10f))
+            setThumbTextBold(getBoolean(R.styleable.NiftySlider_thumbTextBold, false))
 
             setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, -1))
             setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding, -1))
@@ -274,6 +293,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (defaultThumbDrawable.isStateful) {
             defaultThumbDrawable.state = drawableState
         }
+        thumbTextPaint.color = getColorForState(thumbTextColor)
         haloPaint.color = getColorForState(haloColor)
         haloPaint.alpha = HALO_ALPHA
     }
@@ -284,6 +304,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (hasDirtyData) {
             validateDirtyData()
         }
+
+        drawDebugArea(canvas)
 
         val yCenter = measuredHeight / 2f
         val width = measuredWidth
@@ -301,6 +323,36 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         drawThumb(canvas, trackWidth, yCenter)
+    }
+
+    private fun drawDebugArea(canvas: Canvas){
+        val offset = 1
+        if (DEBUG_MODE){
+            debugPaint.color = Color.RED
+            canvas.drawRect(
+                0f + offset,
+                0f + offset,
+                canvas.width.toFloat() - offset,
+                canvas.height.toFloat() - offset,
+                debugPaint
+            )
+            debugPaint.color = Color.BLUE
+            canvas.drawLine(
+                0f,
+                canvas.height/2f,
+                canvas.width.toFloat(),
+                canvas.height/2f,
+                debugPaint
+            )
+            canvas.drawLine(
+                canvas.width/2f,
+                0f,
+                canvas.width/2f,
+                canvas.height.toFloat(),
+                debugPaint
+            )
+
+        }
     }
 
     /**
@@ -356,16 +408,28 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 在[setThumbWithinTrackBounds]模式下，thumb会向内缩进[thumbRadius]距离
      */
     private fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
-        val cx =
-            (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2)).toInt()) - defaultThumbDrawable.bounds.width() / 2f
+        val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
         val cy = yCenter - (defaultThumbDrawable.bounds.height() / 2f)
-        if (!dispatchDrawThumbBefore(canvas, cx, cy)) {
-            canvas.withTranslation(cx, cy) {
+        val tx = cx - defaultThumbDrawable.bounds.width() / 2f
+        if (!dispatchDrawThumbBefore(canvas, cx, yCenter)) {
+            canvas.withTranslation(tx, cy) {
                 defaultThumbDrawable.draw(canvas)
             }
+
+            //draw thumb text if needed
+            thumbText?.let {
+                val baseline = yCenter - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
+                canvas.drawText(
+                    it,
+                    cx,
+                    baseline,
+                    thumbTextPaint
+                )
+            }
+
         }
 
-        drawThumbAfter(canvas, cx, cy)
+        drawThumbAfter(canvas, cx, yCenter)
     }
 
     /**
@@ -391,7 +455,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * draw tick
      */
     private fun drawTicks(canvas: Canvas, width: Int, yCenter: Float) {
-        if (enableStepMode()) {
+        if (enableStepMode() && tickVisible) {
             val drawWidth = width - thumbOffset * 2 - tickRadius * 2
             val tickCount: Int = ((valueTo - valueFrom) / stepSize + 1).toInt()
             val stepWidth = drawWidth / (tickCount - 1).toFloat()
@@ -648,6 +712,18 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Sets the text of the thumb
+     *
+     * @see R.attr.thumbText
+     */
+    fun setThumbText(text: String?){
+        if (this.thumbText != text) {
+            this.thumbText = text
+            postInvalidate()
+        }
+    }
+
+    /**
      * Sets the radius of the tick in pixels.
      * 设置刻度半径大小
      *
@@ -723,6 +799,41 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
         defaultThumbDrawable.fillColor = thumbColor
         invalidate()
+    }
+
+    /**
+     * Sets the color of the thumb text.
+     *
+     * @see R.attr.thumbTextColor
+     */
+    fun setThumbTextTintList(color: ColorStateList?) {
+        if (color != null) {
+            if (this::thumbTextColor.isInitialized && thumbTextColor == color) {
+                return
+            }
+            thumbTextColor = color
+            thumbTextPaint.color = getColorForState(thumbTextColor)
+            invalidate()
+        }
+    }
+
+    /**
+     * Sets the text size of the thumb text.
+     *
+     * @see R.attr.thumbTextSize
+     */
+    fun setThumbTextSize(size: Float){
+        if (thumbTextPaint.textSize != size){
+            thumbTextPaint.textSize = size
+            invalidate()
+        }
+    }
+
+    fun setThumbTextBold(isBold: Boolean){
+        if (thumbTextPaint.isFakeBoldText != isBold){
+            thumbTextPaint.isFakeBoldText = isBold
+            invalidate()
+        }
     }
 
 
@@ -835,7 +946,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 是否启用了刻度功能
      */
     fun enableStepMode(): Boolean {
-        return stepSize > 0 && tickVisible
+        return stepSize > 0
     }
 
     /**

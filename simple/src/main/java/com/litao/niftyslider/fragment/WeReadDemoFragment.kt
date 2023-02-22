@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.litao.niftyslider.Data
 import com.litao.niftyslider.R
 import com.litao.niftyslider.Utils
 import com.litao.niftyslider.databinding.FragmentWeReadDemoBinding
+import com.litao.slider.NiftySlider
 import com.litao.slider.effect.WeReadEffect
 
 /**
@@ -42,23 +44,24 @@ class WeReadDemoFragment : Fragment() {
 
         val activeTrackColor = Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color),0.1f)
         val inactiveTrackColor = Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color),0.05f)
-        val thumbColor = ContextCompat.getColor(requireContext(), R.color.we_read_thumb_color)
 
 
         with(binding) {
 
             niftySlider.apply {
-                effect = WeReadEffect()
+                effect = WeReadEffect(this)
                 setTrackTintList(ColorStateList.valueOf(activeTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor))
-                setThumbTintList(ColorStateList.valueOf(thumbColor))
             }
 
+
             niftySlider2.apply {
-                effect = WeReadEffect()
+                effect = WeReadEffect(niftySlider2)
                 setTrackTintList(ColorStateList.valueOf(activeTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor))
-                setThumbTintList(ColorStateList.valueOf(thumbColor))
+                setOnIntValueChangeListener { slider, value, fromUser ->
+                    setThumbText(Data.weReadFontSizeMap[value].toString())
+                }
             }
         }
     }

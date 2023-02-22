@@ -57,4 +57,20 @@ object Data {
         return list
     }
 
+
+    val weReadFontSizeMap = mapOf(
+        16 to 16,
+        17 to 17,
+        18 to 18,
+        19 to 19,
+        20 to 20,
+        21 to 22,
+        22 to 24,
+        23 to 27,
+        24 to 30,
+        25 to 33,
+        26 to 36,
+        27 to 40
+    )
+
 }
