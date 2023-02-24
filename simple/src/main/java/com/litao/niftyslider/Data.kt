@@ -18,17 +18,17 @@ object Data {
         StyleModel(ID_1, "Basics Demo"),
         StyleModel(ID_2, "M3 Style"),
         StyleModel(ID_3, "In scrolling container"),
-        StyleModel(ID_4, "微信阅读菜单样式"),
-        StyleModel(5, "建设中..."),
-        StyleModel(6, "建设中..."),
-        StyleModel(7, "建设中..."),
-        StyleModel(8, "建设中..."),
-        StyleModel(9, "建设中..."),
-        StyleModel(10, "建设中..."),
-        StyleModel(11, "建设中..."),
-        StyleModel(12, "建设中..."),
-        StyleModel(13, "建设中..."),
-        StyleModel(14, "建设中...")
+        StyleModel(ID_4, "WeRead Style\n(微信阅读菜单样式)"),
+//        StyleModel(5, "building..."),
+//        StyleModel(6, "building..."),
+//        StyleModel(7, "building..."),
+//        StyleModel(8, "building..."),
+//        StyleModel(9, "building..."),
+//        StyleModel(10, "building..."),
+//        StyleModel(11, "building..."),
+//        StyleModel(12, "building..."),
+//        StyleModel(13, "building..."),
+//        StyleModel(14, "building...")
     )
 
     val colors = mutableListOf(

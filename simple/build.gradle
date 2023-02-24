@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace 'com.litao.niftyslider'
-    compileSdk 33
+    compileSdk COMPILE_SDK as int
 
     defaultConfig {
         applicationId "com.litao.niftyslider"
-        minSdk 16
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        minSdk MIN_SDK as int
+        targetSdk TARGET_SDK as int
+        versionCode VARSION_CODE as int
+        versionName VERSION_NAME as String
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

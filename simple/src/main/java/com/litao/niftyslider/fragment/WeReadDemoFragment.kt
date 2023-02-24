@@ -36,14 +36,12 @@ class WeReadDemoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val stateArray = arrayOf(
-            intArrayOf(-android.R.attr.state_enabled),
-            intArrayOf(android.R.attr.state_enabled)
-        )
-
-        val activeTrackColor = Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color),0.1f)
-        val inactiveTrackColor = Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color),0.05f)
-        val iconTintColor = Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color),0.7f)
+        val activeTrackColor =
+            Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.1f)
+        val inactiveTrackColor =
+            Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.05f)
+        val iconTintColor =
+            Utils.setColorAlpha(ContextCompat.getColor(requireContext(), R.color.we_read_theme_color), 0.7f)
 
 
         with(binding) {

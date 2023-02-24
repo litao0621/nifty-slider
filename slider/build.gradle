@@ -5,11 +5,11 @@ plugins {
 
 android {
     namespace 'com.litao.slider'
-    compileSdk 33
+    compileSdk COMPILE_SDK as int
 
     defaultConfig {
-        minSdk 16
-        targetSdk 33
+        minSdk MIN_SDK as int
+        targetSdk TARGET_SDK as int
 
         consumerProguardFiles "consumer-rules.pro"
     }
