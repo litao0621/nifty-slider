@@ -62,5 +62,7 @@ atlassian-ide-plugin.xml
 /captures
 .externalNativeBuild
 
+/publish-to-maven.gradle
+
 
 

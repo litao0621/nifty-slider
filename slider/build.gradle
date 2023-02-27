@@ -3,6 +3,15 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+ext {
+    PUBLISH_ARTIFACT_ID = 'nifty-slider'
+}
+
+def publish_plugin_path = "${rootProject.projectDir}/publish-to-maven.gradle"
+if (new File(publish_plugin_path).exists()) {
+    apply from: publish_plugin_path
+}
+
 android {
     namespace 'com.litao.slider'
     compileSdk COMPILE_SDK as int

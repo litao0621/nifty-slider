@@ -11,8 +11,8 @@ android {
         applicationId "com.litao.niftyslider"
         minSdk MIN_SDK as int
         targetSdk TARGET_SDK as int
-        versionCode VARSION_CODE as int
-        versionName VERSION_NAME as String
+        versionCode PUBLISH_VARSION_CODE as int
+        versionName PUBLISH_VERSION_NAME as String
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
