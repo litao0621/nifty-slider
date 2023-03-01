@@ -489,8 +489,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * Returns a number between 0 and 1 with [BaseSlider.value]
      * 通过value返回当前滑动百分比，0为最左、1为最右
      */
-    private fun percentValue(value: Float): Float {
-        return (value - valueFrom) / (valueTo - valueFrom)
+    fun percentValue(v: Float = value): Float {
+        return (v - valueFrom) / (valueTo - valueFrom)
     }
 
 

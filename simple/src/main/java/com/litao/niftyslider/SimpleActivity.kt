@@ -4,10 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.litao.niftyslider.databinding.ActivitySimpleBinding
-import com.litao.niftyslider.fragment.BasicsDemoFragment
-import com.litao.niftyslider.fragment.M3StyleDemoFragment
-import com.litao.niftyslider.fragment.ScrollContainerDemoFragment
-import com.litao.niftyslider.fragment.WeReadDemoFragment
+import com.litao.niftyslider.fragment.*
 
 /**
  * @author : litao
@@ -45,6 +42,9 @@ class SimpleActivity : AppCompatActivity() {
             }
             Data.ID_4 -> {
                 WeReadDemoFragment.newInstance()
+            }
+            Data.ID_5 -> {
+                ColorPickDemoFragment.newInstance()
             }
             else -> {
                 null

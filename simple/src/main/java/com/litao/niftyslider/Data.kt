@@ -13,13 +13,14 @@ object Data {
     const val ID_2 = 2
     const val ID_3 = 3
     const val ID_4 = 4
+    const val ID_5 = 5
 
     val styleList = mutableListOf(
         StyleModel(ID_1, "Basics Demo"),
         StyleModel(ID_2, "M3 Style"),
         StyleModel(ID_3, "In scrolling container"),
         StyleModel(ID_4, "WeRead Style\n(微信阅读菜单样式)"),
-//        StyleModel(5, "building..."),
+        StyleModel(ID_5, "Color Pick Style"),
 //        StyleModel(6, "building..."),
 //        StyleModel(7, "building..."),
 //        StyleModel(8, "building..."),
