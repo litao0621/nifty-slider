@@ -14,10 +14,11 @@ import com.litao.slider.NiftySlider
 class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
 
     private val colorTrackPaint = Paint(HIGH_QUALITY_FLAGS)
-    private var colorShader:LinearGradient? = null
+    private var colorShader: LinearGradient? = null
     private var colors = DEFAULT_COLORS
 
-    var colorValueChangeListener:OnColorValueChangeListener? = null
+
+    var colorValueChangeListener: OnColorValueChangeListener? = null
 
 
     fun interface OnColorValueChangeListener {
@@ -29,8 +30,8 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
     }
 
 
-    companion object{
-        val DEFAULT_COLORS:IntArray = intArrayOf(
+    companion object {
+        val DEFAULT_COLORS: IntArray = intArrayOf(
             0xFFFF0000.toInt(),
             0xFFFF00FF.toInt(),
             0xFF0000FF.toInt(),
@@ -44,7 +45,7 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
 
     override fun onValueChanged(slider: NiftySlider, value: Float, fromUser: Boolean) {
         super.onValueChanged(slider, value, fromUser)
-        colorValueChangeListener?.onColorValueChange(slider,calculateColor(slider.percentValue()),fromUser)
+        colorValueChangeListener?.onColorValueChange(slider, calculateColor(slider.percentValue()), fromUser)
     }
 
 
@@ -76,8 +77,8 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
         return true
     }
 
-    private fun maybeCreateShader(trackRect: RectF){
-        if (colorShader == null){
+    private fun maybeCreateShader(trackRect: RectF) {
+        if (colorShader == null) {
             colorShader = LinearGradient(
                 0f,
                 0f,
@@ -86,7 +87,7 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
                 colors,
                 null,
                 Shader.TileMode.CLAMP
-                )
+            )
 
             colorTrackPaint.shader = colorShader
         }
@@ -97,29 +98,29 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
     private fun calculateColor(@FloatRange(from = 0.0, to = 1.0) value: Float): Int {
 
         val colorsLength = colors.size
-        val colorsRangeLength = colorsLength - 1
-        val stepValue = 1f / colorsRangeLength
+        val stepValue = 1f / (colorsLength - 1)
 
         val index = (value / stepValue).toInt()
         val rangeValue = value % stepValue
-        val colorRatio = rangeValue/ stepValue
+        val colorRatio = rangeValue / stepValue
 
-        if (index >= colorsRangeLength){
-            return colors[index]
-        }else{
+        return if (index >= colorsLength - 1) {
+            colors[index]
+        } else {
             val startColor = colors[index]
             val endColor = colors[index + 1]
-            return ColorUtils.blendARGB(startColor,endColor,colorRatio)
+            ColorUtils.blendARGB(startColor, endColor, colorRatio)
         }
     }
 
     /**
      * update gradient colors
      */
-    fun updateColors(colors:IntArray){
+    fun updateColors(colors: IntArray) {
         this.colors = colors
         colorShader = null
         slider.invalidate()
     }
+
 
 }

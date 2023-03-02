@@ -40,35 +40,40 @@ class ColorPickDemoFragment : Fragment() {
             val colorEffect = ColorPickEffect(niftySlider)
             val alphaColorEffect = ColorPickEffect(niftySlider2)
 
-            colorEffect.colorValueChangeListener = ColorPickEffect.OnColorValueChangeListener { slider, color, fromUser ->
-                colorText.setBackgroundColor(color)
-                val hexColor = Utils.toHexColorString(color)
-                colorText.text = hexColor
-                niftySlider.setThumbShadowColor(color)
-                niftySlider.setThumbStrokeColor(ColorStateList.valueOf(color))
+            colorEffect.colorValueChangeListener =
+                ColorPickEffect.OnColorValueChangeListener { slider, color, fromUser ->
+                    //color changed
+                    colorText.setBackgroundColor(color)
+                    colorText.text = Utils.toHexColorString(color)
 
-                niftySlider2.setThumbShadowColor(color)
-                niftySlider2.setThumbStrokeColor(ColorStateList.valueOf(color))
-                if (niftySlider2.value != niftySlider2.valueTo){
-                    niftySlider2.setValue(niftySlider2.valueTo)
+                    niftySlider.setThumbShadowColor(color)
+                    niftySlider.setThumbStrokeColor(ColorStateList.valueOf(color))
+
+                    niftySlider2.setThumbShadowColor(color)
+                    niftySlider2.setThumbStrokeColor(ColorStateList.valueOf(color))
+
+                    if (niftySlider2.value != niftySlider2.valueTo) {
+                        niftySlider2.setValue((niftySlider2.valueTo - niftySlider2.valueFrom) / 2f)
+                    }
+
+                    alphaColorEffect.updateColors(
+                        intArrayOf(
+                            Color.WHITE,
+                            color,
+                            Color.BLACK
+                        )
+                    )
                 }
 
-                alphaColorEffect.updateColors(
-                    intArrayOf(
-                        Color.WHITE,
-                        color
-                    )
-                )
-            }
+            alphaColorEffect.colorValueChangeListener =
+                ColorPickEffect.OnColorValueChangeListener { slider, color, fromUser ->
+                    colorText.setBackgroundColor(color)
+                    val hexColor = Utils.toHexColorString(color)
+                    colorText.text = hexColor
 
-            alphaColorEffect.colorValueChangeListener = ColorPickEffect.OnColorValueChangeListener { slider, color, fromUser ->
-                colorText.setBackgroundColor(color)
-                val hexColor = Utils.toHexColorString(color)
-                colorText.text = hexColor
-
-                niftySlider2.setThumbShadowColor(color)
-                niftySlider2.setThumbStrokeColor(ColorStateList.valueOf(color))
-            }
+                    niftySlider2.setThumbShadowColor(color)
+                    niftySlider2.setThumbStrokeColor(ColorStateList.valueOf(color))
+                }
 
 
 
