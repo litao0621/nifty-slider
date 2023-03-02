@@ -2,7 +2,11 @@ package com.litao.slider
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.util.AttributeSet
@@ -10,13 +14,11 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
-import androidx.annotation.ColorInt
-import androidx.annotation.Dimension
-import androidx.annotation.FloatRange
+import androidx.annotation.*
 import androidx.annotation.IntRange
-import androidx.annotation.Nullable
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
@@ -57,7 +59,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var haloColor: ColorStateList
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
+    private var customThumbDrawable:Drawable? = null
     private var thumbRadius = 0
+    private var thumbVOffset = 0
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
     private var thumbText: String? = null
@@ -249,6 +253,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
+            setThumbVOffset(getDimensionPixelOffset(R.styleable.NiftySlider_thumbVOffset, 0))
             setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
             setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
@@ -412,12 +417,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 在[setThumbWithinTrackBounds]模式下，thumb会向内缩进[thumbRadius]距离
      */
     private fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
+
+        val thumbDrawable = customThumbDrawable?:defaultThumbDrawable
+
         val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
-        val cy = yCenter - (defaultThumbDrawable.bounds.height() / 2f)
-        val tx = cx - defaultThumbDrawable.bounds.width() / 2f
+        val cy = yCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
+        val tx = cx - thumbDrawable.bounds.width() / 2f
         if (!dispatchDrawThumbBefore(canvas, cx, yCenter)) {
             canvas.withTranslation(tx, cy) {
-                defaultThumbDrawable.draw(canvas)
+                thumbDrawable.draw(canvas)
             }
 
             //draw thumb text if needed
@@ -716,18 +724,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
-     * Sets the text of the thumb
-     *
-     * @see R.attr.thumbText
-     */
-    fun setThumbText(text: String?) {
-        if (this.thumbText != text) {
-            this.thumbText = text
-            postInvalidate()
-        }
-    }
-
-    /**
      * Sets the radius of the tick in pixels.
      * 设置刻度半径大小
      *
@@ -741,8 +737,21 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Sets the text of the thumb
+     *
+     * @see R.attr.thumbText
+     */
+    fun setThumbText(text: String?) {
+        if (this.thumbText != text) {
+            this.thumbText = text
+            postInvalidate()
+        }
+    }
+
+    /**
      * Sets the radius of the thumb in pixels.
      * 设置滑块半径大小
+     * 如果使用自定义drawable时为长边半径
      *
      * @see R.attr.thumbRadius
      *
@@ -761,7 +770,28 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             thumbRadius * 2,
             thumbRadius * 2
         )
+
+        customThumbDrawable?.let {
+            adjustCustomThumbDrawableBounds(it)
+        }
+
         updateViewLayout()
+    }
+
+    /**
+     * Sets the vertical offset of the thumb
+     * 设置thumb纵向的偏移量
+     *
+     * @see R.attr.thumbVOffset
+     *
+     * @param offset 偏移量
+     */
+    fun setThumbVOffset(offset: Int) {
+        if (offset == thumbVOffset) {
+            return
+        }
+        thumbVOffset = offset
+        postInvalidate()
     }
 
     /**
@@ -838,6 +868,18 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             thumbTextPaint.isFakeBoldText = isBold
             invalidate()
         }
+    }
+
+
+    fun setThumbCustomDrawable(@DrawableRes drawableResId: Int) {
+        ContextCompat.getDrawable(context, drawableResId)?.also {
+            setThumbCustomDrawable(it)
+        }
+    }
+
+    fun setThumbCustomDrawable(drawable: Drawable) {
+        customThumbDrawable = initializeCustomThumbDrawable(drawable)
+        postInvalidate()
     }
 
 
@@ -1019,6 +1061,30 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             p = p.getParent()
         }
         return false
+    }
+
+
+    private fun initializeCustomThumbDrawable(originalDrawable: Drawable): Drawable? {
+        val drawable = originalDrawable.mutate().constantState?.newDrawable()
+        if (drawable != null) {
+            adjustCustomThumbDrawableBounds(drawable)
+        }
+        return drawable
+    }
+
+
+    private fun adjustCustomThumbDrawableBounds(drawable: Drawable) {
+        val thumbDiameter = thumbRadius * 2
+        val originalWidth = drawable.intrinsicWidth
+        val originalHeight = drawable.intrinsicHeight
+        if (originalWidth == -1 && originalHeight == -1) {
+            drawable.setBounds(0, 0, thumbDiameter, thumbDiameter)
+        } else {
+            val scaleRatio = thumbDiameter.toFloat() / max(originalWidth, originalHeight)
+            drawable.setBounds(
+                0, 0, (originalWidth * scaleRatio).toInt(), (originalHeight * scaleRatio).toInt()
+            )
+        }
     }
 
 

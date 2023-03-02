@@ -22,6 +22,7 @@
         <attr name="trackInnerVPadding" format="dimension"/>
         <attr name="thumbColor" format="color"/>
         <attr name="thumbRadius" format="dimension"/>
+        <attr name="thumbVOffset" format="dimension"/>
         <attr name="thumbElevation" format="dimension"/>
         <attr name="thumbStrokeColor" format="color" />
         <attr name="thumbStrokeWidth" format="dimension" />

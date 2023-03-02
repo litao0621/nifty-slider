@@ -46,6 +46,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_5 -> {
                 ColorPickDemoFragment.newInstance()
             }
+            Data.ID_6 -> {
+                CustomThumbDemoFragment.newInstance()
+            }
             else -> {
                 null
             }

@@ -10,7 +10,8 @@
     <color name="darker_gray">#AAA</color>
     <color name="m3_demo_color">#a8d286</color>
     <color name="we_read_background_color">#f6f1dc</color>
-    <color name="color_pick_demo_background_color">#444444</color>
+    <color name="black_background_color">#444444</color>
+    <color name="custom_thumb_demo_background_color">#6551a3</color>
     <color name="we_read_theme_color">#444138</color>
     <color name="we_read_thumb_color">#fbf7eb</color>
 </resources>
