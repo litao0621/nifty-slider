@@ -1065,7 +1065,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     private fun initializeCustomThumbDrawable(originalDrawable: Drawable): Drawable? {
-        val drawable = originalDrawable.mutate().constantState?.newDrawable()
+        val drawable = originalDrawable.mutate()
         if (drawable != null) {
             adjustCustomThumbDrawableBounds(drawable)
         }

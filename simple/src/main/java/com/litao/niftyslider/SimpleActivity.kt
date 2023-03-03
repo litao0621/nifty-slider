@@ -49,6 +49,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_6 -> {
                 CustomThumbDemoFragment.newInstance()
             }
+            Data.ID_7 -> {
+                CustomThumbWithLottieDemoFragment.newInstance()
+            }
             else -> {
                 null
             }
