@@ -24,10 +24,10 @@ class SimpleActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         binding = ActivitySimpleBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initView()
+        initView(savedInstanceState)
     }
 
-    private fun initView() {
+    private fun initView(savedInstanceState: Bundle?) {
         val id = intent.getIntExtra(EXTRA_ID, 0)
 
         val fragment = when (id) {
@@ -57,7 +57,7 @@ class SimpleActivity : AppCompatActivity() {
             }
         }
 
-        if (fragment != null) {
+        if (fragment != null && savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .setReorderingAllowed(true)
                 .replace(R.id.fragment_container_view, fragment)

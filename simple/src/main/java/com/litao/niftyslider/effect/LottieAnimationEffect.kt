@@ -1,5 +1,8 @@
 package com.litao.niftyslider.effect
 
+import android.os.Parcel
+import android.os.Parcelable
+import android.view.View.BaseSavedState
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
@@ -67,6 +70,8 @@ class LottieAnimationEffect(private val slider: NiftySlider) : BaseEffect() {
             animDrawable.progress = slider.value
         }
     }
+
+
 
 
     

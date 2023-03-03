@@ -9,6 +9,8 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
@@ -18,7 +20,6 @@ import androidx.annotation.*
 import androidx.annotation.IntRange
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
@@ -1229,6 +1230,50 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
     }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        val superState = super.onSaveInstanceState()
+        val sliderState = SavedState(superState)
+        sliderState.value = value
+        return sliderState
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        val sliderState = state as SavedState
+        super.onRestoreInstanceState(sliderState.superState)
+        value = sliderState.value
+    }
+
+
+    internal class SavedState : BaseSavedState {
+        var value = 0f
+
+        constructor(superState: Parcelable?) : super(superState) {}
+
+        constructor(parcel: Parcel) : super(parcel) {
+            value = parcel.readFloat()
+        }
+
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            super.writeToParcel(parcel, flags)
+            parcel.writeFloat(value)
+        }
+
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel): SavedState {
+                return SavedState(parcel)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
+            }
+        }
+
+    }
+
+
+
 
 
 }
