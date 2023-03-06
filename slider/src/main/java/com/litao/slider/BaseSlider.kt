@@ -62,6 +62,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private val defaultThumbDrawable = MaterialShapeDrawable()
     private var customThumbDrawable: Drawable? = null
     private var thumbRadius = 0
+    private var thumbWidth = -1
+    private var thumbHeight = -1
     private var thumbVOffset = 0
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
@@ -253,8 +255,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             )
 
 
+            val thumbW = getDimensionPixelOffset(R.styleable.NiftySlider_thumbWidth,-1)
+            val thumbH = getDimensionPixelOffset(R.styleable.NiftySlider_thumbHeight,-1)
+
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
+            setThumbWidthAndHeight(thumbW,thumbH)
             setThumbVOffset(getDimensionPixelOffset(R.styleable.NiftySlider_thumbVOffset, 0))
             setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
@@ -801,6 +807,34 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         updateViewLayout()
     }
+
+
+    /**
+     * Sets the width and height of the thumb.this conflicts with the [setThumbRadius]
+     * 设置滑块宽高
+     * 不适用于自定义thumb drawable
+     *
+     * @see R.attr.thumbWidth
+     * @see R.attr.thumbHeight
+     *
+     * @param radius 滑块半径
+     */
+    fun setThumbWidthAndHeight(thumbWidth: Int,thumbHeight: Int) {
+        if ((this.thumbWidth == thumbWidth && this.thumbHeight == thumbHeight) || thumbHeight <= 0 || thumbWidth <= 0) {
+            return
+        }
+        this.thumbWidth = thumbWidth
+        this.thumbHeight = thumbHeight
+        defaultThumbDrawable.setBounds(
+            0,
+            0,
+            thumbWidth,
+            thumbHeight
+        )
+        updateViewLayout()
+    }
+
+
 
     /**
      * Sets the vertical offset of the thumb
