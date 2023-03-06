@@ -6,12 +6,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.ColorUtils
-import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.litao.niftyslider.databinding.FragmentTiktokStyleDemoBinding
+import com.litao.niftyslider.dp
+import com.litao.slider.NiftySlider
+import com.litao.slider.effect.AnimationEffect
 
 /**
  * @author : litao
@@ -38,18 +41,45 @@ class TiktokStyleDemoFragment : Fragment() {
 
         with(binding) {
             //thumb为半透明颜色时可能会将track背景映射出来,需要按需根据自己的背景对颜色进行下转换
-            val thumbColor = ColorUtils.compositeColors(ColorUtils.setAlphaComponent(Color.WHITE, 0x55),Color.BLACK)
+            val thumbColor = ColorUtils.compositeColors(ColorUtils.setAlphaComponent(Color.WHITE, 0x55), Color.BLACK)
+            val thumbTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
+            val thumbInactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
+
+            val animEffect = AnimationEffect(niftySlider).apply {
+                srcTrackHeight = 3.dp
+                srcThumbHeight = 6.dp
+                srcThumbWidth = 6.dp
+                srcThumbRadius = 3.dp
+                srcThumbColor = thumbColor
+                srcTrackColor = thumbTrackColor
+                srcInactiveTrackColor = thumbInactiveColor
+
+                targetTrackHeight = 12.dp
+                targetThumbHeight = 16.dp
+                targetThumbWidth = 8.dp
+                targetThumbRadius = 5.dp
+                targetThumbColor = Color.WHITE
+                targetTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0xDD)
+                targetInactiveTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
+
+                animationListener = object : AnimationEffect.OnAnimationChangeListener {
+                    override fun onEnd(slider: NiftySlider) {
+                        Toast.makeText(requireContext(), "do something on animation end", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
 
             niftySlider.apply {
-                setTrackTintList(ColorStateList.valueOf(ColorUtils.setAlphaComponent(Color.WHITE, 0x33)))
-                setTrackInactiveTintList(ColorStateList.valueOf(ColorUtils.setAlphaComponent(Color.WHITE, 0x11)))
+                effect = animEffect
+                setTrackTintList(ColorStateList.valueOf(thumbTrackColor))
+                setTrackInactiveTintList(ColorStateList.valueOf(thumbInactiveColor))
                 setThumbTintList(ColorStateList.valueOf(thumbColor))
                 setThumbShadowColor(Color.BLACK)
             }
 
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
-                bottomGuide.setPadding(0,0,0,insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom)
+                bottomGuide.setPadding(0, 0, 0, insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom)
                 insets
             }
         }

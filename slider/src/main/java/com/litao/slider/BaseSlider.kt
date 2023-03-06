@@ -61,7 +61,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
     private var customThumbDrawable: Drawable? = null
-    private var thumbRadius = 0
+
     private var thumbWidth = -1
     private var thumbHeight = -1
     private var thumbVOffset = 0
@@ -131,7 +131,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     //修正后的真实高度，会根据thumb、thumb shadow、track的高度来进行调整
     private var viewHeight = 0
 
-    private var trackHeight = 0
+    var trackHeight = 0
         set(@IntRange(from = 0) value) {
             if (value != field) {
                 field = value
@@ -255,12 +255,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             )
 
 
-            val thumbW = getDimensionPixelOffset(R.styleable.NiftySlider_thumbWidth,-1)
-            val thumbH = getDimensionPixelOffset(R.styleable.NiftySlider_thumbHeight,-1)
+            val thumbW = getDimensionPixelOffset(R.styleable.NiftySlider_thumbWidth, -1)
+            val thumbH = getDimensionPixelOffset(R.styleable.NiftySlider_thumbHeight, -1)
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
-            setThumbRadius(getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0))
-            setThumbWidthAndHeight(thumbW,thumbH)
+            thumbRadius = getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0)
+            setThumbWidthAndHeight(thumbW, thumbH)
             setThumbVOffset(getDimensionPixelOffset(R.styleable.NiftySlider_thumbVOffset, 0))
             setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
@@ -787,30 +787,31 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param radius 滑块半径
      */
-    fun setThumbRadius(@IntRange(from = 0) @Dimension radius: Int) {
-        if (radius == thumbRadius) {
-            return
-        }
-        thumbRadius = radius
-        defaultThumbDrawable.shapeAppearanceModel =
-            ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, thumbRadius.toFloat()).build()
-        defaultThumbDrawable.setBounds(
-            0,
-            0,
-            thumbRadius * 2,
-            thumbRadius * 2
-        )
+    var thumbRadius = 0
+        set(@IntRange(from = 0) @Dimension value) {
+            if (field == value) {
+                return
+            }
+            field = value
+            defaultThumbDrawable.shapeAppearanceModel =
+                ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, value.toFloat()).build()
+            defaultThumbDrawable.setBounds(
+                0,
+                0,
+                value * 2,
+                value * 2
+            )
 
-        customThumbDrawable?.let {
-            adjustCustomThumbDrawableBounds(it)
-        }
+            customThumbDrawable?.let {
+                adjustCustomThumbDrawableBounds(it)
+            }
 
-        updateViewLayout()
-    }
+            updateViewLayout()
+        }
 
 
     /**
-     * Sets the width and height of the thumb.this conflicts with the [setThumbRadius]
+     * Sets the width and height of the thumb.this conflicts with the [thumbRadius]
      * 设置滑块宽高
      * 不适用于自定义thumb drawable
      *
@@ -819,21 +820,35 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param radius 滑块半径
      */
-    fun setThumbWidthAndHeight(thumbWidth: Int,thumbHeight: Int) {
-        if ((this.thumbWidth == thumbWidth && this.thumbHeight == thumbHeight) || thumbHeight <= 0 || thumbWidth <= 0) {
+    fun setThumbWidthAndHeight(thumbWidth: Int, thumbHeight: Int, radius: Int = thumbRadius) {
+        if ((this.thumbWidth == thumbWidth && this.thumbHeight == thumbHeight) || (thumbHeight < 0 && thumbWidth <= 0)) {
             return
         }
-        this.thumbWidth = thumbWidth
-        this.thumbHeight = thumbHeight
+        if (thumbWidth >= 0) {
+            this.thumbWidth = thumbWidth
+        } else {
+            this.thumbWidth = thumbRadius * 2
+        }
+
+        if (thumbHeight >= 0) {
+            this.thumbHeight = thumbHeight
+        } else {
+            this.thumbHeight = thumbRadius * 2
+        }
+
+        if (radius != thumbRadius) {
+            defaultThumbDrawable.shapeAppearanceModel =
+                ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, radius.toFloat()).build()
+        }
+
         defaultThumbDrawable.setBounds(
             0,
             0,
-            thumbWidth,
-            thumbHeight
+            this.thumbWidth,
+            this.thumbHeight
         )
         updateViewLayout()
     }
-
 
 
     /**
