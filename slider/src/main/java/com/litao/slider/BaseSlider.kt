@@ -60,7 +60,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var haloColor: ColorStateList
 
     private val defaultThumbDrawable = MaterialShapeDrawable()
-    private var customThumbDrawable:Drawable? = null
+    private var customThumbDrawable: Drawable? = null
     private var thumbRadius = 0
     private var thumbVOffset = 0
     private var thumbElevation = 0f
@@ -78,6 +78,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private var trackInnerHPadding = 0
     private var trackInnerVPadding = 0
+    private var trackCornerRadius = -1
 
 
     private var lastTouchEvent: MotionEvent? = null
@@ -271,6 +272,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, -1))
             setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding, -1))
+            setTrackCornersRadius(getDimensionPixelOffset(R.styleable.NiftySlider_trackCornersRadius, -1))
             setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo, true))
             setHaloTintList(getColorStateListOrThrow(R.styleable.NiftySlider_haloColor))
             setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius, 0))
@@ -376,11 +378,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         )
 
         if (!dispatchDrawTrackBefore(canvas, trackRectF, yCenter)) {
+
+            val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+
             if (value > valueFrom) {
                 canvas.drawRoundRect(
                     trackRectF,
-                    trackHeight / 2f,
-                    trackHeight / 2f,
+                    cornerRadius,
+                    cornerRadius,
                     trackPaint
                 )
             }
@@ -402,10 +407,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         if (!dispatchDrawInactiveTrackBefore(canvas, trackRectF, yCenter)) {
 
+            val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+
             canvas.drawRoundRect(
                 trackRectF,
-                trackHeight / 2f,
-                trackHeight / 2f,
+                cornerRadius,
+                cornerRadius,
                 inactiveTrackPaint
             )
         }
@@ -419,7 +426,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     private fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
 
-        val thumbDrawable = customThumbDrawable?:defaultThumbDrawable
+        val thumbDrawable = customThumbDrawable ?: defaultThumbDrawable
 
         val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
         val cy = yCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
@@ -651,6 +658,22 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         updateViewLayout()
     }
 
+
+    /**
+     * Sets the radius of the track corners.
+     *
+     * 设置滑轨转角圆角值
+     * @see R.attr.trackCornersRadius
+     *
+     * @param radius 圆角半径
+     */
+    fun setTrackCornersRadius(@IntRange(from = 0) @Dimension radius: Int) {
+        if (radius == trackCornerRadius) {
+            return
+        }
+        trackCornerRadius = radius
+        postInvalidate()
+    }
 
     /**
      * Sets the color for the track
@@ -1271,9 +1294,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
     }
-
-
-
 
 
 }
