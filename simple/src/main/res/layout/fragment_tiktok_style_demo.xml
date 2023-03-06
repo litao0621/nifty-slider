@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+
+
+
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:value="0.5"
+        app:trackHeight="3dp"
+        app:thumbRadius="3dp"
+        app:enableDrawHalo="false"
+        app:thumbWithinTrackBounds="true"
+        app:trackInnerHPadding="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/add_icon"/>
+
+
+
+
+
+    <!-- ######## Ignore this code  ###### -->
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_tiktok"
+        app:layout_constraintBottom_toTopOf="@+id/add_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/add_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_add"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_guide"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:tint="@color/white" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tab1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minEms="2"
+        android:text="首页"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/add_icon"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/tab2"
+        app:layout_constraintTop_toTopOf="@+id/add_icon" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minEms="2"
+        android:text="朋友"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/add_icon"
+        app:layout_constraintLeft_toRightOf="@+id/tab1"
+        app:layout_constraintRight_toLeftOf="@+id/add_icon"
+        app:layout_constraintTop_toTopOf="@+id/add_icon" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minEms="2"
+        android:text="消息"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/add_icon"
+        app:layout_constraintLeft_toRightOf="@+id/add_icon"
+        app:layout_constraintRight_toLeftOf="@+id/tab4"
+        app:layout_constraintTop_toTopOf="@+id/add_icon" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tab4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minEms="2"
+        android:text="我"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/add_icon"
+        app:layout_constraintLeft_toRightOf="@+id/tab3"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_icon" />
+
+    <ImageView
+        android:id="@+id/bottom_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -52,6 +52,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_7 -> {
                 CustomThumbWithLottieDemoFragment.newInstance()
             }
+            Data.ID_8 -> {
+                TiktokStyleDemoFragment.newInstance()
+            }
             else -> {
                 null
             }
