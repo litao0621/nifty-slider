@@ -11,6 +11,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.litao.niftyslider.databinding.FragmentTiktokStyleDemoBinding
 import com.litao.niftyslider.dp
 import com.litao.slider.NiftySlider
@@ -67,6 +68,8 @@ class TiktokStyleDemoFragment : Fragment() {
                         Toast.makeText(requireContext(), "do something on animation end", Toast.LENGTH_SHORT).show()
                     }
                 }
+
+                setInterpolator(FastOutLinearInInterpolator())
             }
 
             niftySlider.apply {

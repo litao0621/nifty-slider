@@ -1,5 +1,6 @@
 package com.litao.slider.effect
 
+import android.animation.TimeInterpolator
 import android.content.res.ColorStateList
 import androidx.annotation.ColorInt
 import androidx.core.animation.doOnEnd
@@ -162,6 +163,14 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
                 )
             )
         }
+    }
+
+
+    /**
+     * Sets the interpolator of this animation effect
+     */
+    fun setInterpolator(interpolator: TimeInterpolator){
+        sliderAnimation.interpolator = interpolator
     }
 
 
