@@ -2,10 +2,10 @@ package com.litao.slider.effect
 
 import android.animation.TimeInterpolator
 import android.content.res.ColorStateList
-import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.core.animation.doOnEnd
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
 import com.litao.slider.NiftySlider
 import com.litao.slider.anim.SliderValueAnimation
 
@@ -22,6 +22,8 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
             field = value
             sliderAnimation.duration = animDuration
         }
+
+    var endAnimDelay = 0L
 
     var srcTrackHeight = UNSET
     var srcThumbRadius = UNSET
@@ -58,7 +60,9 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
             addUpdateListener { animationUpdate(getAnimatedValueAbsolute()) }
             doOnEnd {
                 if (isReversed()) {
-                    animationListener?.onEnd(slider)
+                    if (ViewCompat.isAttachedToWindow(slider)) {
+                        animationListener?.onEnd(slider)
+                    }
                 }
             }
         }
@@ -79,7 +83,19 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
 
     fun startAnim(isReversed: Boolean) {
         sliderAnimation.apply {
-            if (isReversed) reverse() else start()
+            if (isReversed) {
+                if (endAnimDelay > 0) {
+                    slider.postDelayed({
+                        if (ViewCompat.isAttachedToWindow(slider)) {
+                            reverse()
+                        }
+                    }, endAnimDelay)
+                } else {
+                    reverse()
+                }
+            } else {
+                start()
+            }
         }
     }
 
@@ -87,7 +103,6 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
      * update slider animation
      */
     fun animationUpdate(value: Float) {
-        Log.d("lllxxxx","value = $value")
         updateTrackHeight(value)
         updateThumbSize(value)
         updateThumbColor(value)
@@ -101,10 +116,8 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
      */
     private fun updateTrackHeight(value: Float) {
         if (targetTrackHeight != UNSET) {
-           val height = getValueByFraction(srcTrackHeight, targetTrackHeight, value).toInt()
+            val height = getValueByFraction(srcTrackHeight, targetTrackHeight, value).toInt()
             slider.trackHeight = height
-
-            Log.d("lllxxxx","updateTrackHeight value = $value  -- height = $height")
         }
     }
 
@@ -175,7 +188,7 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
     /**
      * Sets the interpolator of this animation effect
      */
-    fun setInterpolator(interpolator: TimeInterpolator){
+    fun setInterpolator(interpolator: TimeInterpolator) {
         sliderAnimation.interpolator = interpolator
     }
 
