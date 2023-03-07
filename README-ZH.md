@@ -60,46 +60,48 @@ The latest version is:
 
 # Custom Effects
 
-1. M3 Style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/m3_style.png|width=480px]]
+### 1. M3 Style
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/m3_style.png" width="480">
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
 <br/>
 
-2. WeRead Style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/weread_style.png|width=480px]]
+### 2. WeRead Style
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/WeReadDemoFragment.kt)
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/weread_style.png" width="480">
+
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/WeReadDemoFragment.kt)
 <br/>
 
-3. Color Pick Style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/color_pick_style.gif|width=480px]]
+### 3. Color Pick Style
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/color_pick_style.gif" width="480">
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/ColorPickDemoFragment.kt)
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/ColorPickDemoFragment.kt)
 <br/>
 
-4. Custom Thumb Drawable Style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/custom_thumb_drawable.png|width=480px]]
+### 4. Custom Thumb Drawable Style
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/custom_thumb_drawable.png" width="480">
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbDemoFragment.kt)
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbDemoFragment.kt)
 <br/>
 
-5. Lottie Animation style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/lottie_anim_style.gif|width=480px]]
+### 5. Lottie Animation style
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/lottie_anim_style.gif" width="480">
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbWithLottieDemoFragment.kt)
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbWithLottieDemoFragment.kt)
 <br/>
 
-6. Tiktok Style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/tiktok_style.gif|width=480px]]
+### 6. Tiktok Style
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/TiktokStyleDemoFragment.kt)
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/tiktok_style.gif" width="480">
+
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/TiktokStyleDemoFragment.kt)
 <br/>
 
-7. BiliBili Style
-[[https://github.com/litao0621/NiftySlider/blob/main/art/bilibili_style.gif|width=480px]]
+### 7. BiliBili Style
+<img src="https://github.com/litao0621/NiftySlider/blob/main/art/bilibili_style.gif" width="480">
 
-    [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
+  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
 <br/>
 
 
