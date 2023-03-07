@@ -1,4 +1,9 @@
-![banner](https://github.com/litao0621/NiftySlider/blob/main/art/banner1.png)
+
+
+![banner](https://github.com/litao0621/NiftySlider/blob/main/art/banner1.png)  
+
+![NiftySliderVersion](https://maven-badges.herokuapp.com/maven-central/io.github.litao0621/nifty-slider/badge.svg)
+[![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
 # 开始
 
@@ -14,9 +19,6 @@ dependencies {
 }
 
 ```
-
-最新版本:
-![NiftySliderVersion](https://maven-badges.herokuapp.com/maven-central/io.github.litao0621/nifty-slider/badge.svg)
 
 2. 添加布局文件
 
