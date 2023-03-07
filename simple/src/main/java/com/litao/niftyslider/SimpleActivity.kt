@@ -55,6 +55,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_8 -> {
                 TiktokStyleDemoFragment.newInstance()
             }
+            Data.ID_9 -> {
+                BiliBiliDemoFragment.newInstance()
+            }
             else -> {
                 null
             }

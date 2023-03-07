@@ -2,6 +2,7 @@ package com.litao.slider.effect
 
 import android.animation.TimeInterpolator
 import android.content.res.ColorStateList
+import android.util.Log
 import androidx.annotation.ColorInt
 import androidx.core.animation.doOnEnd
 import androidx.core.graphics.ColorUtils
@@ -86,11 +87,13 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
      * update slider animation
      */
     fun animationUpdate(value: Float) {
+        Log.d("lllxxxx","value = $value")
         updateTrackHeight(value)
         updateThumbSize(value)
         updateThumbColor(value)
         updateTrackColor(value)
         updateInactiveTrackColor(value)
+        slider.postInvalidate()
     }
 
     /**
@@ -98,7 +101,10 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
      */
     private fun updateTrackHeight(value: Float) {
         if (targetTrackHeight != UNSET) {
-            slider.trackHeight = getValueByFraction(srcTrackHeight, targetTrackHeight, value).toInt()
+           val height = getValueByFraction(srcTrackHeight, targetTrackHeight, value).toInt()
+            slider.trackHeight = height
+
+            Log.d("lllxxxx","updateTrackHeight value = $value  -- height = $height")
         }
     }
 

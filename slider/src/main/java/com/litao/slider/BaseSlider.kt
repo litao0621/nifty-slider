@@ -341,6 +341,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         drawThumb(canvas, trackWidth, yCenter)
     }
 
+    override fun invalidateDrawable(drawable: Drawable) {
+        super.invalidateDrawable(drawable)
+        invalidate()
+    }
+
     private fun drawDebugArea(canvas: Canvas) {
         val offset = 1
         if (DEBUG_MODE) {
