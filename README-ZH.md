@@ -1,24 +1,24 @@
 ![banner](https://github.com/litao0621/NiftySlider/blob/main/art/banner1.png)
 
-# Getting Started
+# 开始
 
-1. Maven library dependency
+1. 添加依赖
 ``` groovy
 dependencies {
 
     implementation 'io.github.litao0621:nifty-slider:(latest version)'
 
-    // Added effect for Sliders (Optional Features)
+    // 自定义交互效果 (非必选功能)
     implementation 'io.github.litao0621:nifty-slider-effect:(latest version)'
 
 }
 
 ```
 
-The latest version is:
+最新版本:
 ![NiftySliderVersion](https://maven-badges.herokuapp.com/maven-central/io.github.litao0621/nifty-slider/badge.svg)
 
-2. Add it to the  layout file
+2. 添加布局文件
 
 ``` xml
     <com.litao.slider.NiftySlider
@@ -35,7 +35,7 @@ The latest version is:
         app:thumbShadowColor="@color/white"
         app:haloColor="@color/m3_demo_halo_color"/>
 ```
-3. Registers a callback to be invoked when the slider changes
+3. 注册滑动回调
 
 ``` kotlin
         binding.niftySlider.setOnValueChangeListener { slider, value, fromUser ->
@@ -58,50 +58,50 @@ The latest version is:
         })
 ```
 
-# Custom Effects
+# 自定义滑动效果
 
 ### 1. M3 Style
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/m3_style.png" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
 <br/>
 
-### 2. WeRead Style
+### 2. 微信阅读菜单中滑动条样式
 
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/weread_style.png" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/WeReadDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/WeReadDemoFragment.kt)
 <br/>
 
-### 3. Color Pick Style
+### 3. 颜色选择器
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/color_pick_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/ColorPickDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/ColorPickDemoFragment.kt)
 <br/>
 
-### 4. Custom Thumb Drawable Style
+### 4. 自定义滑块
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/custom_thumb_drawable.png" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbDemoFragment.kt)
 <br/>
 
-### 5. Lottie Animation style
+### 5. 结合lottie动画自定义滑块
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/lottie_anim_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbWithLottieDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbWithLottieDemoFragment.kt)
 <br/>
 
-### 6. Tiktok Style
+### 6. 抖音滑动条样式
 
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/tiktok_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/TiktokStyleDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/TiktokStyleDemoFragment.kt)
 <br/>
 
-### 7. BiliBili Style
+### 7. BiliBili滑动条样式
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/bilibili_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
 <br/>
 
 
