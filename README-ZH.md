@@ -4,6 +4,7 @@
 
 ![NiftySliderVersion](https://maven-badges.herokuapp.com/maven-central/io.github.litao0621/nifty-slider/badge.svg)
 [![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
+｜ [查看文档][2]
 
 # 开始
 
@@ -37,6 +38,9 @@ dependencies {
         app:thumbShadowColor="@color/white"
         app:haloColor="@color/m3_demo_halo_color"/>
 ```
+[查看更多属性方法][1]
+
+
 3. 注册滑动回调
 
 ``` kotlin
@@ -124,6 +128,9 @@ dependencies {
     See the License for the specific language governing permissions and
     limitations under the License.
 
+
+[1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
+[2]:https://github.com/litao0621/nifty-slider/wiki
 
 
 
