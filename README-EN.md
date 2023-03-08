@@ -111,6 +111,9 @@ If you feel this library has helped you, you can click the Star button to suppor
 
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/wechat_pay.png" width="280"><img src="https://github.com/litao0621/nifty-slider/blob/main/art/alipay.png" width="280">
 
+# DEMO
+
+[Demo APK download][5]   
 
 # License
 
@@ -132,3 +135,4 @@ If you feel this library has helped you, you can click the Star button to suppor
 [1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
 [2]:https://github.com/litao0621/nifty-slider/wiki
 [3]:https://github.com/litao0621/nifty-slider/blob/main/README.md
+[5]:https://github.com/litao0621/nifty-slider/blob/main/art/simple-debug.apk
