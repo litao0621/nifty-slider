@@ -5,7 +5,7 @@
 ![NiftySliderVersion](https://maven-badges.herokuapp.com/maven-central/io.github.litao0621/nifty-slider/badge.svg)
 [![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
-｜ [查看文档][2]
+｜ [查看文档][2] | [English][3]
 
 # 开始
 
@@ -138,6 +138,7 @@ dependencies {
 
 [1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
 [2]:https://github.com/litao0621/nifty-slider/wiki
+[3]:https://github.com/litao0621/nifty-slider/blob/main/README.md
 
 
 
