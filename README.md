@@ -107,7 +107,7 @@ dependencies {
 You are welcome to send push requests (Just remember to add you name to the contributers list) or raise issues
 
 # Donate
-If you feel this library has helped you, you can click the Star button to support the author. You can also buy the author a cup of coffee
+If you feel this library has helped you, you can click the Star button to support the author. You can also buy the author a cup of coffee.Thanks very much.:smiley:
 
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/wechat_pay.png" width="280"><img src="https://github.com/litao0621/nifty-slider/blob/main/art/alipay.png" width="280">
 
