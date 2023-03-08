@@ -111,7 +111,13 @@ dependencies {
   [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
 <br/>
 
+# 参与项目
+欢迎共同完善项目，有问题随时提交Issues
 
+# 捐赠
+如果你觉的这个库帮到了你的话可以点击Star按钮来支持作者，也可以请作者喝杯咖啡，非常感谢！:smiley:
+
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/wechat_pay.png" width="280"><img src="https://github.com/litao0621/nifty-slider/blob/main/art/alipay.png" width="280">
 
 # License
 
