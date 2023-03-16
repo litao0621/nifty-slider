@@ -119,6 +119,12 @@ dependencies {
 
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/wechat_pay.png" width="280"><img src="https://github.com/litao0621/nifty-slider/blob/main/art/alipay.png" width="280">
 
+# DEMO
+
+[Demo APK 下载地址1][4]   
+<br/>
+[Demo APK 下载地址2][5]
+
 # License
 
     Copyright 2023 litao
@@ -139,7 +145,8 @@ dependencies {
 [1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
 [2]:https://github.com/litao0621/nifty-slider/wiki
 [3]:https://github.com/litao0621/nifty-slider/blob/main/README-EN.md
-
+[4]:https://www.pgyer.com/sXFL
+[5]:https://github.com/litao0621/nifty-slider/blob/main/art/simple-debug.apk
 
 
 
