@@ -114,6 +114,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     var value = 0f
         private set
 
+    var secondaryValue = 0f
+        private set
+
     var stepSize = 0.0f
         set(value) {
             if (field != value && value > 0) {
@@ -328,9 +331,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val yCenter = measuredHeight / 2f
         val width = measuredWidth
         drawInactiveTrack(canvas, width, yCenter)
+        drawSecondaryTrack(canvas, width, yCenter)
         drawTrack(canvas, width, yCenter)
-
-
         drawTicks(canvas, trackWidth, yCenter)
 
         if ((isDragging || isFocused) && isEnabled) {
@@ -403,6 +405,30 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         drawTrackAfter(canvas, trackRectF, yCenter)
+    }
+
+    /**
+     * draw secondary track
+     * 需要考虑如果使用半透明颜色时会与下层[trackSecondaryColor]颜色进行叠加，需注意叠加后的效果是否满足要求
+     */
+    private fun drawSecondaryTrack(canvas: Canvas, width: Int, yCenter: Float){
+        trackRectF.set(
+            0f + paddingLeft + trackInnerHPadding,
+            yCenter - trackHeight / 2f,
+            paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(secondaryValue),
+            yCenter + trackHeight / 2f
+        )
+
+        val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+
+        if (secondaryValue > valueFrom) {
+            canvas.drawRoundRect(
+                trackRectF,
+                cornerRadius,
+                cornerRadius,
+                trackSecondaryPaint
+            )
+        }
     }
 
     /**
@@ -562,6 +588,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         } else if (value > valueTo) {
             value = valueTo
         }
+
+        if (secondaryValue < valueFrom) {
+            secondaryValue = valueFrom
+        } else if (secondaryValue > valueTo) {
+            secondaryValue = valueTo
+        }
     }
 
     fun updateViewLayout() {
@@ -612,6 +644,20 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             this.value = value
             hasDirtyData = true
             onValueChanged(value, false)
+            postInvalidate()
+        }
+    }
+
+
+    /**
+     * Sets the slider's [BaseSlider.secondaryValue]
+     *
+     * @param value 必须小于等于 [valueTo] 大于等于 [valueFrom]
+     */
+    fun setSecondaryValue(secondaryValue: Float){
+        if (this.secondaryValue != secondaryValue){
+            this.secondaryValue = secondaryValue
+            hasDirtyData = true
             postInvalidate()
         }
     }
