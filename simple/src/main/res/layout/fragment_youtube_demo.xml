@@ -14,6 +14,7 @@
         android:valueTo="300"
         android:value="0"
         app:enableDrawHalo="false"
+        app:trackHeight="3dp"
         app:trackColor="@color/youtube_theme_color"
         app:thumbColor="@color/youtube_theme_color"
         app:thumbShadowColor="@android:color/transparent"
@@ -35,6 +36,7 @@
         android:valueTo="300"
         android:value="50"
         app:enableDrawHalo="false"
+        app:trackHeight="3dp"
         app:trackColor="@color/youtube_theme_color"
         app:thumbColor="@color/youtube_theme_color"
         app:thumbShadowColor="@android:color/transparent"
@@ -45,5 +47,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nifty_slider" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

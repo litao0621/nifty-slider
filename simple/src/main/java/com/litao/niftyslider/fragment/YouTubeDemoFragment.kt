@@ -7,9 +7,14 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.litao.niftyslider.databinding.FragmentYoutubeDemoBinding
+import com.litao.niftyslider.dp
+import com.litao.slider.NiftySlider
+import com.litao.slider.effect.AnimationEffect
 import kotlin.math.max
 
 /**
@@ -40,14 +45,48 @@ class YouTubeDemoFragment  : Fragment() {
 
         with(binding) {
 
+            val animEffect = AnimationEffect(niftySlider).apply {
+                animDuration = 300
+                srcThumbRadius = 6.dp
+                targetThumbRadius = 9.dp
+            }
+
+            val animEffect2 = AnimationEffect(niftySlide2).apply {
+                animDuration = 300
+                srcThumbRadius = 6.dp
+                targetThumbRadius = 9.dp
+            }
+
             niftySlider.apply {
+                effect = animEffect
                 setTrackSecondaryTintList(ColorStateList.valueOf(secondaryTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
+                niftySlider.hideThumb(delayMillis = 2000)
+                niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
+                    override fun onStartTrackingTouch(slider: NiftySlider) {
+                        slider.showThumb(false)
+                    }
+
+                    override fun onStopTrackingTouch(slider: NiftySlider) {
+                        slider.hideThumb(delayMillis = 2000)
+                    }
+                })
             }
 
             niftySlide2.apply {
+                effect = animEffect2
                 setTrackSecondaryTintList(ColorStateList.valueOf(secondaryTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
+                niftySlide2.hideThumb(delayMillis = 2000)
+                niftySlide2.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
+                    override fun onStartTrackingTouch(slider: NiftySlider) {
+                        slider.showThumb(false)
+                    }
+
+                    override fun onStopTrackingTouch(slider: NiftySlider) {
+                        slider.hideThumb(delayMillis = 2000)
+                    }
+                })
             }
         }
 

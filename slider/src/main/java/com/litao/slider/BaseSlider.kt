@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -28,6 +29,7 @@ import androidx.core.math.MathUtils
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.litao.slider.anim.ThumbValueAnimation
 import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -68,6 +70,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
     private var thumbText: String? = null
+    private val thumbAnimation = ThumbValueAnimation()
 
     private var enableDrawHalo = true
     private var haloDrawable: RippleDrawable? = null
@@ -210,6 +213,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         processAttributes(context, attrs, defStyleAttr)
 
+        thumbAnimation.apply {
+            addUpdateListener {
+                adjustThumbDrawableBounds((getAnimatedValueAbsolute() * thumbRadius).toInt())
+                postInvalidate()
+            }
+        }
     }
 
     private fun processAttributes(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int) {
@@ -463,30 +472,34 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     private fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
 
-        val thumbDrawable = customThumbDrawable ?: defaultThumbDrawable
+        if (!thumbAnimation.isThumbHidden()) {
 
-        val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
-        val cy = yCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
-        val tx = cx - thumbDrawable.bounds.width() / 2f
-        if (!dispatchDrawThumbBefore(canvas, cx, yCenter)) {
-            canvas.withTranslation(tx, cy) {
-                thumbDrawable.draw(canvas)
+            val thumbDrawable = customThumbDrawable ?: defaultThumbDrawable
+
+            val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
+            val cy = yCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
+            val tx = cx - thumbDrawable.bounds.width() / 2f
+            if (!dispatchDrawThumbBefore(canvas, cx, yCenter)) {
+                canvas.withTranslation(tx, cy) {
+                    thumbDrawable.draw(canvas)
+                }
+
+                //draw thumb text if needed
+                thumbText?.let {
+                    val baseline =
+                        yCenter - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
+                    canvas.drawText(
+                        it,
+                        cx,
+                        baseline,
+                        thumbTextPaint
+                    )
+                }
+
             }
 
-            //draw thumb text if needed
-            thumbText?.let {
-                val baseline = yCenter - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
-                canvas.drawText(
-                    it,
-                    cx,
-                    baseline,
-                    thumbTextPaint
-                )
-            }
-
+            drawThumbAfter(canvas, cx, yCenter)
         }
-
-        drawThumbAfter(canvas, cx, yCenter)
     }
 
     /**
@@ -846,17 +859,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             field = value
             defaultThumbDrawable.shapeAppearanceModel =
                 ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, value.toFloat()).build()
-            defaultThumbDrawable.setBounds(
-                0,
-                0,
-                value * 2,
-                value * 2
-            )
-
-            customThumbDrawable?.let {
-                adjustCustomThumbDrawableBounds(it)
-            }
-
+            adjustThumbDrawableBounds(value)
             updateViewLayout()
         }
 
@@ -1091,7 +1094,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbShadowColor
      */
     fun setThumbShadowColor(@ColorInt shadowColor: Int) {
-        defaultThumbDrawable.setShadowColor(shadowColor)
+        if (shadowColor == Color.TRANSPARENT){
+            defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_NEVER
+        }else{
+            defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
+            defaultThumbDrawable.setShadowColor(shadowColor)
+        }
     }
 
 
@@ -1134,6 +1142,32 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     @ColorInt
     fun getColorForState(colorStateList: ColorStateList): Int {
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
+    }
+
+
+    /**
+     * show thumb on sliders
+     *
+     * @param animated Whether to update the thumb visibility with the animation
+     * @param delayMillis The delay the show thumb Runnable will be executed
+     */
+    fun showThumb(animated:Boolean = true,delayMillis:Long = 0){
+        thumbAnimation.show(animated,delayMillis)
+    }
+
+    /**
+     * hide thumb on sliders
+     *
+     * @param animated Whether to update the thumb visibility with the animation
+     * @param delayMillis The delay the hide thumb Runnable will be executed
+     */
+    fun hideThumb(animated:Boolean = true,delayMillis:Long = 0){
+        thumbAnimation.hide(animated,delayMillis)
+    }
+
+
+    fun toggleThumbVisibility(animated:Boolean = true){
+        thumbAnimation.toggle(animated)
     }
 
     /**
@@ -1197,8 +1231,22 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    private fun adjustCustomThumbDrawableBounds(drawable: Drawable) {
-        val thumbDiameter = thumbRadius * 2
+    private fun adjustThumbDrawableBounds(radius:Int){
+        defaultThumbDrawable.setBounds(
+            0,
+            0,
+            radius * 2,
+            radius * 2
+        )
+
+        customThumbDrawable?.let {
+            adjustCustomThumbDrawableBounds(it,radius)
+        }
+    }
+
+
+    private fun adjustCustomThumbDrawableBounds(drawable: Drawable,radius: Int = thumbRadius) {
+        val thumbDiameter = radius * 2
         val originalWidth = drawable.intrinsicWidth
         val originalHeight = drawable.intrinsicHeight
         if (originalWidth == -1 && originalHeight == -1) {
