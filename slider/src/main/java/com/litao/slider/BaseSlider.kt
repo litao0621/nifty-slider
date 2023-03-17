@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -606,17 +605,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     private fun validateValue() {
         //value 超出起始结束范围则进行修正
-        if (value < valueFrom) {
-            value = valueFrom
-        } else if (value > valueTo) {
-            value = valueTo
-        }
-
-        if (secondaryValue < valueFrom) {
-            secondaryValue = valueFrom
-        } else if (secondaryValue > valueTo) {
-            secondaryValue = valueTo
-        }
+        value = MathUtils.clamp(value,valueFrom,valueTo)
+        secondaryValue = MathUtils.clamp(secondaryValue,valueFrom,valueTo)
     }
 
     fun updateViewLayout() {
@@ -640,11 +630,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         val tempHeight = max(minHeightWithTrack, minHeightWithThumb)
 
-        if (tempHeight == viewHeight) {
-            return false
+        return if (tempHeight == viewHeight) {
+            false
         } else {
             viewHeight = max(tempHeight, sourceViewHeight)
-            return true
+            true
         }
     }
 
@@ -675,7 +665,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * Sets the slider's [BaseSlider.secondaryValue]
      *
-     * @param value 必须小于等于 [valueTo] 大于等于 [valueFrom]
+     * @param secondaryValue 必须小于等于 [valueTo] 大于等于 [valueFrom]
      */
     fun setSecondaryValue(secondaryValue: Float){
         if (this.secondaryValue != secondaryValue){
@@ -862,14 +852,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @param radius 滑块半径
      */
     var thumbRadius = 0
-        set(@IntRange(from = 0) @Dimension value) {
-            if (field == value) {
+        set(@IntRange(from = 0) @Dimension radius) {
+            if (field == radius) {
                 return
             }
-            field = value
+            field = radius
             defaultThumbDrawable.shapeAppearanceModel =
-                ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, value.toFloat()).build()
-            adjustThumbDrawableBounds(value)
+                ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, radius.toFloat()).build()
+            adjustThumbDrawableBounds(radius)
             updateViewLayout()
         }
 
