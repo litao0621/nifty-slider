@@ -1358,6 +1358,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val superState = super.onSaveInstanceState()
         val sliderState = SavedState(superState)
         sliderState.value = value
+        sliderState.secondaryValue = secondaryValue
         return sliderState
     }
 
@@ -1365,22 +1366,26 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val sliderState = state as SavedState
         super.onRestoreInstanceState(sliderState.superState)
         value = sliderState.value
+        secondaryValue = sliderState.secondaryValue
     }
 
 
     internal class SavedState : BaseSavedState {
         var value = 0f
+        var secondaryValue = 0f
 
         constructor(superState: Parcelable?) : super(superState) {}
 
         constructor(parcel: Parcel) : super(parcel) {
             value = parcel.readFloat()
+            secondaryValue = parcel.readFloat()
         }
 
 
         override fun writeToParcel(parcel: Parcel, flags: Int) {
             super.writeToParcel(parcel, flags)
             parcel.writeFloat(value)
+            parcel.writeFloat(secondaryValue)
         }
 
         companion object CREATOR : Parcelable.Creator<SavedState> {

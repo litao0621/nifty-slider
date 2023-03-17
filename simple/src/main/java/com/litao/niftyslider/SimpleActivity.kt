@@ -58,6 +58,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_9 -> {
                 BiliBiliDemoFragment.newInstance()
             }
+            Data.ID_10 -> {
+                YouTubeDemoFragment.newInstance()
+            }
             else -> {
                 null
             }

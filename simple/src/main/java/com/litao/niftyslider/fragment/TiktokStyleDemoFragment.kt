@@ -43,8 +43,8 @@ class TiktokStyleDemoFragment : Fragment() {
         with(binding) {
             //thumb为半透明颜色时可能会将track背景映射出来,需要按需根据自己的背景对颜色进行下转换
             val thumbColor = ColorUtils.compositeColors(ColorUtils.setAlphaComponent(Color.WHITE, 0x55), Color.BLACK)
-            val thumbTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
-            val thumbInactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
+            val trackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
+            val inactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
 
             val animEffect = AnimationEffect(niftySlider).apply {
                 srcTrackHeight = 3.dp
@@ -52,8 +52,8 @@ class TiktokStyleDemoFragment : Fragment() {
                 srcThumbWidth = 6.dp
                 srcThumbRadius = 3.dp
                 srcThumbColor = thumbColor
-                srcTrackColor = thumbTrackColor
-                srcInactiveTrackColor = thumbInactiveColor
+                srcTrackColor = trackColor
+                srcInactiveTrackColor = inactiveColor
 
                 targetTrackHeight = 12.dp
                 targetThumbHeight = 16.dp
@@ -74,8 +74,8 @@ class TiktokStyleDemoFragment : Fragment() {
 
             niftySlider.apply {
                 effect = animEffect
-                setTrackTintList(ColorStateList.valueOf(thumbTrackColor))
-                setTrackInactiveTintList(ColorStateList.valueOf(thumbInactiveColor))
+                setTrackTintList(ColorStateList.valueOf(trackColor))
+                setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
                 setThumbTintList(ColorStateList.valueOf(thumbColor))
                 setThumbShadowColor(Color.BLACK)
             }
