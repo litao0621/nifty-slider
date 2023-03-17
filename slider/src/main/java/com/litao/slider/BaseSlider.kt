@@ -165,7 +165,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     abstract fun drawInactiveTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
 
     abstract fun dispatchDrawTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+
+    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
     abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+
+    abstract fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
 
 
     abstract fun dispatchDrawThumbBefore(canvas: Canvas, cx: Float, cy: Float): Boolean
@@ -420,24 +424,30 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * draw secondary track
      * 需要考虑如果使用半透明颜色时会与下层[trackSecondaryColor]颜色进行叠加，需注意叠加后的效果是否满足要求
      */
-    private fun drawSecondaryTrack(canvas: Canvas, width: Int, yCenter: Float){
+    private fun drawSecondaryTrack(canvas: Canvas, width: Int, yCenter: Float) {
         trackRectF.set(
             0f + paddingLeft + trackInnerHPadding,
             yCenter - trackHeight / 2f,
-            paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(secondaryValue),
+            paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(
+                secondaryValue
+            ),
             yCenter + trackHeight / 2f
         )
 
-        val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+        if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF, yCenter)) {
+            val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
 
-        if (secondaryValue > valueFrom) {
-            canvas.drawRoundRect(
-                trackRectF,
-                cornerRadius,
-                cornerRadius,
-                trackSecondaryPaint
-            )
+            if (secondaryValue > valueFrom) {
+                canvas.drawRoundRect(
+                    trackRectF,
+                    cornerRadius,
+                    cornerRadius,
+                    trackSecondaryPaint
+                )
+            }
         }
+
+        drawSecondaryTrackAfter(canvas, trackRectF, yCenter)
     }
 
     /**

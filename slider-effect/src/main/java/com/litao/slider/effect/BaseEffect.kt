@@ -46,4 +46,16 @@ open class BaseEffect : SliderEffect<NiftySlider> {
     override fun drawThumbAfter(slider: NiftySlider, canvas: Canvas, cx: Float, cy: Float) {
     }
 
+    override fun dispatchDrawSecondaryTrackBefore(
+        slider: NiftySlider,
+        canvas: Canvas,
+        trackRect: RectF,
+        yCenter: Float
+    ): Boolean {
+        return false
+    }
+
+    override fun drawSecondaryTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    }
+
 }

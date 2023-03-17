@@ -74,8 +74,16 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
         return effect?.dispatchDrawTrackBefore(this, canvas, trackRect, yCenter) ?: false
     }
 
+    override fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean {
+        return effect?.dispatchDrawSecondaryTrackBefore(this, canvas, trackRect, yCenter) ?: false
+    }
+
     override fun drawTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
         effect?.drawTrackAfter(this, canvas, trackRect, yCenter)
+    }
+
+    override fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+        effect?.drawSecondaryTrackAfter(this, canvas, trackRect, yCenter)
     }
 
     override fun dispatchDrawThumbBefore(canvas: Canvas, cx: Float, cy: Float): Boolean {

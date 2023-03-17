@@ -29,6 +29,11 @@ interface SliderEffect<T : BaseSlider> {
     /** Called after draw active track */
     fun drawTrackAfter(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float)
 
+    /** Called before draw secondary track . Return true if the interrupt default draw*/
+    fun dispatchDrawSecondaryTrackBefore(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+    /** Called after draw secondary track */
+    fun drawSecondaryTrackAfter(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float)
+
     /** Called before draw thumb drawable . Return true if the interrupt default draw*/
     fun dispatchDrawThumbBefore(slider: T, canvas: Canvas, cx: Float, cy: Float): Boolean
     /** Called after draw thumb drawable */
