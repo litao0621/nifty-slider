@@ -39,5 +39,6 @@
         <attr name="haloColor" format="color"/>
         <attr name="haloRadius" format="dimension"/>
         <attr name="android:hapticFeedbackEnabled" format="boolean"/>
+        <attr name="showTipView" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -91,6 +91,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var isDragging = false
     private var isTackingStart = false
 
+    private var tipView: SliderTipView? = null
+    private var isShowTipView = false
+
     private var hasDirtyData = false
 
     var enableHapticFeedback = false
@@ -276,6 +279,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             thumbRadius = getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0)
             setThumbWidthAndHeight(thumbW, thumbH)
+            setShowTipView(getBoolean(R.styleable.NiftySlider_showTipView,false))
             setThumbVOffset(getDimensionPixelOffset(R.styleable.NiftySlider_thumbVOffset, 0))
             setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
@@ -358,6 +362,20 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     override fun invalidateDrawable(drawable: Drawable) {
         super.invalidateDrawable(drawable)
         invalidate()
+    }
+
+    override fun onAttachedToWindow() {
+        tipView = SliderTipView(context).also {
+            if (isShowTipView) {
+                it.attachTipView(this)
+            }
+        }
+        super.onAttachedToWindow()
+    }
+
+    override fun onDetachedFromWindow() {
+        tipView?.detachTipView(this)
+        super.onDetachedFromWindow()
     }
 
     private fun drawDebugArea(canvas: Canvas) {
@@ -656,7 +674,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (this.value != value) {
             this.value = value
             hasDirtyData = true
-            onValueChanged(value, false)
+            valueChanged(value, false)
             postInvalidate()
         }
     }
@@ -1058,6 +1076,21 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Sets whether the tip view are visible
+     *
+     * @see R.attr.showTipView
+     */
+    fun setShowTipView(isShow: Boolean){
+        if (isShowTipView == isShow){
+            return
+        }
+        isShowTipView = isShow
+        if (isShow) {
+            tipView?.attachTipView(this)
+        }
+    }
+
+    /**
      * Sets the elevation of the thumb.
      *
      * @see R.attr.thumbElevation
@@ -1266,6 +1299,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private fun startTacking(event: MotionEvent) {
         isTackingStart = true
         onStartTacking()
+        tipView?.show()
     }
 
     /**
@@ -1276,7 +1310,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             onStopTacking()
         }
         isTackingStart = false
+        tipView?.hide()
         invalidate()
+    }
+
+    private fun valueChanged(value: Float, fromUser: Boolean, touchX: Float = 0f, touchRawX: Float = 0f) {
+        onValueChanged(value, fromUser)
     }
 
 
@@ -1306,7 +1345,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val touchValue = getValueByTouchPos(touchPos)
         if (this.value != touchValue) {
             value = touchValue
-            onValueChanged(value, true)
+            valueChanged(value, true,event.x,event.rawX)
             updateHaloHotspot()
             invalidate()
         }

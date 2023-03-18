@@ -13,6 +13,7 @@
         android:valueFrom="0"
         android:valueTo="300"
         android:value="0"
+        app:showTipView="true"
         app:enableDrawHalo="false"
         app:trackHeight="3dp"
         app:trackColor="@color/youtube_theme_color"
