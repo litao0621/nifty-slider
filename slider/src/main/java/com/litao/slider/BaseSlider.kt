@@ -29,6 +29,7 @@ import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.litao.slider.anim.ThumbValueAnimation
+import com.litao.slider.widget.TipViewContainer
 import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -91,7 +92,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var isDragging = false
     private var isTackingStart = false
 
-    private var tipView: SliderTipView = SliderTipView(context)
+    private var tipView: TipViewContainer = TipViewContainer(context)
     private var isShowTipView = false
 
     private var hasDirtyData = false
@@ -283,7 +284,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbVOffset(getDimensionPixelOffset(R.styleable.NiftySlider_thumbVOffset, 0))
             setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
-            setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, 0))
+            setThumbShadowColor(getColor(R.styleable.NiftySlider_thumbShadowColor, Color.GRAY))
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
             setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
             setThumbText(getString(R.styleable.NiftySlider_thumbText) ?: "")
@@ -305,6 +306,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             setTipViewVisibility(getBoolean(R.styleable.NiftySlider_tipViewVisible,false))
             setTipVerticalOffset(getDimensionPixelOffset(R.styleable.NiftySlider_tipViewVerticalOffset,0))
+            setTipBackground(getColor(R.styleable.NiftySlider_tipViewBackground,Color.WHITE))
+            setTipTextColor(getColor(R.styleable.NiftySlider_tipViewTextColor,Color.BLACK))
+            setTipTextAutoChange(getBoolean(R.styleable.NiftySlider_tipTextAutoChange,true))
 
         }
     }
@@ -1075,20 +1079,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         postInvalidate()
     }
 
-    /**
-     * Sets whether the tip view are visible
-     *
-     * @see R.attr.tipViewVisible
-     */
-    fun setTipViewVisibility(visibility: Boolean){
-        if (isShowTipView == visibility){
-            return
-        }
-        isShowTipView = visibility
-        if (visibility) {
-            tipView.attachTipView(this)
-        }
-    }
 
     /**
      * Sets the elevation of the thumb.
@@ -1153,14 +1143,57 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Sets whether the tip view are visible
+     *
+     * @see R.attr.tipViewVisible
+     */
+    fun setTipViewVisibility(visibility: Boolean){
+        if (isShowTipView == visibility){
+            return
+        }
+        isShowTipView = visibility
+        if (visibility) {
+            tipView.attachTipView(this)
+        }
+    }
+
+    /**
      * Sets the tip view vertical offset
      *
-     * Default is thumb radius + [SliderTipView.defaultSpace]
+     * Default is thumb radius + [TipViewContainer.defaultSpace]
      */
     fun setTipVerticalOffset(offset: Int) {
         if (offset != 0) {
             tipView.verticalOffset = offset
         }
+    }
+
+    /**
+     * Sets the tip view background color
+     *
+     * @see R.attr.tipViewBackground
+     */
+    fun setTipBackground(@ColorInt color:Int){
+        tipView.setTipBackground(color)
+    }
+
+    /**
+     * Sets the tip view text color
+     *
+     * @see R.attr.tipViewTextColor
+     */
+    fun setTipTextColor(@ColorInt color:Int){
+        tipView.setTipTextColor(color)
+    }
+
+
+    /**
+     * Sets the tip text auto change
+     *
+     * @see R.attr.tipTextAutoChange
+     */
+    fun setTipTextAutoChange(isAutoChange:Boolean){
+        tipView.isTipTextAutoChange = isAutoChange
     }
 
     /**
@@ -1188,6 +1221,20 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
     }
 
+
+    /**
+     * Get the thumb center x-coordinates
+     */
+    fun getThumbCenterX():Float{
+        return paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
+    }
+
+    /**
+     * Get the thumb center y-coordinates
+     */
+    fun getThumbCenterY():Float{
+        return measuredHeight/2f + thumbVOffset
+    }
 
     /**
      * show thumb on sliders
@@ -1240,6 +1287,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val position = snapStepPos(pos)
         return position * (valueTo - valueFrom) + valueFrom
     }
+
 
     /**
      * 通过当前坐标获取滑动位置百分比
@@ -1327,9 +1375,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun valueChanged(value: Float, fromUser: Boolean, touchX: Float = 0f, touchRawX: Float = 0f) {
         onValueChanged(value, fromUser)
-        val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
-        val cy = measuredHeight/2f + thumbVOffset
-        tipView.onLocationChanged(cx,cy)
+        tipView.onLocationChanged(getThumbCenterX(),getThumbCenterY(),value)
 
     }
 

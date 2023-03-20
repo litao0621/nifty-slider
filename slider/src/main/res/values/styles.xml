@@ -19,5 +19,7 @@
         <item name="thumbShadowColor">@color/nifty_slider_thumb_shadow_color</item>
         <item name="haloColor">@color/default_halo_color</item>
         <item name="haloRadius">@dimen/nifty_slider_halo_radius</item>
+        <item name="tipViewBackground">?attr/colorPrimary</item>
+        <item name="tipViewTextColor">@android:color/white</item>
     </style>
 </resources>

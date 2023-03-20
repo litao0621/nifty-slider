@@ -19,6 +19,7 @@
         app:trackColor="@color/youtube_theme_color"
         app:thumbColor="@color/youtube_theme_color"
         app:thumbShadowColor="@android:color/transparent"
+        app:tipViewBackground="@color/youtube_theme_color"
         app:thumbRadius="6dp"
         app:trackCornersRadius="0dp"
         app:layout_constraintBottom_toTopOf="@+id/nifty_slide2"

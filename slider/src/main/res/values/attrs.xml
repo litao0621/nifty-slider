@@ -41,5 +41,8 @@
         <attr name="android:hapticFeedbackEnabled" format="boolean"/>
         <attr name="tipViewVisible" format="boolean"/>
         <attr name="tipViewVerticalOffset" format="dimension"/>
+        <attr name="tipViewBackground" format="color"/>
+        <attr name="tipViewTextColor" format="color"/>
+        <attr name="tipTextAutoChange" format="boolean"/>
     </declare-styleable>
 </resources>

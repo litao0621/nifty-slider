@@ -1,21 +1,26 @@
-package com.litao.slider
+package com.litao.slider.widget
 
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import com.litao.slider.BaseSlider
+import com.litao.slider.R
+import com.litao.slider.Utils
 import kotlin.math.roundToInt
 
 /**
  * @author : litao
  * @date   : 2023/3/17 17:56
  */
-class SliderTipView @JvmOverloads constructor(
+class TipViewContainer @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
@@ -23,8 +28,16 @@ class SliderTipView @JvmOverloads constructor(
 
     private var slider: BaseSlider? = null
 
+    private val defaultSpace = Utils.dpToPx(8)
+
     private var locationOnScreenX = 0
     private var locationOnScreenY = 0
+
+    private var customTipView:View? = null
+
+    private var defaultTipView = DefaultTipView(context)
+
+    var isTipTextAutoChange = true
 
     /**
      * > 0 offset up
@@ -34,15 +47,20 @@ class SliderTipView @JvmOverloads constructor(
 
     var isAttached = false
 
+    companion object{
+        const val TAG = "TipViewContainer"
+    }
+
     init {
         id = TIP_VIEW_ID + hashCode()
         visibility = INVISIBLE
-        setSize(300, 300)
-        setBackgroundColor(Color.WHITE)
+        setSize(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+//        setBackgroundColor(Color.WHITE)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        updateLocation()
     }
 
     fun setSize(width: Int, height: Int) {
@@ -53,7 +71,7 @@ class SliderTipView @JvmOverloads constructor(
         val contentView = getContentView(view)
         this.slider = view
         contentView?.let {
-            val tipView = it.findViewById<SliderTipView>(TIP_VIEW_ID)
+            val tipView = it.findViewById<TipViewContainer>(TIP_VIEW_ID)
             if (tipView == null) {
                 it.addView(this)
             }
@@ -73,7 +91,7 @@ class SliderTipView @JvmOverloads constructor(
 
     private fun updateParams() {
         if (verticalOffset == 0) {
-            verticalOffset = -(slider?.thumbRadius ?: 0) - dpToPx(12)
+            verticalOffset = -(slider?.thumbRadius ?: 0) - defaultSpace
         }
     }
 
@@ -99,7 +117,9 @@ class SliderTipView @JvmOverloads constructor(
 
     fun show() {
         if (isAttached) {
+            addTipViewIfNeed()
             updateLocationOnScreen(slider)
+            updateLocation()
             updateParams()
             visibility = VISIBLE
         }
@@ -115,16 +135,49 @@ class SliderTipView @JvmOverloads constructor(
     /**
      * Update tip view location
      */
-    fun onLocationChanged(centerX: Float, centerY: Float) {
+    fun onLocationChanged(cx: Float, cy: Float,value: Float) {
         if (isAttached) {
-            x = locationOnScreenX + centerX - width / 2
-            y = locationOnScreenY + centerY - height + verticalOffset
+            updateLocation(cx,cy)
+            if (isTipTextAutoChange) {
+                setTipText(String.format("%.0f", value))
+            }
         }
     }
 
+    private fun updateLocation(cx: Float = getRelativeCX(), cy: Float = getRelativeCY()){
+        x = locationOnScreenX + cx - width / 2
+        y = locationOnScreenY + cy - height + verticalOffset
+    }
 
-    private fun dpToPx(@Dimension(unit = Dimension.DP) dp: Int): Int {
-        val r = Resources.getSystem()
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics).roundToInt()
+    fun addTipViewIfNeed(){
+        if (customTipView == null){
+            if (childCount == 0){
+                //add default tip view
+                addView(defaultTipView, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
+            }
+        }else{
+            // TODO: add custom tip view 
+        }
+
+    }
+
+    fun setTipBackground(@ColorInt color:Int){
+        defaultTipView.setTipBackground(color)
+    }
+
+    fun setTipTextColor(@ColorInt color:Int){
+        defaultTipView.setTipTextColor(color)
+    }
+
+    fun setTipText(text:CharSequence){
+        defaultTipView.setTipText(text)
+    }
+
+    private fun getRelativeCX(): Float {
+        return slider?.getThumbCenterX() ?: 0f
+    }
+
+    private fun getRelativeCY(): Float {
+        return slider?.getThumbCenterY() ?: 0f
     }
 }
