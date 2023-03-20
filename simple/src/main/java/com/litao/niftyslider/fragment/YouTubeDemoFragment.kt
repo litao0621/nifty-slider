@@ -24,6 +24,7 @@ import kotlin.math.max
 class YouTubeDemoFragment  : Fragment() {
     private lateinit var binding: FragmentYoutubeDemoBinding
 
+    private var testTimer:CountDownTimer? = null
 
     companion object {
         fun newInstance(): YouTubeDemoFragment {
@@ -90,7 +91,7 @@ class YouTubeDemoFragment  : Fragment() {
             }
         }
 
-        playVideo()
+//        playVideo()
 
     }
 
@@ -99,7 +100,7 @@ class YouTubeDemoFragment  : Fragment() {
      * 模拟播放视频
      */
     private fun playVideo(){
-        val timer = object :CountDownTimer(Long.MAX_VALUE,1000){
+        testTimer = object :CountDownTimer(Long.MAX_VALUE,1000){
             override fun onTick(p0: Long) {
                 updateProgress()
             }
@@ -133,5 +134,10 @@ class YouTubeDemoFragment  : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        testTimer?.cancel()
     }
 }

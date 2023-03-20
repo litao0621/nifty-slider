@@ -91,7 +91,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var isDragging = false
     private var isTackingStart = false
 
-    private var tipView: SliderTipView? = null
+    private var tipView: SliderTipView = SliderTipView(context)
     private var isShowTipView = false
 
     private var hasDirtyData = false
@@ -279,7 +279,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             thumbRadius = getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0)
             setThumbWidthAndHeight(thumbW, thumbH)
-            setShowTipView(getBoolean(R.styleable.NiftySlider_showTipView,false))
+
             setThumbVOffset(getDimensionPixelOffset(R.styleable.NiftySlider_thumbVOffset, 0))
             setThumbWithinTrackBounds(getBoolean(R.styleable.NiftySlider_thumbWithinTrackBounds, false))
             setThumbElevation(getDimension(R.styleable.NiftySlider_thumbElevation, 0f))
@@ -301,8 +301,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo, true))
             setHaloTintList(getColorStateListOrThrow(R.styleable.NiftySlider_haloColor))
             setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius, 0))
-
             setTickRadius(getDimension(R.styleable.NiftySlider_tickRadius, 0.0f))
+
+            setTipViewVisibility(getBoolean(R.styleable.NiftySlider_tipViewVisible,false))
+            setTipVerticalOffset(getDimensionPixelOffset(R.styleable.NiftySlider_tipViewVerticalOffset,0))
 
         }
     }
@@ -365,16 +367,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     override fun onAttachedToWindow() {
-        tipView = SliderTipView(context).also {
-            if (isShowTipView) {
-                it.attachTipView(this)
-            }
+        if (isShowTipView) {
+            tipView.attachTipView(this)
         }
         super.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
-        tipView?.detachTipView(this)
+        tipView.detachTipView(this)
         super.onDetachedFromWindow()
     }
 
@@ -1078,15 +1078,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * Sets whether the tip view are visible
      *
-     * @see R.attr.showTipView
+     * @see R.attr.tipViewVisible
      */
-    fun setShowTipView(isShow: Boolean){
-        if (isShowTipView == isShow){
+    fun setTipViewVisibility(visibility: Boolean){
+        if (isShowTipView == visibility){
             return
         }
-        isShowTipView = isShow
-        if (isShow) {
-            tipView?.attachTipView(this)
+        isShowTipView = visibility
+        if (visibility) {
+            tipView.attachTipView(this)
         }
     }
 
@@ -1149,6 +1149,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && haloDrawable == null && enable) {
             background = ContextCompat.getDrawable(context, R.drawable.halo_background)
             haloDrawable = background as RippleDrawable
+        }
+    }
+
+    /**
+     * Sets the tip view vertical offset
+     *
+     * Default is thumb radius + [SliderTipView.defaultSpace]
+     */
+    fun setTipVerticalOffset(offset: Int) {
+        if (offset != 0) {
+            tipView.verticalOffset = offset
         }
     }
 
@@ -1299,7 +1310,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private fun startTacking(event: MotionEvent) {
         isTackingStart = true
         onStartTacking()
-        tipView?.show()
+        tipView.show()
     }
 
     /**
@@ -1310,12 +1321,16 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             onStopTacking()
         }
         isTackingStart = false
-        tipView?.hide()
+        tipView.hide()
         invalidate()
     }
 
     private fun valueChanged(value: Float, fromUser: Boolean, touchX: Float = 0f, touchRawX: Float = 0f) {
         onValueChanged(value, fromUser)
+        val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
+        val cy = measuredHeight/2f + thumbVOffset
+        tipView.onLocationChanged(cx,cy)
+
     }
 
 
