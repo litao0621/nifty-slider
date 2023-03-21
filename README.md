@@ -68,7 +68,7 @@ dependencies {
 # 自定义滑动效果
 
 ### 1. M3 Style
-<img src="https://github.com/litao0621/NiftySlider/blob/main/art/m3_style.png" width="480">
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/m3_style_2.jpg" width="480">
 
   [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
 <br/>
