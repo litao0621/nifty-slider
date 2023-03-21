@@ -28,6 +28,7 @@ import androidx.core.math.MathUtils
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import com.litao.slider.anim.TipViewAnimator
 import com.litao.slider.anim.ThumbValueAnimation
 import com.litao.slider.widget.TipViewContainer
 import java.lang.reflect.InvocationTargetException
@@ -1215,6 +1216,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     fun addCustomTipView(view: View){
         tipView.customTipView = view
+    }
+
+    /**
+     * Create tip view show/hide animation
+     */
+    fun createTipAnimation(animator: TipViewAnimator){
+        tipView.animator = animator
     }
 
     /**

@@ -23,10 +23,10 @@ import kotlin.math.max
  * @author : litao
  * @date   : 2023/3/17 10:40
  */
-class YouTubeDemoFragment  : Fragment() {
+class YouTubeDemoFragment : Fragment() {
     private lateinit var binding: FragmentYoutubeDemoBinding
 
-    private var testTimer:CountDownTimer? = null
+    private var testTimer: CountDownTimer? = null
 
     companion object {
         fun newInstance(): YouTubeDemoFragment {
@@ -46,17 +46,11 @@ class YouTubeDemoFragment  : Fragment() {
         val secondaryTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
         val inactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
 
-        val customTipView = CustomTipViewBinding.bind(View.inflate(context, R.layout.custom_tip_view,null))
+        val customTipView = CustomTipViewBinding.bind(View.inflate(context, R.layout.custom_tip_view, null))
 
         with(binding) {
 
             val animEffect = AnimationEffect(niftySlider).apply {
-                animDuration = 300
-                srcThumbRadius = 6.dp
-                targetThumbRadius = 9.dp
-            }
-
-            val animEffect2 = AnimationEffect(niftySlide2).apply {
                 animDuration = 300
                 srcThumbRadius = 6.dp
                 targetThumbRadius = 9.dp
@@ -82,22 +76,6 @@ class YouTubeDemoFragment  : Fragment() {
                     }
                 })
             }
-
-            niftySlide2.apply {
-                effect = animEffect2
-                setTrackSecondaryTintList(ColorStateList.valueOf(secondaryTrackColor))
-                setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
-                niftySlide2.hideThumb(delayMillis = 2000)
-                niftySlide2.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
-                    override fun onStartTrackingTouch(slider: NiftySlider) {
-                        slider.showThumb(false)
-                    }
-
-                    override fun onStopTrackingTouch(slider: NiftySlider) {
-                        slider.hideThumb(delayMillis = 2000)
-                    }
-                })
-            }
         }
 
         playVideo()
@@ -108,8 +86,8 @@ class YouTubeDemoFragment  : Fragment() {
     /**
      * 模拟播放视频
      */
-    private fun playVideo(){
-        testTimer = object :CountDownTimer(Long.MAX_VALUE,1000){
+    private fun playVideo() {
+        testTimer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
             override fun onTick(p0: Long) {
                 updateProgress()
             }
@@ -121,23 +99,13 @@ class YouTubeDemoFragment  : Fragment() {
         }.start()
     }
 
-    fun updateProgress(){
+    fun updateProgress() {
         with(binding) {
             niftySlider.apply {
                 setValue(value + 1000)
                 setSecondaryValue(max(value, secondaryValue) + 4000)
 
-                if (value >= valueTo){
-                    setValue(0f)
-                    setSecondaryValue(0f)
-                }
-            }
-
-            niftySlide2.apply {
-                setValue(value + 1)
-                setSecondaryValue(max(value, secondaryValue) + 4)
-
-                if (value >= valueTo){
+                if (value >= valueTo) {
                     setValue(0f)
                     setSecondaryValue(0f)
                 }

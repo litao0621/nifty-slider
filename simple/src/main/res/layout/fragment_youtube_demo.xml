@@ -23,33 +23,12 @@
         app:thumbRadius="6dp"
         app:trackCornersRadius="0dp"
         app:isTipViewClippingEnabled ="true"
-        app:layout_constraintBottom_toTopOf="@+id/nifty_slide2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
          />
-
-    <com.litao.slider.NiftySlider
-        android:id="@+id/nifty_slide2"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:padding="16dp"
-        android:valueFrom="0"
-        android:valueTo="300"
-        android:value="50"
-        app:enableDrawHalo="false"
-        app:trackHeight="3dp"
-        app:trackColor="@color/youtube_theme_color"
-        app:thumbColor="@color/youtube_theme_color"
-        app:thumbShadowColor="@android:color/transparent"
-        app:thumbRadius="6dp"
-        app:trackCornersRadius="0dp"
-        app:tickRadius="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nifty_slider" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

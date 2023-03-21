@@ -1,21 +1,18 @@
 package com.litao.slider.widget
 
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.Color
 import android.util.AttributeSet
-import android.util.Log
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
-import androidx.annotation.Dimension
 import androidx.core.math.MathUtils
+import androidx.transition.Fade
+import androidx.transition.TransitionManager
 import com.litao.slider.BaseSlider
 import com.litao.slider.R
 import com.litao.slider.Utils
-import kotlin.math.roundToInt
+import com.litao.slider.anim.TipViewAnimator
 
 /**
  * @author : litao
@@ -34,9 +31,12 @@ class TipViewContainer @JvmOverloads constructor(
     private var locationOnScreenX = 0
     private var locationOnScreenY = 0
 
+
     var customTipView:View? = null
 
     private var defaultTipView = DefaultTipView(context)
+
+    var animator:TipViewAnimator? = null
 
     var isTipTextAutoChange = true
 
@@ -127,13 +127,35 @@ class TipViewContainer @JvmOverloads constructor(
             updateLocationOnScreen(slider)
             updateLocation()
             updateParams()
-            visibility = VISIBLE
+            executeShowAnim()
         }
     }
 
     fun hide() {
         if (isAttached) {
             updateLocationOnScreen(slider)
+            executeHideAnim()
+        }
+    }
+
+    fun executeShowAnim(){
+        if (animator?.executeShowAnim(this) == true){
+
+        }else{
+            //use default show animation
+            val fade = Fade(Fade.IN)
+            TransitionManager.beginDelayedTransition(this, fade)
+            visibility = VISIBLE
+        }
+    }
+
+    fun executeHideAnim(){
+        if (animator?.executeHideAnim(this) == true){
+
+        }else{
+            //use default hide animation
+            val fade = Fade(Fade.OUT)
+            TransitionManager.beginDelayedTransition(this, fade)
             visibility = GONE
         }
     }
