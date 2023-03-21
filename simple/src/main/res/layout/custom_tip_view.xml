@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/video_border"
+        android:layout_width="130dp"
+        android:layout_height="70dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@android:color/white"
+        android:scaleType="centerCrop"
+        app:round="6dp"
+        />
+    <androidx.constraintlayout.utils.widget.ImageFilterView
+        android:id="@+id/video_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="2dp"
+        app:layout_constraintLeft_toLeftOf="@+id/video_border"
+        app:layout_constraintTop_toTopOf="@+id/video_border"
+        app:layout_constraintRight_toRightOf="@+id/video_border"
+        app:layout_constraintBottom_toBottomOf="@+id/video_border"
+        android:scaleType="centerCrop"
+        app:round="4dp"
+        />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:layout_constraintLeft_toLeftOf="@+id/video_image"
+        app:layout_constraintRight_toRightOf="@+id/video_image"
+        app:layout_constraintTop_toBottomOf="@+id/video_image"
+        android:textColor="#AAAAAA"
+        android:text="22:34"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

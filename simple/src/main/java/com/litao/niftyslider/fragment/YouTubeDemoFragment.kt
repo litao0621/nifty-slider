@@ -7,10 +7,12 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import com.litao.niftyslider.Data
+import com.litao.niftyslider.R
+import com.litao.niftyslider.Utils
+import com.litao.niftyslider.databinding.CustomTipViewBinding
 import com.litao.niftyslider.databinding.FragmentYoutubeDemoBinding
 import com.litao.niftyslider.dp
 import com.litao.slider.NiftySlider
@@ -44,6 +46,8 @@ class YouTubeDemoFragment  : Fragment() {
         val secondaryTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
         val inactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
 
+        val customTipView = CustomTipViewBinding.bind(View.inflate(context, R.layout.custom_tip_view,null))
+
         with(binding) {
 
             val animEffect = AnimationEffect(niftySlider).apply {
@@ -60,9 +64,14 @@ class YouTubeDemoFragment  : Fragment() {
 
             niftySlider.apply {
                 effect = animEffect
+                addCustomTipView(customTipView.root)
                 setTrackSecondaryTintList(ColorStateList.valueOf(secondaryTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
                 niftySlider.hideThumb(delayMillis = 2000)
+                niftySlider.setOnIntValueChangeListener { slider, value, fromUser ->
+                    customTipView.time.text = Utils.formatVideoTime(value.toLong())
+                    customTipView.videoImage.setImageResource(Data.videoImage.shuffled()[0])
+                }
                 niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
                     override fun onStartTrackingTouch(slider: NiftySlider) {
                         slider.showThumb(false)
@@ -91,7 +100,7 @@ class YouTubeDemoFragment  : Fragment() {
             }
         }
 
-//        playVideo()
+        playVideo()
 
     }
 
@@ -115,8 +124,8 @@ class YouTubeDemoFragment  : Fragment() {
     fun updateProgress(){
         with(binding) {
             niftySlider.apply {
-                setValue(value + 1)
-                setSecondaryValue(max(value, secondaryValue) + 4)
+                setValue(value + 1000)
+                setSecondaryValue(max(value, secondaryValue) + 4000)
 
                 if (value >= valueTo){
                     setValue(0f)

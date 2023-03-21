@@ -675,7 +675,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @param value 必须小于等于 [valueTo] 大于等于 [valueFrom]
      */
     fun setValue(value: Float) {
-        if (this.value != value) {
+        //用户滑动过程禁止改变value
+        if (this.value != value && !isDragging) {
             this.value = value
             hasDirtyData = true
             valueChanged(value, false)
@@ -1196,6 +1197,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         tipView.isTipTextAutoChange = isAutoChange
     }
 
+
+    /**
+     * Add a custom tip view
+     */
+    fun addCustomTipView(view: View){
+        tipView.customTipView = view
+    }
+
     /**
      * Returns true if step mode enable
      * 是否启用了刻度功能
@@ -1209,8 +1218,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * 仅在v23及以上生效，更新ripple effect坐标
      */
-
-
     fun shouldDrawCompatHalo(): Boolean {
         return Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP || background !is RippleDrawable
     }

@@ -83,4 +83,10 @@ object Data {
         27 to 40
     )
 
+    val videoImage = listOf(
+        R.drawable.video_1,
+        R.drawable.video_2,
+        R.drawable.video_3
+    )
+
 }

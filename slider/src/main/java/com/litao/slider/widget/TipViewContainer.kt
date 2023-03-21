@@ -33,7 +33,7 @@ class TipViewContainer @JvmOverloads constructor(
     private var locationOnScreenX = 0
     private var locationOnScreenY = 0
 
-    private var customTipView:View? = null
+    var customTipView:View? = null
 
     private var defaultTipView = DefaultTipView(context)
 
@@ -156,7 +156,9 @@ class TipViewContainer @JvmOverloads constructor(
                 addView(defaultTipView, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
             }
         }else{
-            // TODO: add custom tip view 
+            if (childCount == 0){
+                addView(customTipView, LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT))
+            }
         }
 
     }
