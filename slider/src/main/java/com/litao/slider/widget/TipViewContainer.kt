@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.annotation.Dimension
+import androidx.core.math.MathUtils
 import com.litao.slider.BaseSlider
 import com.litao.slider.R
 import com.litao.slider.Utils
@@ -39,6 +40,8 @@ class TipViewContainer @JvmOverloads constructor(
 
     var isTipTextAutoChange = true
 
+    var isClippingEnabled = false
+
     /**
      * > 0 offset up
      * < 0 offset down
@@ -46,6 +49,8 @@ class TipViewContainer @JvmOverloads constructor(
     var verticalOffset = 0
 
     var isAttached = false
+
+    var windowWidth = 0
 
     companion object{
         const val TAG = "TipViewContainer"
@@ -76,6 +81,7 @@ class TipViewContainer @JvmOverloads constructor(
                 it.addView(this)
             }
             isAttached = true
+            windowWidth = Utils.getWindowWidth(context)
         }
 
     }
@@ -145,7 +151,13 @@ class TipViewContainer @JvmOverloads constructor(
     }
 
     private fun updateLocation(cx: Float = getRelativeCX(), cy: Float = getRelativeCY()){
-        x = locationOnScreenX + cx - width / 2
+        var viewX = locationOnScreenX + cx - width / 2
+        if (isClippingEnabled){
+            viewX = MathUtils.clamp(viewX,0f,windowWidth.toFloat() - width)
+        }
+
+
+        x = viewX
         y = locationOnScreenY + cy - height + verticalOffset
     }
 

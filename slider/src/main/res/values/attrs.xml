@@ -44,5 +44,6 @@
         <attr name="tipViewBackground" format="color"/>
         <attr name="tipViewTextColor" format="color"/>
         <attr name="tipTextAutoChange" format="boolean"/>
+        <attr name="isTipViewClippingEnabled" format="boolean"/>
     </declare-styleable>
 </resources>

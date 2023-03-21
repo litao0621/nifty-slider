@@ -1,5 +1,6 @@
 package com.litao.slider
 
+import android.content.Context
 import android.content.res.Resources
 import android.util.TypedValue
 import androidx.annotation.Dimension
@@ -13,5 +14,9 @@ object Utils {
     fun dpToPx(@Dimension(unit = Dimension.DP) dp: Int): Int {
         val r = Resources.getSystem()
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), r.displayMetrics).roundToInt()
+    }
+
+    fun getWindowWidth(context: Context): Int {
+        return dpToPx(context.resources.configuration.screenWidthDp)
     }
 }

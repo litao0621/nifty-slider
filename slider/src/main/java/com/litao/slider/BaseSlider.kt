@@ -309,6 +309,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setTipBackground(getColor(R.styleable.NiftySlider_tipViewBackground,Color.WHITE))
             setTipTextColor(getColor(R.styleable.NiftySlider_tipViewTextColor,Color.BLACK))
             setTipTextAutoChange(getBoolean(R.styleable.NiftySlider_tipTextAutoChange,true))
+            setTipViewClippingEnabled(getBoolean(R.styleable.NiftySlider_isTipViewClippingEnabled,false))
 
         }
     }
@@ -1195,6 +1196,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     fun setTipTextAutoChange(isAutoChange:Boolean){
         tipView.isTipTextAutoChange = isAutoChange
+    }
+
+    /**
+     *  Sets whether the tip view will be fully within the bounds
+     *
+     *  是否将tip view 始终限制在屏幕内 ，默认为 false , tip view将根据滑块位置来计算真实位置，可能会移动到屏幕外
+     *
+     *  @see R.attr.isTipViewClippingEnabled
+     */
+    fun setTipViewClippingEnabled(enable :Boolean){
+        tipView.isClippingEnabled = enable
     }
 
 

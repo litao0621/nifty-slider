@@ -22,6 +22,7 @@
         app:tipViewBackground="@color/youtube_theme_color"
         app:thumbRadius="6dp"
         app:trackCornersRadius="0dp"
+        app:isTipViewClippingEnabled ="true"
         app:layout_constraintBottom_toTopOf="@+id/nifty_slide2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
