@@ -106,7 +106,7 @@ dependencies {
 ### 8. YouTube video preview style
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/youtube_style.gif" width="480">
 
-  [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeDemoFragment.kt)
+  [View Sample](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeDemoFragment.kt)
 <br/>
 
 # Contributing
