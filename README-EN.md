@@ -103,6 +103,12 @@ dependencies {
   [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
 <br/>
 
+### 8. YouTube video preview style
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/youtube_style.gif" width="480">
+
+  [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeDemoFragment.kt)
+<br/>
+
 # Contributing
 You are welcome to send push requests (Just remember to add you name to the contributers list) or raise issues
 
