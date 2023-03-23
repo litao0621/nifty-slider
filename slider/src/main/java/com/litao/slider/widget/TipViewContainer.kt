@@ -2,6 +2,7 @@ package com.litao.slider.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -12,6 +13,8 @@ import androidx.transition.TransitionManager
 import com.litao.slider.BaseSlider
 import com.litao.slider.R
 import com.litao.slider.Utils
+import com.litao.slider.anim.ITipTransition
+import com.litao.slider.anim.RevealTransition
 import com.litao.slider.anim.TipViewAnimator
 
 /**
@@ -26,17 +29,18 @@ class TipViewContainer @JvmOverloads constructor(
 
     private var slider: BaseSlider? = null
 
-    private val defaultSpace = Utils.dpToPx(8)
+    private val defaultSpace = Utils.dpToPx(-8)
 
     private var locationOnScreenX = 0
     private var locationOnScreenY = 0
-
 
     var customTipView:View? = null
 
     private var defaultTipView = DefaultTipView(context)
 
     var animator:TipViewAnimator? = null
+
+    private var  defaultTransition = Fade()
 
     var isTipTextAutoChange = true
 
@@ -97,7 +101,7 @@ class TipViewContainer @JvmOverloads constructor(
 
     private fun updateParams() {
         if (verticalOffset == 0) {
-            verticalOffset = -(slider?.thumbRadius ?: 0) - defaultSpace
+            verticalOffset = -(slider?.thumbRadius ?: 0) + defaultSpace
         }
     }
 
@@ -127,37 +131,32 @@ class TipViewContainer @JvmOverloads constructor(
             updateLocationOnScreen(slider)
             updateLocation()
             updateParams()
-            executeShowAnim()
+            executeTransition()
+            visibility = VISIBLE
         }
     }
 
     fun hide() {
         if (isAttached) {
             updateLocationOnScreen(slider)
-            executeHideAnim()
-        }
-    }
-
-    fun executeShowAnim(){
-        if (animator?.executeShowAnim(this) == true){
-
-        }else{
-            //use default show animation
-            val fade = Fade(Fade.IN)
-            TransitionManager.beginDelayedTransition(this, fade)
-            visibility = VISIBLE
-        }
-    }
-
-    fun executeHideAnim(){
-        if (animator?.executeHideAnim(this) == true){
-
-        }else{
-            //use default hide animation
-            val fade = Fade(Fade.OUT)
-            TransitionManager.beginDelayedTransition(this, fade)
+            executeTransition()
             visibility = GONE
         }
+    }
+
+    private fun executeTransition(){
+        var customTransition = animator?.createTransition()
+
+        if (customTransition == null){
+            customTransition = defaultTransition
+        }else{
+            if (customTransition is ITipTransition){
+                val srcY = locationOnScreenY + getRelativeCY() + verticalOffset
+                customTransition.updateLocation(locationOnScreenY.toFloat(),srcY)
+            }
+        }
+
+        TransitionManager.beginDelayedTransition(this, customTransition)
     }
 
     /**

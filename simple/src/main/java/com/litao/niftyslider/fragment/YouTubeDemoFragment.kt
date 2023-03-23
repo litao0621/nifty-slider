@@ -2,6 +2,8 @@ package com.litao.niftyslider.fragment
 
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
+import androidx.transition.Transition
 import com.litao.niftyslider.Data
 import com.litao.niftyslider.R
 import com.litao.niftyslider.Utils
@@ -16,6 +19,8 @@ import com.litao.niftyslider.databinding.CustomTipViewBinding
 import com.litao.niftyslider.databinding.FragmentYoutubeDemoBinding
 import com.litao.niftyslider.dp
 import com.litao.slider.NiftySlider
+import com.litao.slider.anim.RevealTransition
+import com.litao.slider.anim.TipViewAnimator
 import com.litao.slider.effect.AnimationEffect
 import kotlin.math.max
 
@@ -58,6 +63,7 @@ class YouTubeDemoFragment : Fragment() {
 
             niftySlider.apply {
                 effect = animEffect
+                //添加自定义tip view
                 addCustomTipView(customTipView.root)
                 setTrackSecondaryTintList(ColorStateList.valueOf(secondaryTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
@@ -66,6 +72,7 @@ class YouTubeDemoFragment : Fragment() {
                     customTipView.time.text = Utils.formatVideoTime(value.toLong())
                     customTipView.videoImage.setImageResource(Data.videoImage.shuffled()[0])
                 }
+                //监听滑动开始/结束 控制滑块的显示状态
                 niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
                     override fun onStartTrackingTouch(slider: NiftySlider) {
                         slider.showThumb(false)
@@ -75,6 +82,15 @@ class YouTubeDemoFragment : Fragment() {
                         slider.hideThumb(delayMillis = 2000)
                     }
                 })
+
+                //更换tip展示动画 - 揭露动画
+                niftySlider.createTipAnimation {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        RevealTransition()
+                    } else {
+                        null
+                    }
+                }
             }
         }
 
