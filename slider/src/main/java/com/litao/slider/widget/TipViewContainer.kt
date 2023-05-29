@@ -56,6 +56,15 @@ class TipViewContainer @JvmOverloads constructor(
 
     var windowWidth = 0
 
+    val showRunnable = Runnable{
+        addTipViewIfNeed()
+        updateLocationOnScreen(slider)
+        updateLocation()
+        updateParams()
+        executeTransition()
+        visibility = VISIBLE
+    }
+
     companion object{
         const val TAG = "TipViewContainer"
     }
@@ -126,17 +135,14 @@ class TipViewContainer @JvmOverloads constructor(
     }
 
     fun show() {
+        removeCallbacks(showRunnable)
         if (isAttached) {
-            addTipViewIfNeed()
-            updateLocationOnScreen(slider)
-            updateLocation()
-            updateParams()
-            executeTransition()
-            visibility = VISIBLE
+            postDelayed(showRunnable,200)
         }
     }
 
     fun hide() {
+        removeCallbacks(showRunnable)
         if (isAttached) {
             updateLocationOnScreen(slider)
             executeTransition()
