@@ -1,5 +1,6 @@
 package com.litao.slider
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
@@ -12,6 +13,7 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -25,6 +27,9 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.withTranslation
 import androidx.core.math.MathUtils
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -35,6 +40,7 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -99,7 +105,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var hasDirtyData = false
 
     var enableHapticFeedback = false
-
+    var enableProgressAnim = false
     var valueFrom = 0f
         set(value) {
             if (field != value) {
@@ -150,6 +156,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
     var trackWidth = 0
+
+    private var progressAnimator = ValueAnimator()
 
     companion object {
         var DEBUG_MODE = false
@@ -227,6 +235,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 postInvalidate()
             }
         }
+
+        progressAnimator.apply {
+            this.duration = 300L
+            addUpdateListener {
+                val progress = it.animatedValue.toString().toFloat()
+                this@BaseSlider.value = progress
+                this.interpolator = LinearOutSlowInInterpolator()
+                valueChanged(progress, false)
+                updateHaloHotspot()
+                postInvalidate()
+                hasDirtyData = true
+            }
+        }
     }
 
     private fun processAttributes(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int) {
@@ -241,6 +262,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             sourceViewHeight = getLayoutDimension(R.styleable.NiftySlider_android_layout_height, 0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
+            enableProgressAnim = getBoolean(R.styleable.NiftySlider_enableProgressAnim,false)
 
             setTrackTintList(
                 getColorStateList(R.styleable.NiftySlider_trackColor) ?: AppCompatResources.getColorStateList(
@@ -670,22 +692,40 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         trackWidth = max(viewWidth - paddingLeft - paddingRight - trackInnerHPadding * 2, 0)
     }
 
+
     /**
      * Sets the slider's [BaseSlider.value]
      * 如果存在step size时 value 可能会根据step size进行修正
      *
      * @param value 必须小于等于 [valueTo] 大于等于 [valueFrom]
      */
-    fun setValue(value: Float) {
+    fun setValue(value: Float,animated: Boolean = false) {
         //用户滑动过程禁止改变value
         if (this.value != value && !isDragging) {
-            this.value = value
-            hasDirtyData = true
-            valueChanged(value, false)
-            postInvalidate()
+            updateValue(value,animated)
         }
     }
 
+    private fun updateValue(value:Float,animated: Boolean = false){
+        hasDirtyData = true
+        val currentValue = this.value
+        if (animated || enableProgressAnim){
+            val radio = (abs(value - currentValue)) /(valueTo - valueFrom)
+            val duration = if (radio < 0.35) max(radio * 500f,0f) else 300
+            progressAnimator.apply {
+                cancel()
+                this.duration = duration.toLong()
+                setFloatValues(currentValue,value)
+                start()
+            }
+
+        }else {
+            this.value = value
+            valueChanged(value, false)
+            updateHaloHotspot()
+            postInvalidate()
+        }
+    }
 
     /**
      * Sets the slider's [BaseSlider.secondaryValue]
@@ -1432,10 +1472,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val touchPos = getTouchPosByX(event.x)
         val touchValue = getValueByTouchPos(touchPos)
         if (this.value != touchValue) {
-            value = touchValue
-            valueChanged(value, true,event.x,event.rawX)
-            updateHaloHotspot()
-            invalidate()
+            val animated = event.action != MotionEvent.ACTION_MOVE && enableProgressAnim
+            updateValue(touchValue,animated)
         }
     }
 
@@ -1468,6 +1506,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     }
                     parent.requestDisallowInterceptTouchEvent(true)
                     startTacking(event)
+                }
+
+                if (abs(currentX - touchDownX) > scaledTouchSlop){
+                    progressAnimator.cancel()
                 }
 
                 isDragging = true

@@ -21,6 +21,7 @@
         app:haloColor="@color/m3_demo_halo_color"
         app:tipViewVisible="true"
         app:tipViewBackground="@color/m3_demo_color"
+        app:enableProgressAnim ="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
