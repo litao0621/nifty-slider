@@ -262,7 +262,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             sourceViewHeight = getLayoutDimension(R.styleable.NiftySlider_android_layout_height, 0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
-            enableProgressAnim = getBoolean(R.styleable.NiftySlider_enableProgressAnim,false)
+            enableProgressAnim = getBoolean(R.styleable.NiftySlider_enableProgressAnim, false)
 
             setTrackTintList(
                 getColorStateList(R.styleable.NiftySlider_trackColor) ?: AppCompatResources.getColorStateList(
@@ -327,12 +327,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius, 0))
             setTickRadius(getDimension(R.styleable.NiftySlider_tickRadius, 0.0f))
 
-            setTipViewVisibility(getBoolean(R.styleable.NiftySlider_tipViewVisible,false))
-            setTipVerticalOffset(getDimensionPixelOffset(R.styleable.NiftySlider_tipViewVerticalOffset,0))
-            setTipBackground(getColor(R.styleable.NiftySlider_tipViewBackground,Color.WHITE))
-            setTipTextColor(getColor(R.styleable.NiftySlider_tipViewTextColor,Color.BLACK))
-            setTipTextAutoChange(getBoolean(R.styleable.NiftySlider_tipTextAutoChange,true))
-            setTipViewClippingEnabled(getBoolean(R.styleable.NiftySlider_isTipViewClippingEnabled,false))
+            setTipViewVisibility(getBoolean(R.styleable.NiftySlider_tipViewVisible, false))
+            setTipVerticalOffset(getDimensionPixelOffset(R.styleable.NiftySlider_tipViewVerticalOffset, 0))
+            setTipBackground(getColor(R.styleable.NiftySlider_tipViewBackground, Color.WHITE))
+            setTipTextColor(getColor(R.styleable.NiftySlider_tipViewTextColor, Color.BLACK))
+            setTipTextAutoChange(getBoolean(R.styleable.NiftySlider_tipTextAutoChange, true))
+            setTipViewClippingEnabled(getBoolean(R.styleable.NiftySlider_isTipViewClippingEnabled, false))
 
         }
     }
@@ -651,8 +651,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     private fun validateValue() {
         //value 超出起始结束范围则进行修正
-        value = MathUtils.clamp(value,valueFrom,valueTo)
-        secondaryValue = MathUtils.clamp(secondaryValue,valueFrom,valueTo)
+        value = MathUtils.clamp(value, valueFrom, valueTo)
+        secondaryValue = MathUtils.clamp(secondaryValue, valueFrom, valueTo)
     }
 
     fun updateViewLayout() {
@@ -699,27 +699,27 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param value 必须小于等于 [valueTo] 大于等于 [valueFrom]
      */
-    fun setValue(value: Float,animated: Boolean = false) {
+    fun setValue(value: Float, animated: Boolean = enableProgressAnim) {
         //用户滑动过程禁止改变value
         if (this.value != value && !isDragging) {
-            updateValue(value,animated)
+            updateValue(value, animated)
         }
     }
 
-    private fun updateValue(value:Float,animated: Boolean = false){
+    private fun updateValue(value: Float, animated: Boolean = false) {
         hasDirtyData = true
         val currentValue = this.value
-        if (animated || enableProgressAnim){
-            val radio = (abs(value - currentValue)) /(valueTo - valueFrom)
-            val duration = if (radio < 0.35) max(radio * 500f,0f) else 300
+        if (animated) {
+            val radio = (abs(value - currentValue)) / (valueTo - valueFrom)
+            val duration = if (radio < 0.35) max(radio * 500f, 0f) else 300
             progressAnimator.apply {
                 cancel()
                 this.duration = duration.toLong()
-                setFloatValues(currentValue,value)
+                setFloatValues(currentValue, value)
                 start()
             }
 
-        }else {
+        } else {
             this.value = value
             valueChanged(value, false)
             updateHaloHotspot()
@@ -732,8 +732,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param secondaryValue 必须小于等于 [valueTo] 大于等于 [valueFrom]
      */
-    fun setSecondaryValue(secondaryValue: Float){
-        if (this.secondaryValue != secondaryValue){
+    fun setSecondaryValue(secondaryValue: Float) {
+        if (this.secondaryValue != secondaryValue) {
             this.secondaryValue = secondaryValue
             hasDirtyData = true
             postInvalidate()
@@ -1160,9 +1160,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbShadowColor
      */
     fun setThumbShadowColor(@ColorInt shadowColor: Int) {
-        if (shadowColor == Color.TRANSPARENT){
+        if (shadowColor == Color.TRANSPARENT) {
             defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_NEVER
-        }else{
+        } else {
             defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
             defaultThumbDrawable.setShadowColor(shadowColor)
         }
@@ -1190,8 +1190,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.tipViewVisible
      */
-    fun setTipViewVisibility(visibility: Boolean){
-        if (isShowTipView == visibility){
+    fun setTipViewVisibility(visibility: Boolean) {
+        if (isShowTipView == visibility) {
             return
         }
         isShowTipView = visibility
@@ -1216,7 +1216,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.tipViewBackground
      */
-    fun setTipBackground(@ColorInt color:Int){
+    fun setTipBackground(@ColorInt color: Int) {
         tipView.setTipBackground(color)
     }
 
@@ -1225,7 +1225,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.tipViewTextColor
      */
-    fun setTipTextColor(@ColorInt color:Int){
+    fun setTipTextColor(@ColorInt color: Int) {
         tipView.setTipTextColor(color)
     }
 
@@ -1235,7 +1235,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.tipTextAutoChange
      */
-    fun setTipTextAutoChange(isAutoChange:Boolean){
+    fun setTipTextAutoChange(isAutoChange: Boolean) {
         tipView.isTipTextAutoChange = isAutoChange
     }
 
@@ -1246,7 +1246,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      *  @see R.attr.isTipViewClippingEnabled
      */
-    fun setTipViewClippingEnabled(enable :Boolean){
+    fun setTipViewClippingEnabled(enable: Boolean) {
         tipView.isClippingEnabled = enable
     }
 
@@ -1254,14 +1254,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * Add a custom tip view
      */
-    fun addCustomTipView(view: View){
+    fun addCustomTipView(view: View) {
         tipView.customTipView = view
     }
 
     /**
      * Create tip view show/hide animation
      */
-    fun createTipAnimation(animator: TipViewAnimator){
+    fun createTipAnimation(animator: TipViewAnimator) {
         tipView.animator = animator
     }
 
@@ -1292,15 +1292,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * Get the thumb center x-coordinates
      */
-    fun getThumbCenterX():Float{
+    fun getThumbCenterX(): Float {
         return paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
     }
 
     /**
      * Get the thumb center y-coordinates
      */
-    fun getThumbCenterY():Float{
-        return measuredHeight/2f + thumbVOffset
+    fun getThumbCenterY(): Float {
+        return measuredHeight / 2f + thumbVOffset
     }
 
     /**
@@ -1309,8 +1309,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @param animated Whether to update the thumb visibility with the animation
      * @param delayMillis The delay the show thumb Runnable will be executed
      */
-    fun showThumb(animated:Boolean = true,delayMillis:Long = 0){
-        thumbAnimation.show(animated,delayMillis)
+    fun showThumb(animated: Boolean = true, delayMillis: Long = 0) {
+        thumbAnimation.show(animated, delayMillis)
     }
 
     /**
@@ -1319,12 +1319,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @param animated Whether to update the thumb visibility with the animation
      * @param delayMillis The delay the hide thumb Runnable will be executed
      */
-    fun hideThumb(animated:Boolean = true,delayMillis:Long = 0){
-        thumbAnimation.hide(animated,delayMillis)
+    fun hideThumb(animated: Boolean = true, delayMillis: Long = 0) {
+        thumbAnimation.hide(animated, delayMillis)
     }
 
 
-    fun toggleThumbVisibility(animated:Boolean = true){
+    fun toggleThumbVisibility(animated: Boolean = true) {
         thumbAnimation.toggle(animated)
     }
 
@@ -1390,7 +1390,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    private fun adjustThumbDrawableBounds(radius:Int){
+    private fun adjustThumbDrawableBounds(radius: Int) {
         defaultThumbDrawable.setBounds(
             0,
             0,
@@ -1399,12 +1399,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         )
 
         customThumbDrawable?.let {
-            adjustCustomThumbDrawableBounds(it,radius)
+            adjustCustomThumbDrawableBounds(it, radius)
         }
     }
 
 
-    private fun adjustCustomThumbDrawableBounds(drawable: Drawable,radius: Int = thumbRadius) {
+    private fun adjustCustomThumbDrawableBounds(drawable: Drawable, radius: Int = thumbRadius) {
         val thumbDiameter = radius * 2
         val originalWidth = drawable.intrinsicWidth
         val originalHeight = drawable.intrinsicHeight
@@ -1442,7 +1442,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun valueChanged(value: Float, fromUser: Boolean, touchX: Float = 0f, touchRawX: Float = 0f) {
         onValueChanged(value, fromUser)
-        tipView.onLocationChanged(getThumbCenterX(),getThumbCenterY(),value)
+        tipView.onLocationChanged(getThumbCenterX(), getThumbCenterY(), value)
 
     }
 
@@ -1473,7 +1473,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val touchValue = getValueByTouchPos(touchPos)
         if (this.value != touchValue) {
             val animated = event.action != MotionEvent.ACTION_MOVE && enableProgressAnim
-            updateValue(touchValue,animated)
+            updateValue(touchValue, animated)
         }
     }
 
@@ -1499,6 +1499,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     trackTouchEvent(event)
                 }
             }
+
             MotionEvent.ACTION_MOVE -> {
                 if (!isDragging) {
                     if (isInVerticalScrollingContainer() && abs(currentX - touchDownX) < scaledTouchSlop) {
@@ -1508,7 +1509,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     startTacking(event)
                 }
 
-                if (abs(currentX - touchDownX) > scaledTouchSlop){
+                if (abs(currentX - touchDownX) > scaledTouchSlop) {
                     progressAnimator.cancel()
                 }
 
@@ -1516,6 +1517,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 trackTouchEvent(event)
 
             }
+
             MotionEvent.ACTION_UP -> {
                 isDragging = false
 
@@ -1529,6 +1531,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 stopTacking(event)
 
             }
+
             MotionEvent.ACTION_CANCEL -> {
                 isDragging = false
                 stopTacking(event)
