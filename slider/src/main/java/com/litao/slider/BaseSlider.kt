@@ -242,7 +242,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 val progress = it.animatedValue.toString().toFloat()
                 this@BaseSlider.value = progress
                 this.interpolator = LinearOutSlowInInterpolator()
-                valueChanged(progress, false)
+                valueChanged(progress, isDragging)
                 updateHaloHotspot()
                 postInvalidate()
                 hasDirtyData = true
@@ -721,7 +721,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         } else {
             this.value = value
-            valueChanged(value, false)
+            valueChanged(value, isDragging)
             updateHaloHotspot()
             postInvalidate()
         }
