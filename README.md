@@ -117,6 +117,12 @@ dependencies {
   [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeDemoFragment.kt)
 <br/>
 
+### 9. YouTube展示用户关注度样式
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/youtube_chart_style.gif" width="480">
+
+  [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeChartDemoFragment.kt)
+<br/>
+
 # 参与项目
 欢迎共同完善项目，有问题随时提交Issues
 
