@@ -36,6 +36,10 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
         fun onStopTrackingTouch(slider: NiftySlider)
     }
 
+    override fun updateDirtyData() {
+        effect?.updateDirtyData()
+    }
+
     override fun onStartTacking() {
         sliderTouchListener?.onStartTrackingTouch(this)
         effect?.onStartTacking(this)
@@ -44,6 +48,14 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     override fun onStopTacking() {
         sliderTouchListener?.onStopTrackingTouch(this)
         effect?.onStopTacking(this)
+    }
+
+    override fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+        effect?.onDrawBefore(canvas,trackRect,yCenter)
+    }
+
+    override fun onDrawAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+        effect?.onDrawAfter(canvas,trackRect,yCenter)
     }
 
     override fun onValueChanged(value: Float, fromUser: Boolean) {

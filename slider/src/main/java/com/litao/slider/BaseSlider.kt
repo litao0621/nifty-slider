@@ -86,6 +86,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     private val trackRectF = RectF()
+    private val viewRectF = RectF()
     private var thumbOffset = 0
 
     private var trackInnerHPadding = 0
@@ -167,9 +168,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         private const val HALO_ALPHA = 63
     }
 
+    abstract fun updateDirtyData()
 
     abstract fun onStartTacking()
     abstract fun onStopTacking()
+
+    abstract fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float)
+    abstract fun onDrawAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
 
     abstract fun onValueChanged(value: Float, fromUser: Boolean)
 
@@ -371,11 +376,20 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (hasDirtyData) {
             validateDirtyData()
         }
-
-        drawDebugArea(canvas)
-
         val yCenter = measuredHeight / 2f
         val width = measuredWidth
+
+        viewRectF.set(
+            0f + paddingLeft + trackInnerHPadding,
+            yCenter - trackHeight / 2f,
+            width.toFloat() - paddingRight - trackInnerHPadding,
+            yCenter + trackHeight / 2f
+        )
+
+        onDrawBefore(canvas,viewRectF,yCenter)
+        drawDebugArea(canvas)
+
+
         drawInactiveTrack(canvas, width, yCenter)
         drawSecondaryTrack(canvas, width, yCenter)
         drawTrack(canvas, width, yCenter)
@@ -387,6 +401,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         drawThumb(canvas, trackWidth, yCenter)
+        onDrawAfter(canvas,viewRectF,yCenter)
     }
 
     override fun invalidateDrawable(drawable: Drawable) {
@@ -624,6 +639,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             validateValueFrom()
             validateValueTo()
             validateValue()
+            updateDirtyData()
             hasDirtyData = false
         }
     }

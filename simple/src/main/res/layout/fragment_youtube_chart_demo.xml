@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:valueFrom="0"
+        android:valueTo="100"
+        android:value="0"
+        app:tipViewVisible="false"
+        app:enableDrawHalo="false"
+        app:trackHeight="3dp"
+        app:trackColor="@color/youtube_theme_color"
+        app:trackColorInactive="#44FFFFFF"
+        app:thumbColor="@color/youtube_theme_color"
+        app:thumbShadowColor="@android:color/transparent"
+        app:thumbRadius="6dp"
+        app:thumbWithinTrackBounds="true"
+        app:trackCornersRadius="0dp"
+        app:isTipViewClippingEnabled ="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

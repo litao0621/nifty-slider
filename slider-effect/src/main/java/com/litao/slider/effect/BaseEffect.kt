@@ -58,4 +58,14 @@ open class BaseEffect : SliderEffect<NiftySlider> {
     override fun drawSecondaryTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float) {
     }
 
+    override fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    }
+
+    override fun onDrawAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    }
+
+    override fun updateDirtyData() {
+
+    }
+
 }

@@ -18,8 +18,13 @@ interface SliderEffect<T : BaseSlider> {
     /** Called when the value of the slider changes  */
     fun onValueChanged(slider: T, value: Float, fromUser: Boolean)
 
-    /** Called before draw inactive track . Return true if the interrupt default draw */
+    /** Called before slider onDraw */
+    fun onDrawBefore(canvas: Canvas,trackRect: RectF, yCenter: Float)
 
+    /** Called after slider onDraw */
+    fun onDrawAfter(canvas: Canvas,trackRect: RectF, yCenter: Float)
+
+    /** Called before draw inactive track . Return true if the interrupt default draw */
     fun dispatchDrawInactiveTrackBefore(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
     /** Called after draw inactive track */
     fun drawInactiveTrackAfter(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float)
@@ -38,5 +43,8 @@ interface SliderEffect<T : BaseSlider> {
     fun dispatchDrawThumbBefore(slider: T, canvas: Canvas, cx: Float, cy: Float): Boolean
     /** Called after draw thumb drawable */
     fun drawThumbAfter(slider: T, canvas: Canvas, cx: Float, cy: Float)
+
+    /** The parameter has changed, and there is dirty data */
+    fun updateDirtyData()
 
 }
