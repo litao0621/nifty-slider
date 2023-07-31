@@ -1,6 +1,7 @@
 package com.litao.slider.widget
 
 import android.content.Context
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -102,9 +103,11 @@ class TipViewContainer @JvmOverloads constructor(
     private fun updateLocationOnScreen(view: View?) {
         if (view != null) {
             val locationOnScreen = IntArray(2)
+            val globalRect = Rect()
+            getContentView(view)?.getGlobalVisibleRect(globalRect)
             view.getLocationOnScreen(locationOnScreen)
             locationOnScreenX = locationOnScreen[0]
-            locationOnScreenY = locationOnScreen[1]
+            locationOnScreenY = locationOnScreen[1] - globalRect.top
         }
     }
 
