@@ -974,8 +974,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         if (radius != thumbRadius) {
-            defaultThumbDrawable.shapeAppearanceModel =
-                ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, radius.toFloat()).build()
+            // TODO: thumb 包含阴影时暂不修改thumb的圆角值，MaterialShapeDrawable在进行圆角变换时会影响阴影的绘制，后续进行替换修改
+            if (defaultThumbDrawable.elevation <= 0) {
+                defaultThumbDrawable.shapeAppearanceModel =
+                    ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, radius.toFloat()).build()
+            }
         }
 
         defaultThumbDrawable.setBounds(
