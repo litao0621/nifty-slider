@@ -13,7 +13,6 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -27,21 +26,15 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.withTranslation
 import androidx.core.math.MathUtils
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
-import com.google.android.material.shape.CornerFamily
-import com.google.android.material.shape.MaterialShapeDrawable
-import com.google.android.material.shape.ShapeAppearanceModel
-import com.litao.slider.anim.TipViewAnimator
 import com.litao.slider.anim.ThumbValueAnimation
+import com.litao.slider.anim.TipViewAnimator
 import com.litao.slider.thumb.DefaultThumbDrawable
 import com.litao.slider.widget.TipViewContainer
 import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
@@ -70,7 +63,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var haloColor: ColorStateList
 
     private val defaultThumbDrawable = DefaultThumbDrawable()
-//    private val defaultThumbDrawable = MaterialShapeDrawable()
     private var customThumbDrawable: Drawable? = null
 
     private var thumbWidth = -1
