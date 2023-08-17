@@ -65,7 +65,7 @@ class TiktokStyleDemoFragment : Fragment() {
 
                 animationListener = object : AnimationEffect.OnAnimationChangeListener {
                     override fun onEnd(slider: NiftySlider) {
-                        Toast.makeText(requireContext(), "do something on animation end", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(requireContext(), "do something on animation end", Toast.LENGTH_SHORT).show()
                     }
                 }
 

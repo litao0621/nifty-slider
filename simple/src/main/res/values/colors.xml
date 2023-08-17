@@ -14,6 +14,7 @@
     <color name="custom_thumb_demo_background_color">#6551a3</color>
     <color name="we_read_theme_color">#444138</color>
     <color name="we_read_thumb_color">#fbf7eb</color>
+    <color name="we_read_thumb_shadow_color">#CCCCCC</color>
     <color name="youtube_theme_color">#ff0000</color>
     <color name="youtube_thumb_color">#fd0000</color>
 </resources>

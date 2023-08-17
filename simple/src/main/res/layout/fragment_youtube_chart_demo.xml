@@ -22,6 +22,7 @@
         app:thumbColor="@color/youtube_theme_color"
         app:thumbShadowColor="@android:color/transparent"
         app:thumbRadius="6dp"
+        app:thumbElevation="0dp"
         app:thumbWithinTrackBounds="true"
         app:trackCornersRadius="0dp"
         app:isTipViewClippingEnabled ="true"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="nifty_slider_thumb_radius">10dp</dimen>
-    <dimen name="nifty_slider_thumb_elevation">4dp</dimen>
+    <dimen name="nifty_slider_thumb_elevation">1dp</dimen>
     <dimen name="nifty_slider_track_height">4dp</dimen>
     <dimen name="nifty_slider_halo_radius">24dp</dimen>
     <dimen name="nifty_slider_tick_radius">1dp</dimen>

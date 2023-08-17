@@ -74,7 +74,7 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
         shadowPaint.apply {
             color = Color.TRANSPARENT
             isAntiAlias = true
-            xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_ATOP)
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
         }
         updateColorsForState(state)
     }

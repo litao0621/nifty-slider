@@ -35,6 +35,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import com.litao.slider.anim.TipViewAnimator
 import com.litao.slider.anim.ThumbValueAnimation
+import com.litao.slider.thumb.DefaultThumbDrawable
 import com.litao.slider.widget.TipViewContainer
 import java.lang.reflect.InvocationTargetException
 import kotlin.math.abs
@@ -68,7 +69,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private lateinit var thumbTextColor: ColorStateList
     private lateinit var haloColor: ColorStateList
 
-    private val defaultThumbDrawable = MaterialShapeDrawable()
+    private val defaultThumbDrawable = DefaultThumbDrawable()
+//    private val defaultThumbDrawable = MaterialShapeDrawable()
     private var customThumbDrawable: Drawable? = null
 
     private var thumbWidth = -1
@@ -229,8 +231,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         scaledTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
-
-        defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
 
         processAttributes(context, attrs, defStyleAttr)
 
@@ -940,8 +940,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 return
             }
             field = radius
-            defaultThumbDrawable.shapeAppearanceModel =
-                ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, radius.toFloat()).build()
+            defaultThumbDrawable.cornerSize = radius.toFloat()
             adjustThumbDrawableBounds(radius)
             updateViewLayout()
         }
@@ -974,11 +973,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         if (radius != thumbRadius) {
-            // TODO: thumb 包含阴影时暂不修改thumb的圆角值，MaterialShapeDrawable在进行圆角变换时会影响阴影的绘制，后续进行替换修改
-            if (defaultThumbDrawable.elevation <= 0) {
-                defaultThumbDrawable.shapeAppearanceModel =
-                    ShapeAppearanceModel.builder().setAllCorners(CornerFamily.ROUNDED, radius.toFloat()).build()
-            }
+            defaultThumbDrawable.cornerSize = radius.toFloat()
         }
 
         defaultThumbDrawable.setBounds(
@@ -1150,8 +1145,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbElevation
      */
     fun setThumbElevation(elevation: Float) {
+        if (elevation > 0){
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
         defaultThumbDrawable.elevation = elevation
-
         thumbElevation = elevation
     }
 
@@ -1181,13 +1178,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbShadowColor
      */
     fun setThumbShadowColor(@ColorInt shadowColor: Int) {
-        if (shadowColor == Color.TRANSPARENT) {
-            defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_NEVER
-        } else {
-            defaultThumbDrawable.shadowCompatibilityMode = MaterialShapeDrawable.SHADOW_COMPAT_MODE_ALWAYS
-            defaultThumbDrawable.setShadowColor(shadowColor)
-        }
+        defaultThumbDrawable.shadowColor = shadowColor
     }
+
 
 
     /**
