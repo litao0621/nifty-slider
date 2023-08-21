@@ -146,5 +146,5 @@ If you feel this library has helped you, you can click the Star button to suppor
 
 [1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
 [2]:https://github.com/litao0621/nifty-slider/wiki
-[3]:https://github.com/litao0621/nifty-slider/blob/main/README.md
+[3]:https://github.com/litao0621/nifty-slider/blob/main/README-ZH.md
 [5]:https://github.com/litao0621/nifty-slider/blob/main/art/simple-debug.apk

@@ -5,20 +5,24 @@
 ![NiftySliderVersion](https://maven-badges.herokuapp.com/maven-central/io.github.litao0621/nifty-slider/badge.svg)
 [![License](https://img.shields.io/badge/License%20-Apache%202-337ab7.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![API](https://img.shields.io/badge/API-16%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=16)
-｜ [View documentation][2] | [中文][3]
+｜ [查看文档][2] | [English][3]
 
-# Getting Started
+# 开始
 
-1. Maven library dependency
+1. 添加依赖
 ``` groovy
 dependencies {
+
     implementation 'io.github.litao0621:nifty-slider:(latest version)'
-    // Added effect for Sliders (Optional Features)
+
+    // 自定义交互效果 (非必选功能)
     implementation 'io.github.litao0621:nifty-slider-effect:(latest version)'
+
 }
+
 ```
 
-2. Add it to the layout file
+2. 添加布局文件
 
 ``` xml
     <com.litao.slider.NiftySlider
@@ -35,97 +39,103 @@ dependencies {
         app:thumbShadowColor="@color/white"
         app:haloColor="@color/m3_demo_halo_color"/>
 ```
-[View more attributes][1]
+[查看更多属性方法][1]
 
 
-3. Registers a callback to be invoked when the slider changes
+3. 注册滑动回调
 
 ``` kotlin
         binding.niftySlider.setOnValueChangeListener { slider, value, fromUser ->
             //do something with float value
         }
+
         binding.niftySlider.setOnIntValueChangeListener { slider, value, fromUser ->
             //do something with int value
         }
+
         binding.niftySlider.setOnSliderTouchListener(object :NiftySlider.OnSliderTouchListener{
             override fun onStartTrackingTouch(slider: NiftySlider) {
                 //do something on touch start
             }
+
             override fun onStopTrackingTouch(slider: NiftySlider) {
                 //do something on touch stop
             }
+
         })
 ```
 
-# Custom Effects
+# 自定义滑动效果
 
 ### 1. M3 Style
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/m3_style_2.jpg" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/M3StyleDemoFragment.kt)
 <br/>
 
-### 2. WeRead Style
+### 2. 微信阅读菜单中滑动条样式
 
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/weread_style.png" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/WeReadDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/WeReadDemoFragment.kt)
 <br/>
 
-### 3. Color Pick Style
+### 3. 颜色选择器
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/color_pick_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/ColorPickDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/ColorPickDemoFragment.kt)
 <br/>
 
-### 4. Custom Thumb Drawable Style
+### 4. 自定义滑块
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/custom_thumb_drawable.png" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbDemoFragment.kt)
 <br/>
 
-### 5. Lottie Animation style
+### 5. 结合lottie动画自定义滑块
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/lottie_anim_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbWithLottieDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/CustomThumbWithLottieDemoFragment.kt)
 <br/>
 
-### 6. Tiktok Style
+### 6. 抖音滑动条样式
 
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/tiktok_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/TiktokStyleDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/TiktokStyleDemoFragment.kt)
 <br/>
 
-### 7. BiliBili Style
+### 7. BiliBili滑动条样式
 <img src="https://github.com/litao0621/NiftySlider/blob/main/art/bilibili_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/NiftySlider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/BiliBiliDemoFragment.kt)
 <br/>
 
-### 8. YouTube video preview style
+### 8. YouTube拖动视频预览样式
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/youtube_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeDemoFragment.kt)
 <br/>
 
-### 9. YouTube graph style
+### 9. YouTube展示用户关注度样式
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/youtube_chart_style.gif" width="480">
 
-  [View Sample](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeChartDemoFragment.kt)
+  [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeChartDemoFragment.kt)
 <br/>
 
-# Contributing
-You are welcome to send push requests (Just remember to add you name to the contributers list) or raise issues
+# 参与项目
+欢迎共同完善项目，有问题随时提交Issues
 
-# Donate
-If you feel this library has helped you, you can click the Star button to support the author. You can also buy the author a cup of coffee.Thanks very much.:smiley:
+# 捐赠
+如果你觉的这个库帮到了你的话可以点击Star按钮来支持作者，也可以请作者喝杯咖啡，非常感谢！:smiley:
 
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/wechat_pay.png" width="280"><img src="https://github.com/litao0621/nifty-slider/blob/main/art/alipay.png" width="280">
 
 # DEMO
 
-[Demo APK download][5]
+[Demo APK 下载地址1][4]
+<br/>
+[Demo APK 下载地址2][5]
 
 # License
 
@@ -146,5 +156,9 @@ If you feel this library has helped you, you can click the Star button to suppor
 
 [1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
 [2]:https://github.com/litao0621/nifty-slider/wiki
-[3]:https://github.com/litao0621/nifty-slider/blob/main/README-ZH.md
+[3]:https://github.com/litao0621/nifty-slider/blob/main/README-EN.md
+[4]:https://www.pgyer.com/sXFL
 [5]:https://github.com/litao0621/nifty-slider/blob/main/art/simple-debug.apk
+
+
+
