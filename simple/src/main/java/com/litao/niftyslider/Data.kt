@@ -26,7 +26,7 @@ object Data {
         StyleModel(ID_1, "Basics Demo"),
         StyleModel(ID_2, "M3 Style"),
         StyleModel(ID_3, "In scrolling container"),
-        StyleModel(ID_4, "WeRead Style\n(微信阅读菜单样式)"),
+        StyleModel(ID_4, "WeRead Style"),
         StyleModel(ID_5, "Color Pick Style"),
         StyleModel(ID_6, "Custom Thumb Drawable"),
         StyleModel(ID_7, "Lottie File Thumb"),
