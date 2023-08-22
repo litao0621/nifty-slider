@@ -682,7 +682,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun viewHeightChanged(): Boolean {
         val topBottomPadding = paddingTop + paddingBottom
         val minHeightWithTrack = topBottomPadding + trackHeight
-        val minHeightWithThumb = topBottomPadding + thumbRadius * 2 + trackInnerVPadding * 2
+        val thumbHeight = customThumbDrawable?.bounds?.height()?:defaultThumbDrawable.bounds.height()
+
+        val minHeightWithThumb = topBottomPadding + thumbHeight + trackInnerVPadding * 2
 
         val tempHeight = max(minHeightWithTrack, minHeightWithThumb)
 
@@ -1142,6 +1144,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
         defaultThumbDrawable.elevation = elevation
         thumbElevation = elevation
+        postInvalidate()
     }
 
     /**

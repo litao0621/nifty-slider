@@ -11,6 +11,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import com.litao.slider.Utils
 import kotlin.math.min
 
 
@@ -24,7 +25,7 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
 
     private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
 
-    private val shadowPaint = Paint()
+    private val shadowPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
 
     /**
      * thumb bounds rect
@@ -72,7 +73,6 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
             style = Paint.Style.STROKE
         }
         shadowPaint.apply {
-            color = Color.TRANSPARENT
             isAntiAlias = true
             xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
         }
@@ -92,12 +92,16 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
         }
         // thumb cornerSize and shadow radius
         val radius = min(cornerSize, rectF.width() / 2f)
-
+        // Offset the shadow inward by 1dp . prevent the appearance of rough edges around the thumb.
+        val shadowOffset = Utils.dpToPx(1).toFloat()
         //draw shadow
         if (elevation > 0 && shadowColor != Color.TRANSPARENT) {
-            shadowPaint.setShadowLayer(calculateElevation(elevation,radius), 0f, 0f, shadowColor)
+            shadowPaint.color = shadowColor
+            shadowPaint.setShadowLayer(calculateElevation(elevation + shadowOffset,radius), 0f, 0f, shadowColor)
+            rectF.inset(shadowOffset,shadowOffset)
             canvas.drawRoundRect(rectF, radius, radius, shadowPaint)
         }
+        rectF.inset(-shadowOffset,-shadowOffset)
         //draw thumb
         canvas.drawRoundRect(rectF, radius, radius, thumbPaint)
         //draw thumb stroke
@@ -159,6 +163,6 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
      * the maximum value is equal to the radius of the thumb.
      */
     private fun calculateElevation(elevation: Float,radius: Float): Float{
-        return min((radius/4 + elevation),radius)
+        return min(elevation,radius)
     }
 }
