@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
+import com.airbnb.lottie.RenderMode
 import com.litao.niftyslider.databinding.FragmentCustomThumbWithLottieDemoBinding
 import com.litao.niftyslider.dp
 import com.litao.niftyslider.effect.LottieAnimationEffect
@@ -45,10 +46,13 @@ class CustomThumbWithLottieDemoFragment  : Fragment() {
 
             val animEffect = LottieAnimationEffect(niftySlider).apply {
                 setAnimation("thumb_1.json")
+                //Change the rendering mode if needed
+                setRenderMode(RenderMode.HARDWARE)
             }
 
             val animEffect2 = LottieAnimationEffect(niftySlider2).apply {
                 setAnimation("thumb_2.json")
+                setRenderMode(RenderMode.HARDWARE)
             }
 
             niftySlider.apply {

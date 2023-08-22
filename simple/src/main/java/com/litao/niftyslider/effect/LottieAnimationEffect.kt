@@ -1,12 +1,10 @@
 package com.litao.niftyslider.effect
 
-import android.os.Parcel
-import android.os.Parcelable
-import android.view.View.BaseSavedState
 import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.LottieCompositionFactory
 import com.airbnb.lottie.LottieDrawable
 import com.airbnb.lottie.LottieResult
+import com.airbnb.lottie.RenderMode
 import com.litao.slider.NiftySlider
 import com.litao.slider.effect.BaseEffect
 
@@ -53,6 +51,10 @@ class LottieAnimationEffect(private val slider: NiftySlider) : BaseEffect() {
         val result: LottieResult<LottieComposition> =
             LottieCompositionFactory.fromAssetSync(slider.context.applicationContext, assetName)
         animDrawable.composition = result.value
+    }
+
+    fun setRenderMode(renderMode: RenderMode) {
+        animDrawable.renderMode = renderMode
     }
 
 
