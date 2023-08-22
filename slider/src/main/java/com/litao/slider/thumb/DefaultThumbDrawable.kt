@@ -94,14 +94,18 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
         val radius = min(cornerSize, rectF.width() / 2f)
         // Offset the shadow inward by 1dp . prevent the appearance of rough edges around the thumb.
         val shadowOffset = Utils.dpToPx(1).toFloat()
+        var hasShadow = false
         //draw shadow
         if (elevation > 0 && shadowColor != Color.TRANSPARENT) {
+            hasShadow = true
             shadowPaint.color = shadowColor
             shadowPaint.setShadowLayer(calculateElevation(elevation + shadowOffset,radius), 0f, 0f, shadowColor)
             rectF.inset(shadowOffset,shadowOffset)
             canvas.drawRoundRect(rectF, radius, radius, shadowPaint)
         }
-        rectF.inset(-shadowOffset,-shadowOffset)
+        if (hasShadow) {
+            rectF.inset(-shadowOffset, -shadowOffset)
+        }
         //draw thumb
         canvas.drawRoundRect(rectF, radius, radius, thumbPaint)
         //draw thumb stroke
