@@ -1521,6 +1521,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         val currentX = event.x
 
+        //Disable progress change via clicks
+        val disableClickTouch = sliderTouchMode == MODE_DISABLE_CLICK_TOUCH
+
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchDownX = currentX
@@ -1530,47 +1533,57 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 } else {
                     parent.requestDisallowInterceptTouchEvent(true)
                     requestFocus()
-                    isDragging = true
-                    startTacking(event)
-                    trackTouchEvent(event)
-                }
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                if (!isDragging) {
-                    if (isInVerticalScrollingContainer() && abs(currentX - touchDownX) < scaledTouchSlop) {
-                        return false
-                    }
-                    parent.requestDisallowInterceptTouchEvent(true)
-                    startTacking(event)
-                }
-
-                if (abs(currentX - touchDownX) > scaledTouchSlop) {
-                    progressAnimator.cancel()
-                }
-
-                isDragging = true
-                trackTouchEvent(event)
-
-            }
-
-            MotionEvent.ACTION_UP -> {
-                isDragging = false
-
-                lastTouchEvent?.let {
-                    if (it.action == MotionEvent.ACTION_DOWN && isClickTouch(it, event)) {
+                    if (!disableClickTouch) {
+                        isDragging = true
                         startTacking(event)
                         trackTouchEvent(event)
                     }
                 }
+            }
 
-                stopTacking(event)
+            MotionEvent.ACTION_MOVE -> {
+                val isInvalidMove = abs(currentX - touchDownX) < scaledTouchSlop
+
+                if (isInvalidMove && disableClickTouch) {
+                    //Do nothing in MODE_DISABLE_CLICK_TOUCH mode
+                } else {
+
+                    if (!isDragging) {
+                        if (isInVerticalScrollingContainer() && isInvalidMove) {
+                            return false
+                        }
+                        parent.requestDisallowInterceptTouchEvent(true)
+                        startTacking(event)
+                    }
+
+                    if (abs(currentX - touchDownX) > scaledTouchSlop) {
+                        progressAnimator.cancel()
+                    }
+
+                    isDragging = true
+                    trackTouchEvent(event)
+                }
 
             }
 
-            MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP,MotionEvent.ACTION_CANCEL -> {
                 isDragging = false
-                stopTacking(event)
+                var ignoreEvent = false
+                lastTouchEvent?.let {
+                    if (it.action == MotionEvent.ACTION_DOWN && isClickTouch(it, event)) {
+                        if (disableClickTouch) {
+                            ignoreEvent = true
+                        } else {
+                            startTacking(event)
+                            trackTouchEvent(event)
+                        }
+                    }
+                }
+
+                if (!ignoreEvent) {
+                    stopTacking(event)
+                }
+
             }
         }
 
