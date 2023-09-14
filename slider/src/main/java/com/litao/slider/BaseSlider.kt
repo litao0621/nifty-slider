@@ -154,12 +154,20 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private var progressAnimator = ValueAnimator()
 
+    private var sliderTouchMode = MODE_NORMAL
+
     companion object {
         var DEBUG_MODE = false
 
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
 
         private const val HALO_ALPHA = 63
+
+        //Slider touch mode
+        private const val MODE_NORMAL = 0
+        private const val MODE_DISABLE_TOUCH = 1
+        private const val MODE_DISABLE_CLICK_TOUCH = 2
+
     }
 
     abstract fun updateDirtyData()
@@ -330,7 +338,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setTipTextColor(getColor(R.styleable.NiftySlider_tipViewTextColor, Color.BLACK))
             setTipTextAutoChange(getBoolean(R.styleable.NiftySlider_tipTextAutoChange, true))
             setTipViewClippingEnabled(getBoolean(R.styleable.NiftySlider_isTipViewClippingEnabled, false))
-
+            setTouchMode(getInt(R.styleable.NiftySlider_sliderTouchMode, MODE_NORMAL))
         }
     }
 
@@ -1261,6 +1269,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     /**
+     * Sets the slider touch mode
+     *  - [BaseSlider.MODE_NORMAL]
+     *  - [BaseSlider.MODE_DISABLE_TOUCH]
+     *  - [BaseSlider.MODE_DISABLE_CLICK_TOUCH]
+     *
+     * @see R.attr.sliderTouchMode
+     */
+    fun setTouchMode(mode: Int) {
+        this.sliderTouchMode = mode
+    }
+
+
+    /**
      * Add a custom tip view
      */
     fun addCustomTipView(view: View) {
@@ -1486,9 +1507,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
+    /**
+     * Returns whether this Slider is enable user touch
+     */
+    private fun enableTouch():Boolean{
+        return isEnabled && sliderTouchMode != MODE_DISABLE_TOUCH
+    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!isEnabled) {
+        if (!enableTouch()) {
             return false
         }
 
