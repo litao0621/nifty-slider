@@ -1516,6 +1516,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!enableTouch()) {
+            //Users may change the enabled state of this Slider during the dragging process
+            if (isDragging){
+                isDragging = false
+                stopTacking(event)
+            }
             return false
         }
 
