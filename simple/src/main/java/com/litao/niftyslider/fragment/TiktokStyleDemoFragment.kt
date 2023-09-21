@@ -3,6 +3,7 @@ package com.litao.niftyslider.fragment
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,10 +81,34 @@ class TiktokStyleDemoFragment : Fragment() {
                 setThumbShadowColor(Color.BLACK)
             }
 
+            bottomBarLayout.bind(niftySlider)
 
             ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
                 bottomGuide.setPadding(0, 0, 0, insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom)
                 insets
+            }
+
+            testCode()
+        }
+    }
+
+
+    /**
+     * Please ignore this code. it's all test code
+     */
+    private fun testCode() {
+        with(binding) {
+            tab1.setOnClickListener {
+                Toast.makeText(requireActivity(), "${tab1.text} is clicked", Toast.LENGTH_SHORT).show()
+            }
+            tab2.setOnClickListener {
+                Toast.makeText(requireActivity(), "${tab2.text} is clicked", Toast.LENGTH_SHORT).show()
+            }
+            tab3.setOnClickListener {
+                Toast.makeText(requireActivity(), "${tab3.text} is clicked", Toast.LENGTH_SHORT).show()
+            }
+            tab4.setOnClickListener {
+                Toast.makeText(requireActivity(), "${tab4.text} is clicked", Toast.LENGTH_SHORT).show()
             }
         }
     }
