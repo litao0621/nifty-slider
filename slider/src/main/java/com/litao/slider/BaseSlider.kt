@@ -373,6 +373,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+
         if (hasDirtyData) {
             validateDirtyData()
         }
@@ -387,7 +388,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         )
 
         onDrawBefore(canvas,viewRectF,yCenter)
-        drawDebugArea(canvas)
+        drawDebugArea(canvas,width,yCenter)
 
 
         drawInactiveTrack(canvas, width, yCenter)
@@ -423,7 +424,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         super.onDetachedFromWindow()
     }
 
-    private fun drawDebugArea(canvas: Canvas) {
+    private fun drawDebugArea(canvas: Canvas, width: Int, yCenter: Float) {
+        trackRectF.set(
+            0f + paddingLeft + trackInnerHPadding,
+            yCenter - trackHeight / 2f,
+            width.toFloat() - paddingRight - trackInnerHPadding,
+            yCenter + trackHeight / 2f
+        )
         val offset = 1
         if (DEBUG_MODE) {
             debugPaint.color = Color.RED
@@ -446,6 +453,21 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 canvas.width / 2f,
                 0f,
                 canvas.width / 2f,
+                canvas.height.toFloat(),
+                debugPaint
+            )
+            debugPaint.color = Color.GREEN
+            canvas.drawLine(
+                trackRectF.left,
+                0f,
+                trackRectF.left,
+                canvas.height.toFloat(),
+                debugPaint
+            )
+            canvas.drawLine(
+                trackRectF.right,
+                0f,
+                trackRectF.right,
                 canvas.height.toFloat(),
                 debugPaint
             )
