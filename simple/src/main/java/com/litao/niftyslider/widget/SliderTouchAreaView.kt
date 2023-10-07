@@ -2,6 +2,7 @@ package com.litao.niftyslider.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -26,9 +27,9 @@ class SliderTouchAreaView @JvmOverloads constructor(
 
 
     private var mInitialTouchX = 0f
-    private var touchSlop = ViewConfiguration.get(context).scaledTouchSlop
     private var isTouchMoved = false
 
+    private var downEvent:MotionEvent? = null
 
     /**
      * 使用时请先调用bind方法来进行与slider进行绑定
@@ -64,20 +65,24 @@ class SliderTouchAreaView @JvmOverloads constructor(
             MotionEvent.ACTION_DOWN -> {
                 isTouchMoved = false
                 mInitialTouchX = ev.x
+                downEvent = MotionEvent.obtain(ev)
             }
 
             MotionEvent.ACTION_MOVE -> {
-                val dx = abs(ev.x - mInitialTouchX)
-                if (dx > touchSlop) {
-                    isTouchMoved = true
-                    slider?.onTouchEvent(ev)
+                isTouchMoved = true
+
+                downEvent?.let {
+                    slider?.onTouchEvent(it)
                 }
+                downEvent = null
+                slider?.onTouchEvent(ev)
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 if (isTouchMoved) {
                     slider?.onTouchEvent(ev)
                 }
+                downEvent = null
             }
         }
         return super.dispatchTouchEvent(ev)

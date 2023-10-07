@@ -91,6 +91,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var lastTouchEvent: MotionEvent? = null
     private var scaledTouchSlop = 0
     private var touchDownX = 0f
+    private var touchDownDiffValue = 0f
     private var isDragging = false
     private var isTackingStart = false
 
@@ -101,6 +102,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     var enableHapticFeedback = false
     var enableProgressAnim = false
+
+    /**
+     * Whether the progress value changes continuously as the user slides.
+     */
+    var isConsecutiveProgress = false
     var valueFrom = 0f
         set(value) {
             if (field != value) {
@@ -268,6 +274,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             sourceViewHeight = getLayoutDimension(R.styleable.NiftySlider_android_layout_height, 0)
             trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
             enableProgressAnim = getBoolean(R.styleable.NiftySlider_enableProgressAnim, false)
+            isConsecutiveProgress = getBoolean(R.styleable.NiftySlider_isConsecutiveProgress, false)
 
             setTrackTintList(
                 getColorStateList(R.styleable.NiftySlider_trackColor) ?: AppCompatResources.getColorStateList(
@@ -1416,6 +1423,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Get the current progress value by the touch position
+     */
+    private fun getTouchValue(event: MotionEvent): Float {
+        val touchPos = getTouchPosByX(event.x)
+        val touchValue = getValueByTouchPos(touchPos)
+        return touchValue
+    }
+
+    /**
      * 是否在纵向滚动的容器中
      * 此情况下需要对touch event做特殊处理
      */
@@ -1521,8 +1537,12 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     private fun trackTouchEvent(event: MotionEvent) {
-        val touchPos = getTouchPosByX(event.x)
-        val touchValue = getValueByTouchPos(touchPos)
+        val touchValue = if (isConsecutiveProgress){
+            getTouchValue(event) - touchDownDiffValue
+        }else {
+            getTouchValue(event)
+        }
+
         if (this.value != touchValue) {
             val animated = event.action != MotionEvent.ACTION_MOVE && enableProgressAnim
             updateValue(touchValue, animated)
@@ -1554,7 +1574,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchDownX = currentX
-
+                val startTouchValue = getTouchValue(event)
+                touchDownDiffValue = startTouchValue - this.value
                 if (isInVerticalScrollingContainer()) {
                     //在纵向滑动布局中不处理down事件，优先外层滑动
                 } else {
@@ -1571,7 +1592,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             MotionEvent.ACTION_MOVE -> {
                 val isInvalidMove = abs(currentX - touchDownX) < scaledTouchSlop
 
-                if (isInvalidMove && disableClickTouch) {
+                if (isInvalidMove && disableClickTouch && !isDragging) {
                     //Do nothing in MODE_DISABLE_CLICK_TOUCH mode
                 } else {
 

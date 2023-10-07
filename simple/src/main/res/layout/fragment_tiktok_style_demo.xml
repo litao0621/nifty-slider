@@ -20,6 +20,7 @@
         app:thumbRadius="3dp"
         app:thumbWithinTrackBounds="true"
         app:trackHeight="3dp"
+        app:isConsecutiveProgress="true"
         app:trackInnerHPadding="0dp" />
 
 

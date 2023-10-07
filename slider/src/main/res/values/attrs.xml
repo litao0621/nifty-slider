@@ -46,6 +46,7 @@
         <attr name="tipTextAutoChange" format="boolean"/>
         <attr name="isTipViewClippingEnabled" format="boolean"/>
         <attr name="enableProgressAnim" format="boolean"/>
+        <attr name="isConsecutiveProgress" format="boolean"/>
         <attr name="sliderTouchMode">
             <enum name="normal" value ="0"/>
             <enum name="disableTouch" value="1"/>
