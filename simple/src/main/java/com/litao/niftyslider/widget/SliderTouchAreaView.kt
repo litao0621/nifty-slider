@@ -27,6 +27,7 @@ class SliderTouchAreaView @JvmOverloads constructor(
 
 
     private var mInitialTouchX = 0f
+    private var touchSlop = ViewConfiguration.get(context).scaledTouchSlop
     private var isTouchMoved = false
 
     private var downEvent:MotionEvent? = null
@@ -69,13 +70,17 @@ class SliderTouchAreaView @JvmOverloads constructor(
             }
 
             MotionEvent.ACTION_MOVE -> {
-                isTouchMoved = true
-
-                downEvent?.let {
-                    slider?.onTouchEvent(it)
+                val dx = abs(ev.x - mInitialTouchX)
+                if (dx < touchSlop && !isTouchMoved) {
+                    //do nothing
+                }else{
+                    isTouchMoved = true
+                    downEvent?.let {
+                        slider?.onTouchEvent(it)
+                    }
+                    downEvent = null
+                    slider?.onTouchEvent(ev)
                 }
-                downEvent = null
-                slider?.onTouchEvent(ev)
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
