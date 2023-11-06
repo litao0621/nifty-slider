@@ -50,14 +50,9 @@ class SliderListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun update(position: Int, model: SliderModel) {
             binding.apply {
                 niftySlider.setValue(model.value)
-                niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
-                    override fun onStartTrackingTouch(slider: NiftySlider) {
-                    }
-
-                    override fun onStopTrackingTouch(slider: NiftySlider) {
-                        model.value = slider.value
-                    }
-                })
+                niftySlider.addOnSliderTouchStopListener {
+                    model.value = it.value
+                }
             }
         }
     }

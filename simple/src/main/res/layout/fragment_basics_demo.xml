@@ -8,12 +8,23 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/value_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/state_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/value_text"
+        app:layout_constraintRight_toRightOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/from_value_text"
@@ -45,7 +56,7 @@
         android:valueTo="100"
         app:layout_constraintLeft_toRightOf="@+id/from_value_text"
         app:layout_constraintRight_toLeftOf="@+id/to_value_text"
-        app:layout_constraintTop_toBottomOf="@+id/value_text" />
+        app:layout_constraintTop_toBottomOf="@+id/state_text" />
 
 
     <androidx.appcompat.widget.AppCompatTextView

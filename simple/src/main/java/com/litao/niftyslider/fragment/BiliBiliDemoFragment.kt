@@ -68,7 +68,7 @@ class BiliBiliDemoFragment : Fragment() {
 
             }
 
-            niftySlider.setOnValueChangeListener { slider, value, fromUser ->
+            niftySlider.addOnValueChangeListener { slider, value, fromUser ->
                 customDrawable.currentStateValue = value
             }
         }

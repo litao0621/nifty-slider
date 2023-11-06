@@ -20,7 +20,7 @@ class BasicsDemoFragment : Fragment() {
 
     companion object {
 
-        private const val VALUE_TEXT = "current value :  int(%d) , float(%f)"
+        private const val VALUE_TEXT = "current value :  \nint = %d , \nfloat = %f"
 
         fun newInstance(): BasicsDemoFragment {
             return BasicsDemoFragment()
@@ -36,35 +36,27 @@ class BasicsDemoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            niftySlider.setOnValueChangeListener { slider, value, fromUser ->
+            niftySlider.addOnValueChangeListener { slider, value, fromUser ->
                 valueText.text = VALUE_TEXT.format(value.toInt(), value)
             }
 
-            niftySlider.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
-                override fun onStartTrackingTouch(slider: NiftySlider) {
-                    Toast.makeText(context, "Start Tracking Touch", Toast.LENGTH_SHORT).show()
-                }
+            niftySlider.addOnSliderTouchStartListener {
+                binding.stateText.text = "Start Tracking Touch"
+            }
+            niftySlider.addOnSliderTouchStopListener {
+                binding.stateText.text = "Stop Tracking Touch"
+            }
 
-                override fun onStopTrackingTouch(slider: NiftySlider) {
-                    Toast.makeText(context, "Stop Tracking Touch", Toast.LENGTH_SHORT).show()
-                }
-
-            })
-
-            niftySlider2.setOnValueChangeListener { slider, value, fromUser ->
+            niftySlider2.addOnValueChangeListener { slider, value, fromUser ->
                 valueText.text = VALUE_TEXT.format(value.toInt(), value)
             }
 
-            niftySlider2.setOnSliderTouchListener(object : NiftySlider.OnSliderTouchListener {
-                override fun onStartTrackingTouch(slider: NiftySlider) {
-                    Toast.makeText(context, "Start Tracking Touch", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onStopTrackingTouch(slider: NiftySlider) {
-                    Toast.makeText(context, "Stop Tracking Touch", Toast.LENGTH_SHORT).show()
-                }
-
-            })
+            niftySlider2.addOnSliderTouchStartListener {
+                binding.stateText.text = "Start Tracking Touch"
+            }
+            niftySlider2.addOnSliderTouchStopListener {
+                binding.stateText.text = "Stop Tracking Touch"
+            }
 
             enableSwitch.setOnCheckedChangeListener { button, isChecked ->
                 if (isChecked){

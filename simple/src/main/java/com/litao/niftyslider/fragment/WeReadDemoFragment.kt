@@ -75,7 +75,7 @@ class WeReadDemoFragment : Fragment() {
                 }
                 setTrackTintList(ColorStateList.valueOf(activeTrackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveTrackColor))
-                setOnIntValueChangeListener { slider, value, fromUser ->
+                addOnIntValueChangeListener { slider, value, fromUser ->
                     setThumbText(Data.weReadFontSizeMap[value].toString())
                 }
             }

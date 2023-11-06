@@ -19,6 +19,12 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     private var intValueChangeListener: OnIntValueChangeListener? = null
     private var sliderTouchListener: OnSliderTouchListener? = null
 
+    private var valueChangeListeners: MutableList<(slider: NiftySlider, value: Float, fromUser: Boolean) -> Unit> = mutableListOf()
+    private var intValueChangeListeners: MutableList<(slider: NiftySlider, value: Int, fromUser: Boolean) -> Unit> = mutableListOf()
+
+    private var sliderTouchStartListeners: MutableList<(slider: NiftySlider) -> Unit> = mutableListOf()
+    private var sliderTouchStopListeners: MutableList<(slider: NiftySlider) -> Unit> = mutableListOf()
+
     var effect: SliderEffect<NiftySlider>? = null
 
     private var lastChangedValue = -1
@@ -42,20 +48,26 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun onStartTacking() {
         sliderTouchListener?.onStartTrackingTouch(this)
+        sliderTouchStartListeners.forEach {
+            it.invoke(this)
+        }
         effect?.onStartTacking(this)
     }
 
     override fun onStopTacking() {
         sliderTouchListener?.onStopTrackingTouch(this)
+        sliderTouchStopListeners.forEach {
+            it.invoke(this)
+        }
         effect?.onStopTacking(this)
     }
 
     override fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float) {
-        effect?.onDrawBefore(canvas,trackRect,yCenter)
+        effect?.onDrawBefore(canvas, trackRect, yCenter)
     }
 
     override fun onDrawAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
-        effect?.onDrawAfter(canvas,trackRect,yCenter)
+        effect?.onDrawAfter(canvas, trackRect, yCenter)
     }
 
     override fun onValueChanged(value: Float, fromUser: Boolean) {
@@ -65,12 +77,18 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
 
         val intValue = value.roundToInt()
 
-        if (lastChangedValue != intValue){
+        if (lastChangedValue != intValue) {
             lastChangedValue = intValue
-            intValueChangeListener?.onValueChange(this,intValue,fromUser)
+            intValueChangeListener?.onValueChange(this, intValue, fromUser)
+            intValueChangeListeners.forEach {
+                it.invoke(this, intValue, fromUser)
+            }
         }
 
         valueChangeListener?.onValueChange(this, value, fromUser)
+        valueChangeListeners.forEach {
+            it.invoke(this, value, fromUser)
+        }
         effect?.onValueChanged(this, value, fromUser)
     }
 
@@ -107,16 +125,118 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
 
+    /**
+     * @deprecated Use [addOnValueChangeListener] instead.
+     */
+    @Deprecated("use addOnValueChangeListener instead")
     fun setOnValueChangeListener(listener: OnValueChangeListener) {
         this.valueChangeListener = listener
     }
 
+    /**
+     * @deprecated Use [addOnIntValueChangeListener] instead.
+     */
+    @Deprecated("use addOnIntValueChangeListener instead")
     fun setOnIntValueChangeListener(listener: OnIntValueChangeListener) {
         this.intValueChangeListener = listener
     }
 
+    /**
+     * @deprecated Use [addOnSliderTouchStartListener] instead.
+     */
+    @Deprecated("use addOnSliderTouchStartListener | addOnSliderTouchStopListener instead")
     fun setOnSliderTouchListener(listener: OnSliderTouchListener) {
         this.sliderTouchListener = listener
+    }
+
+    /**
+     * Registers a callback to be invoked when the slider changes.
+     * the listener is invoked once for each value.（Float Type）
+     *
+     * @param listener The callback to run when the slider changes
+     */
+    fun addOnValueChangeListener(listener: (slider: NiftySlider, value: Float, fromUser: Boolean) -> Unit) {
+        valueChangeListeners.add(listener)
+    }
+
+    fun removeOnValueChangeListener(listener: (slider: NiftySlider, value: Float, fromUser: Boolean) -> Unit) {
+        valueChangeListeners.add(listener)
+    }
+
+    fun clearOnValueChangeListener(listener: (slider: NiftySlider, value: Float, fromUser: Boolean) -> Unit) {
+        valueChangeListeners.add(listener)
+    }
+
+
+    /**
+     * Registers a callback to be invoked when the slider changes.
+     * the listener is invoked once for each value.（Integer Type）
+     *
+     * @param listener The callback to run when the slider changes
+     */
+    fun addOnIntValueChangeListener(listener: (slider: NiftySlider, value: Int, fromUser: Boolean) -> Unit) {
+        intValueChangeListeners.add(listener)
+    }
+
+    fun removeOnIntValueChangeListener(listener: (slider: NiftySlider, value: Int, fromUser: Boolean) -> Unit) {
+        intValueChangeListeners.add(listener)
+    }
+
+    fun clearOnIntValueChangeListener(listener: (slider: NiftySlider, value: Int, fromUser: Boolean) -> Unit) {
+        intValueChangeListeners.add(listener)
+    }
+
+
+    /**
+     * Registers a callback to be invoked when the slider touch starts.
+     * the listener is invoked once for each value.
+     *
+     * @param listener The callback to run when the slider touch start
+     */
+    fun addOnSliderTouchStartListener(listener: (slider: NiftySlider) -> Unit) {
+        sliderTouchStartListeners.add(listener)
+    }
+
+    /**
+     * Removes a callback for value changes from this slider touch starts.
+     *
+     * @param listener The callback that'll stop receive slider touch starts
+     */
+    fun removeOnSliderTouchStartListener(listener: (slider: NiftySlider) -> Unit) {
+        sliderTouchStartListeners.remove(listener)
+    }
+
+    /**
+     * Removes all instances of touch start listener attached to this slider
+     */
+    fun clearOnSliderTouchStartListener(listener: (slider: NiftySlider) -> Unit) {
+        sliderTouchStartListeners.clear()
+    }
+
+    /**
+     * Registers a callback to be invoked when the slider touch stops.
+     * the listener is invoked once for each value.
+     *
+     * @param listener The callback to run when the slider touch stops
+     */
+    fun addOnSliderTouchStopListener(listener: (slider: NiftySlider) -> Unit) {
+        sliderTouchStopListeners.add(listener)
+    }
+
+    /**
+     * Removes a callback for value changes from this slider touch stops.
+     *
+     * @param listener The callback that'll stop receive slider touch stops
+     */
+    fun removeOnSliderTouchStopListener(listener: (slider: NiftySlider) -> Unit) {
+        sliderTouchStopListeners.remove(listener)
+    }
+
+    /**
+     * Removes all instances of touch stop listener attached to this slider
+     */
+    fun clearOnSliderTouchStopListener(listener: (slider: NiftySlider) -> Unit) {
+        sliderTouchStopListeners.clear()
     }
 
 
