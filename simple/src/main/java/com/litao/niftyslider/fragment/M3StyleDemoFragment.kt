@@ -1,6 +1,7 @@
 package com.litao.niftyslider.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class M3StyleDemoFragment : Fragment() {
 
 
     companion object {
+        const val TAG = "M3StyleDemoFragment"
         fun newInstance(): M3StyleDemoFragment {
             return M3StyleDemoFragment()
         }
@@ -33,7 +35,15 @@ class M3StyleDemoFragment : Fragment() {
 
 
         with(binding) {
+            niftySlider.apply {
+                addOnProgressAnimEndListener {
+                    Log.d(TAG, "target value is ${it.value}")
+                }
 
+                addOnValueChangeListener { slider, value, fromUser ->
+                    Log.d(TAG, "current value is ${slider.value}")
+                }
+            }
         }
 
 

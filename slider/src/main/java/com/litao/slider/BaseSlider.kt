@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import androidx.annotation.*
 import androidx.annotation.IntRange
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
@@ -257,6 +258,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 updateHaloHotspot()
                 postInvalidate()
                 hasDirtyData = true
+            }
+            doOnEnd {
+                onProgressAnimEnd()
             }
         }
     }
@@ -1548,6 +1552,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             updateValue(touchValue, animated)
         }
     }
+
+    /**
+     * Invoked when the progress changes animation has ended
+     */
+    open fun onProgressAnimEnd(){
+
+    }
+
 
     /**
      * Returns whether this Slider is enable user touch

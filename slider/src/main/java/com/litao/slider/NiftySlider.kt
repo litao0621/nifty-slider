@@ -25,6 +25,8 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     private var sliderTouchStartListeners: MutableList<(slider: NiftySlider) -> Unit> = mutableListOf()
     private var sliderTouchStopListeners: MutableList<(slider: NiftySlider) -> Unit> = mutableListOf()
 
+    private var onProgressAnimEndListener: MutableList<(slider: NiftySlider) -> Unit> = mutableListOf()
+
     var effect: SliderEffect<NiftySlider>? = null
 
     private var lastChangedValue = -1
@@ -142,7 +144,7 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     /**
-     * @deprecated Use [addOnSliderTouchStartListener] instead.
+     * @deprecated Use [addOnSliderTouchStartListener],[addOnSliderTouchStopListener] instead.
      */
     @Deprecated("use addOnSliderTouchStartListener | addOnSliderTouchStopListener instead")
     fun setOnSliderTouchListener(listener: OnSliderTouchListener) {
@@ -237,6 +239,35 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
      */
     fun clearOnSliderTouchStopListener(listener: (slider: NiftySlider) -> Unit) {
         sliderTouchStopListeners.clear()
+    }
+
+
+
+    /**
+     * Registers a callback to be invoked when the progress changes animation has ended.
+     *
+     * @param listener The callback to run when the progress changes animation ended
+     */
+    fun addOnProgressAnimEndListener(listener: (slider: NiftySlider) -> Unit) {
+        onProgressAnimEndListener.add(listener)
+    }
+
+    fun removeOnProgressAnimEndListener(listener: (slider: NiftySlider) -> Unit) {
+        onProgressAnimEndListener.remove(listener)
+    }
+
+    fun clearOnProgressAnimEndListener(listener: (slider: NiftySlider) -> Unit) {
+        onProgressAnimEndListener.clear()
+    }
+
+    /**
+     * Invoked when the progress changes animation has ended
+     */
+    override fun onProgressAnimEnd() {
+        super.onProgressAnimEnd()
+        onProgressAnimEndListener.forEach {
+            it.invoke(this)
+        }
     }
 
 
