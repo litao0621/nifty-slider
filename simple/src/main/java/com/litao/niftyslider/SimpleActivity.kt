@@ -64,9 +64,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_11 -> {
                 YouTubeChartDemoFragment.newInstance()
             }
-//            Data.ID_12 -> {
-//                TestFragment.newInstance()
-//            }
+            Data.ID_12 -> {
+                AdjustPositionDemoFragment.newInstance()
+            }
             else -> {
                 null
             }

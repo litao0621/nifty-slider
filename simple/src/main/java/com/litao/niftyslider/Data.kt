@@ -24,6 +24,7 @@ object Data {
 
     val styleList = mutableListOf(
         StyleModel(ID_1, "Basics Demo"),
+        StyleModel(ID_12,"Adjust Position"),
         StyleModel(ID_2, "M3 Style"),
         StyleModel(ID_3, "In scrolling container"),
         StyleModel(ID_4, "WeRead Style"),
@@ -34,6 +35,7 @@ object Data {
         StyleModel(ID_9, "BiliBili Style"),
         StyleModel(ID_10, "YouTube Style"),
         StyleModel(ID_11,"YouTube Chart Style"),
+
 //        StyleModel(ID_12,"Custom Thumb Drawable2")
 
 //        StyleModel(7, "building..."),
