@@ -19,6 +19,7 @@
         <attr name="tickRadius" format="dimension" />
         <attr name="trackHeight" format="dimension"/>
         <attr name="trackInnerHPadding" format="dimension"/>
+        <attr name="enableAutoHPadding" format="boolean"/>
         <attr name="trackInnerVPadding" format="dimension"/>
         <attr name="trackCornersRadius" format="dimension"/>
         <attr name="thumbColor" format="color"/>

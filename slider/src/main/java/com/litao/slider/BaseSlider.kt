@@ -85,6 +85,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var thumbOffset = 0
 
     private var trackInnerHPadding = 0
+    private var enableAutoHPadding = true
     private var trackInnerVPadding = 0
     private var trackCornerRadius = -1
 
@@ -335,6 +336,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbTextSize(getDimension(R.styleable.NiftySlider_thumbTextSize, 10f))
             setThumbTextBold(getBoolean(R.styleable.NiftySlider_thumbTextBold, false))
 
+            setEnableAutoHPadding(getBoolean(R.styleable.NiftySlider_enableAutoHPadding, true))
             setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, -1))
             setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding, -1))
             setTrackCornersRadius(getDimensionPixelOffset(R.styleable.NiftySlider_trackCornersRadius, -1))
@@ -804,11 +806,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      */
     fun setTrackInnerHPadding(padding: Int = -1) {
         val innerHPadding = if (padding == -1) {
-            if (isThumbWithinTrackBounds) {
-                //thumb with in track bounds 模式下只需要要考虑超出阴影视图
-                ceil(thumbElevation).toInt()
-            } else {
-                thumbRadius + ceil(thumbElevation).toInt()
+            if (enableAutoHPadding) {
+                if (isThumbWithinTrackBounds) {
+                    //thumb with in track bounds 模式下只需要要考虑超出阴影视图
+                    ceil(thumbElevation).toInt()
+                } else {
+                    thumbRadius + ceil(thumbElevation).toInt()
+                }
+            }else{
+                0
             }
 
         } else {
@@ -821,6 +827,16 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         trackInnerHPadding = innerHPadding
         updateViewLayout()
+    }
+
+
+    /**
+     * Sets whether the auto changed horizontal inner padding when no values are set
+     *
+     * @see R.attr.enableAutoHPadding
+     */
+    fun setEnableAutoHPadding(enable: Boolean){
+        this.enableAutoHPadding = enable
     }
 
     /**
