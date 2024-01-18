@@ -383,6 +383,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         haloPaint.alpha = HALO_ALPHA
     }
 
+    fun paddingDiff() = paddingTop - paddingBottom
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -390,7 +392,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (hasDirtyData) {
             validateDirtyData()
         }
-        val yCenter = measuredHeight / 2f
+
+        val yCenter = measuredHeight / 2f + paddingDiff() / 2f
         val width = measuredWidth
 
         viewRectF.set(
@@ -1379,7 +1382,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * Get the thumb center y-coordinates
      */
     fun getThumbCenterY(): Float {
-        return measuredHeight / 2f + thumbVOffset
+        return measuredHeight / 2f + paddingDiff() / 2f + thumbVOffset
     }
 
     /**
@@ -1541,7 +1544,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 if (background is RippleDrawable) {
                     val haloX =
                         (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
-                    val haloY = viewHeight / 2
+                    val haloY = viewHeight / 2 + paddingDiff() / 2
 
                     DrawableCompat.setHotspotBounds(
                         background,
