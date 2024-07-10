@@ -13,6 +13,7 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -244,7 +245,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         thumbAnimation.apply {
             addUpdateListener {
-                adjustThumbDrawableBounds((getAnimatedValueAbsolute() * thumbRadius).toInt())
+                val value = getAnimatedValueAbsolute()
+                adjustThumbDrawableBounds(
+                    (value * thumbWidth).toInt(),
+                    (value * thumbHeight).toInt()
+                )
                 postInvalidate()
             }
         }
@@ -403,8 +408,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             yCenter + trackHeight / 2f
         )
 
-        onDrawBefore(canvas,viewRectF,yCenter)
-        drawDebugArea(canvas,width,yCenter)
+        onDrawBefore(canvas, viewRectF, yCenter)
+        drawDebugArea(canvas, width, yCenter)
 
 
         drawInactiveTrack(canvas, width, yCenter)
@@ -418,7 +423,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         drawThumb(canvas, trackWidth, yCenter)
-        onDrawAfter(canvas,viewRectF,yCenter)
+        onDrawAfter(canvas, viewRectF, yCenter)
     }
 
     override fun invalidateDrawable(drawable: Drawable) {
@@ -728,7 +733,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun viewHeightChanged(): Boolean {
         val topBottomPadding = paddingTop + paddingBottom
         val minHeightWithTrack = topBottomPadding + trackHeight
-        val thumbHeight = customThumbDrawable?.bounds?.height()?:defaultThumbDrawable.bounds.height()
+        val thumbHeight = customThumbDrawable?.bounds?.height() ?: defaultThumbDrawable.bounds.height()
 
         val minHeightWithThumb = topBottomPadding + thumbHeight + trackInnerVPadding * 2
 
@@ -816,7 +821,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 } else {
                     thumbRadius + ceil(thumbElevation).toInt()
                 }
-            }else{
+            } else {
                 0
             }
 
@@ -838,7 +843,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @see R.attr.enableAutoHPadding
      */
-    fun setEnableAutoHPadding(enable: Boolean){
+    fun setEnableAutoHPadding(enable: Boolean) {
         this.enableAutoHPadding = enable
     }
 
@@ -994,8 +999,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 return
             }
             field = radius
+            this.thumbWidth = radius * 2
+            this.thumbHeight = radius * 2
             defaultThumbDrawable.cornerSize = radius.toFloat()
-            adjustThumbDrawableBounds(radius)
+            adjustThumbDrawableBounds(thumbWidth, thumbHeight)
             updateViewLayout()
         }
 
@@ -1199,7 +1206,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbElevation
      */
     fun setThumbElevation(elevation: Float) {
-        if (elevation > 0){
+        if (elevation > 0) {
             setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         defaultThumbDrawable.elevation = elevation
@@ -1235,7 +1242,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun setThumbShadowColor(@ColorInt shadowColor: Int) {
         defaultThumbDrawable.shadowColor = shadowColor
     }
-
 
 
     /**
@@ -1481,28 +1487,31 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
-    private fun adjustThumbDrawableBounds(radius: Int) {
+    private fun adjustThumbDrawableBounds(width: Int, height: Int) {
         defaultThumbDrawable.setBounds(
             0,
             0,
-            radius * 2,
-            radius * 2
+            width,
+            height
         )
 
         customThumbDrawable?.let {
-            adjustCustomThumbDrawableBounds(it, radius)
+            adjustCustomThumbDrawableBounds(it, width, height)
         }
     }
 
 
-    private fun adjustCustomThumbDrawableBounds(drawable: Drawable, radius: Int = thumbRadius) {
-        val thumbDiameter = radius * 2
+    private fun adjustCustomThumbDrawableBounds(
+        drawable: Drawable,
+        width: Int = thumbWidth,
+        height: Int = thumbHeight
+    ) {
         val originalWidth = drawable.intrinsicWidth
         val originalHeight = drawable.intrinsicHeight
         if (originalWidth == -1 && originalHeight == -1) {
-            drawable.setBounds(0, 0, thumbDiameter, thumbDiameter)
+            drawable.setBounds(0, 0, width, height)
         } else {
-            val scaleRatio = thumbDiameter.toFloat() / max(originalWidth, originalHeight)
+            val scaleRatio = max(width, height).toFloat() / max(originalWidth, originalHeight)
             drawable.setBounds(
                 0, 0, (originalWidth * scaleRatio).toInt(), (originalHeight * scaleRatio).toInt()
             )
@@ -1560,9 +1569,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     private fun trackTouchEvent(event: MotionEvent) {
-        val touchValue = if (isConsecutiveProgress){
+        val touchValue = if (isConsecutiveProgress) {
             getTouchValue(event) - touchDownDiffValue
-        }else {
+        } else {
             getTouchValue(event)
         }
 
@@ -1575,7 +1584,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * Invoked when the progress changes animation has ended
      */
-    open fun onProgressAnimEnd(){
+    open fun onProgressAnimEnd() {
 
     }
 
@@ -1583,14 +1592,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * Returns whether this Slider is enable user touch
      */
-    private fun enableTouch():Boolean{
+    private fun enableTouch(): Boolean {
         return isEnabled && sliderTouchMode != MODE_DISABLE_TOUCH
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!enableTouch()) {
             //Users may change the enabled state of this Slider during the dragging process
-            if (isDragging){
+            if (isDragging) {
                 isDragging = false
                 stopTacking(event)
             }
@@ -1645,7 +1654,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             }
 
-            MotionEvent.ACTION_UP,MotionEvent.ACTION_CANCEL -> {
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 isDragging = false
                 var ignoreEvent = false
                 lastTouchEvent?.let {

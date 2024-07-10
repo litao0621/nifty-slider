@@ -96,22 +96,41 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
         val shadowOffset = Utils.dpToPx(1).toFloat()
         var hasShadow = false
         //draw shadow
-        if (elevation > 0 && shadowColor != Color.TRANSPARENT) {
+        if (isSupportShadow()) {
             hasShadow = true
             shadowPaint.color = shadowColor
             shadowPaint.setShadowLayer(calculateElevation(elevation + shadowOffset,radius), 0f, 0f, shadowColor)
             rectF.inset(shadowOffset,shadowOffset)
             canvas.drawRoundRect(rectF, radius, radius, shadowPaint)
         }
+
         if (hasShadow) {
             rectF.inset(-shadowOffset, -shadowOffset)
         }
         //draw thumb
         canvas.drawRoundRect(rectF, radius, radius, thumbPaint)
         //draw thumb stroke
-        if (strokeWidth > 0) {
+        if (isSupportStroke()) {
             canvas.drawRoundRect(rectF, radius, radius, strokePaint)
         }
+    }
+
+
+    /**
+     * If the drawable size is too small, it may cause display issues.
+     * Therefore, the minimum size for displaying shadows has been controlled.
+     */
+    private fun isSupportShadow(): Boolean {
+        return elevation > 0
+                && shadowColor != Color.TRANSPARENT
+                && rectF.width() > Utils.dpToPx(3)
+                && rectF.height() > Utils.dpToPx(3)
+    }
+
+    private fun isSupportStroke(): Boolean {
+        return strokeWidth > 0
+                && rectF.width() > strokeWidth * 2
+                && rectF.height() > strokeWidth * 2
     }
 
     override fun isStateful(): Boolean {
