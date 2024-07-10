@@ -18,7 +18,7 @@ class ScrollContainerDemoFragment : Fragment() {
 
     private lateinit var binding: FragmentScrollContainerDemoBinding
 
-    private var mAdapter: SliderListAdapter? = null
+    private var mAdapter = SliderListAdapter()
 
     companion object {
         fun newInstance(): ScrollContainerDemoFragment {
@@ -34,16 +34,23 @@ class ScrollContainerDemoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mAdapter = SliderListAdapter()
 
         with(binding) {
             listView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = mAdapter
             }
+
+            addButton.setOnClickListener {
+                mAdapter.reloadList(Data.getTestData())
+            }
+
+            clearButton.setOnClickListener {
+                mAdapter.clear()
+            }
         }
 
-        mAdapter?.reloadList(Data.getTestData())
+        mAdapter.reloadList(Data.getTestData())
 
 
     }

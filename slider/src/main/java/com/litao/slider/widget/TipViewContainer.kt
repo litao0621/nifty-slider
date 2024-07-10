@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.ColorInt
 import androidx.core.math.MathUtils
+import androidx.core.view.doOnLayout
 import androidx.transition.Fade
 import androidx.transition.TransitionManager
 import com.litao.slider.BaseSlider
@@ -57,6 +58,8 @@ class TipViewContainer @JvmOverloads constructor(
 
     var windowWidth = 0
 
+    var currentViewId = TIP_VIEW_ID + hashCode()
+
     val showRunnable = Runnable{
         addTipViewIfNeed()
         updateLocationOnScreen(slider)
@@ -71,7 +74,7 @@ class TipViewContainer @JvmOverloads constructor(
     }
 
     init {
-        id = TIP_VIEW_ID + hashCode()
+        id = currentViewId
         visibility = INVISIBLE
         setSize(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
 //        setBackgroundColor(Color.WHITE)
@@ -90,7 +93,7 @@ class TipViewContainer @JvmOverloads constructor(
         val contentView = getContentView(view)
         this.slider = view
         contentView?.let {
-            val tipView = it.findViewById<TipViewContainer>(TIP_VIEW_ID)
+            val tipView = it.findViewById<TipViewContainer>(currentViewId)
             if (tipView == null) {
                 it.addView(this)
             }
@@ -119,7 +122,9 @@ class TipViewContainer @JvmOverloads constructor(
 
     fun detachTipView(view: View) {
         val contentView = getContentView(view)
-        contentView?.removeView(this)
+        contentView?.doOnLayout {
+            contentView.removeView(this)
+        }
     }
 
 

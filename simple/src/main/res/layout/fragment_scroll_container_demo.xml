@@ -5,6 +5,29 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/add_button"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:paddingHorizontal="8dp"
+        android:text="Add"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/clear_button"
+        />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/clear_button"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:paddingHorizontal="8dp"
+        android:text="Clear"
+        app:layout_constraintLeft_toRightOf="@+id/add_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_view"
         android:layout_width="0dp"
@@ -12,6 +35,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/add_button" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
