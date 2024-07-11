@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="64dp"
+        android:padding="24dp"
+        android:stepSize="1"
+        android:valueFrom="0"
+        android:valueTo="4"
+        app:ticksVisible="true"
+        app:thumbColor="#FFFFFF"
+        app:thumbStrokeColor="#d55852"
+        app:thumbStrokeWidth="6dp"
+        app:thumbRadius="10dp"
+        app:trackColor="@color/discrete_style_1_tick_color"
+        app:trackHeight="3dp"
+        app:enableDrawHalo="false"
+        app:trackColorInactive="@color/discrete_style_1_tick_color"
+        app:trackSecondaryColor="@color/discrete_style_1_tick_color"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nifty_slider_2"
+        app:layout_constraintVertical_chainStyle="packed"
+        android:hapticFeedbackEnabled="true"/>
+
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider_2"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="64dp"
+        android:padding="24dp"
+        android:stepSize="1"
+        android:valueFrom="0"
+        android:valueTo="4"
+        app:ticksVisible="true"
+        app:thumbColor="#FFFFFF"
+        app:thumbStrokeColor="#d55852"
+        app:thumbStrokeWidth="6dp"
+        app:thumbRadius="10dp"
+        app:trackColor="@color/discrete_style_1_tick_color"
+        app:trackHeight="3dp"
+        app:enableDrawHalo="false"
+        app:trackColorInactive="@color/discrete_style_1_tick_color"
+        app:trackSecondaryColor="@color/discrete_style_1_tick_color"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nifty_slider"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:hapticFeedbackEnabled="true"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

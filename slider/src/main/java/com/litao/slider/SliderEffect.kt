@@ -1,6 +1,7 @@
 package com.litao.slider
 
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.RectF
 
 /**
@@ -43,6 +44,15 @@ interface SliderEffect<T : BaseSlider> {
     fun dispatchDrawThumbBefore(slider: T, canvas: Canvas, cx: Float, cy: Float): Boolean
     /** Called after draw thumb drawable */
     fun drawThumbAfter(slider: T, canvas: Canvas, cx: Float, cy: Float)
+
+    /** Called before draw indicators . Return true if the interrupt default draw*/
+    fun dispatchDrawIndicatorsBefore(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+    /** Called before draw single indicator . Return true if the interrupt default draw*/
+    fun dispatchDrawIndicatorBefore(slider: T, canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int): Boolean
+    /** Called after draw single indicator */
+    fun drawIndicatorAfter(slider: T, canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int)
+    /** Called after draw indicators */
+    fun drawIndicatorsAfter(slider: T, canvas: Canvas, trackRect: RectF, yCenter: Float)
 
     /** The parameter has changed, and there is dirty data */
     fun updateDirtyData()

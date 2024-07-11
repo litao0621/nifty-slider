@@ -67,6 +67,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_12 -> {
                 AdjustPositionDemoFragment.newInstance()
             }
+            Data.ID_13 -> {
+                IndicatorStyle1Fragment.newInstance()
+            }
             else -> {
                 null
             }

@@ -17,4 +17,5 @@
     <color name="we_read_thumb_shadow_color">#bbbbbb</color>
     <color name="youtube_theme_color">#ff0000</color>
     <color name="youtube_thumb_color">#fd0000</color>
+    <color name="discrete_style_1_tick_color">#b0bed5</color>
 </resources>

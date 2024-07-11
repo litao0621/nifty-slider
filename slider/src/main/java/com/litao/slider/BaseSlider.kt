@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
@@ -13,7 +14,6 @@ import android.os.Build
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -193,11 +193,16 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     abstract fun drawInactiveTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
 
     abstract fun dispatchDrawTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
-
-    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
     abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
 
+    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
     abstract fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+
+    abstract fun dispatchDrawIndicatorsBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+    abstract fun dispatchDrawIndicatorBefore(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int): Boolean
+    abstract fun drawIndicatorAfter(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int)
+    abstract fun drawIndicatorsAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+
 
 
     abstract fun dispatchDrawThumbBefore(canvas: Canvas, cx: Float, cy: Float): Boolean
@@ -636,6 +641,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
 
+    private val tickPoint = PointF()
     /**
      * draw tick
      */
@@ -646,23 +652,38 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             val stepWidth = drawWidth / (tickCount - 1).toFloat()
             val activeWidth = percentValue(value) * width + paddingLeft + trackInnerHPadding + thumbOffset
 
-            for (i in 0 until tickCount) {
-                val starLeft = paddingLeft + trackInnerHPadding + thumbOffset + tickRadius
-                val cx = starLeft + i * stepWidth
 
-                val circlePaint = if (cx <= activeWidth) {
-                    ticksPaint
-                } else {
-                    inactiveTicksPaint
+            if (!dispatchDrawIndicatorsBefore(canvas, trackRectF, yCenter)) {
+
+                for (i in 0 until tickCount) {
+                    val starLeft = paddingLeft + trackInnerHPadding + thumbOffset + tickRadius
+                    val cx = starLeft + i * stepWidth
+
+                    val circlePaint = if (cx <= activeWidth) {
+                        ticksPaint
+                    } else {
+                        inactiveTicksPaint
+                    }
+
+                    tickPoint.apply {
+                        x = starLeft + i * stepWidth
+                        y = yCenter
+                    }
+
+                    if (!dispatchDrawIndicatorBefore(canvas, trackRectF, tickPoint,i)) {
+                        canvas.drawCircle(
+                            tickPoint.x,
+                            tickPoint.y,
+                            tickRadius,
+                            circlePaint
+                        )
+                    }
+
+                    drawIndicatorAfter(canvas, trackRectF, tickPoint,i)
                 }
-
-                canvas.drawCircle(
-                    starLeft + i * stepWidth,
-                    yCenter,
-                    tickRadius,
-                    circlePaint
-                )
             }
+
+            drawIndicatorsAfter(canvas, trackRectF, yCenter)
         }
     }
 

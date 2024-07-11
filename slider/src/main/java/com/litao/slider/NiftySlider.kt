@@ -2,6 +2,7 @@ package com.litao.slider
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
@@ -116,6 +117,22 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
         effect?.drawSecondaryTrackAfter(this, canvas, trackRect, yCenter)
+    }
+
+    override fun dispatchDrawIndicatorsBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean {
+        return effect?.dispatchDrawIndicatorsBefore(this, canvas, trackRect, yCenter)?:false
+    }
+
+    override fun dispatchDrawIndicatorBefore(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int): Boolean {
+        return effect?.dispatchDrawIndicatorBefore(this,canvas,trackRect,indicatorPoint,index)?:false
+    }
+
+    override fun drawIndicatorAfter(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int) {
+        effect?.drawIndicatorAfter(this,canvas,trackRect,indicatorPoint,index)
+    }
+
+    override fun drawIndicatorsAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+        effect?.drawIndicatorsAfter(this, canvas, trackRect, yCenter)
     }
 
     override fun dispatchDrawThumbBefore(canvas: Canvas, cx: Float, cy: Float): Boolean {

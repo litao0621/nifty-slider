@@ -2,6 +2,7 @@ package com.litao.slider.effect
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.PointF
 import android.graphics.RectF
 import com.litao.slider.NiftySlider
 import com.litao.slider.SliderEffect
@@ -62,6 +63,31 @@ open class BaseEffect : SliderEffect<NiftySlider> {
     }
 
     override fun onDrawAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    }
+
+    override fun drawIndicatorsAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    }
+
+    override fun drawIndicatorAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int) {
+    }
+
+    override fun dispatchDrawIndicatorBefore(
+        slider: NiftySlider,
+        canvas: Canvas,
+        trackRect: RectF,
+        indicatorPoint: PointF,
+        index:Int
+    ): Boolean {
+        return false
+    }
+
+    override fun dispatchDrawIndicatorsBefore(
+        slider: NiftySlider,
+        canvas: Canvas,
+        trackRect: RectF,
+        yCenter: Float
+    ): Boolean {
+        return false
     }
 
     override fun updateDirtyData() {
