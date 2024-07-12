@@ -33,11 +33,11 @@ open class BaseEffect : SliderEffect<NiftySlider> {
     override fun drawInactiveTrackAfter(slider: NiftySlider,canvas: Canvas,  trackRect: RectF, yCenter: Float) {
     }
 
-    override fun dispatchDrawTrackBefore(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean {
+    override fun dispatchDrawTrackBefore(slider: NiftySlider, canvas: Canvas, trackRect: RectF,inactiveTrackRect:RectF, yCenter: Float): Boolean {
         return false
     }
 
-    override fun drawTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    override fun drawTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF,inactiveTrackRect:RectF, yCenter: Float) {
     }
 
     override fun dispatchDrawThumbBefore(slider: NiftySlider, canvas: Canvas, cx: Float, cy: Float): Boolean {
@@ -51,12 +51,13 @@ open class BaseEffect : SliderEffect<NiftySlider> {
         slider: NiftySlider,
         canvas: Canvas,
         trackRect: RectF,
+        inactiveTrackRect: RectF,
         yCenter: Float
     ): Boolean {
         return false
     }
 
-    override fun drawSecondaryTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float) {
+    override fun drawSecondaryTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float) {
     }
 
     override fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float) {

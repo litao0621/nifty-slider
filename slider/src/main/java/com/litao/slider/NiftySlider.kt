@@ -103,20 +103,25 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
         effect?.drawInactiveTrackAfter(this, canvas, trackRect, yCenter)
     }
 
-    override fun dispatchDrawTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean {
-        return effect?.dispatchDrawTrackBefore(this, canvas, trackRect, yCenter) ?: false
+    override fun dispatchDrawTrackBefore(
+        canvas: Canvas,
+        trackRect: RectF,
+        inactiveTrackRect: RectF,
+        yCenter: Float
+    ): Boolean {
+        return effect?.dispatchDrawTrackBefore(this, canvas, trackRect, inactiveTrackRect, yCenter) ?: false
     }
 
-    override fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean {
-        return effect?.dispatchDrawSecondaryTrackBefore(this, canvas, trackRect, yCenter) ?: false
+    override fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float): Boolean {
+        return effect?.dispatchDrawSecondaryTrackBefore(this, canvas, trackRect,inactiveTrackRect, yCenter) ?: false
     }
 
-    override fun drawTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
-        effect?.drawTrackAfter(this, canvas, trackRect, yCenter)
+    override fun drawTrackAfter(canvas: Canvas, trackRect: RectF, inactiveTrackRect: RectF, yCenter: Float) {
+        effect?.drawTrackAfter(this, canvas, trackRect, inactiveTrackRect, yCenter)
     }
 
-    override fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float) {
-        effect?.drawSecondaryTrackAfter(this, canvas, trackRect, yCenter)
+    override fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float) {
+        effect?.drawSecondaryTrackAfter(this, canvas, trackRect,inactiveTrackRect, yCenter)
     }
 
     override fun dispatchDrawIndicatorsBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean {

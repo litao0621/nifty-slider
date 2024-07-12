@@ -4,6 +4,7 @@ import android.graphics.*
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.doOnAttach
 import com.litao.slider.NiftySlider
 
 
@@ -27,6 +28,11 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
 
     init {
         colorTrackPaint.style = Paint.Style.FILL
+        slider.doOnAttach {
+            if (slider.isRtl()) {
+                colors.reverse()
+            }
+        }
     }
 
 
@@ -53,6 +59,7 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
         slider: NiftySlider,
         canvas: Canvas,
         trackRect: RectF,
+        inactiveTrackRect:RectF,
         yCenter: Float
     ): Boolean {
         return true
@@ -117,6 +124,9 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
      * update gradient colors
      */
     fun updateColors(colors: IntArray) {
+        if (slider.isRtl()){
+            colors.reverse()
+        }
         this.colors = colors
         colorShader = null
         slider.invalidate()

@@ -9,12 +9,12 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/value_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:padding="16dp"
         android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/state_text"
@@ -22,28 +22,28 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/value_text"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/from_value_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         android:text="0"
         app:layout_constraintBottom_toBottomOf="@+id/nifty_slider"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/nifty_slider" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/to_value_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="16dp"
+        android:paddingEnd="16dp"
         android:text="100"
         app:layout_constraintBottom_toBottomOf="@+id/nifty_slider"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/nifty_slider" />
 
     <com.litao.slider.NiftySlider
@@ -54,8 +54,8 @@
         android:padding="16dp"
         android:valueFrom="0"
         android:valueTo="100"
-        app:layout_constraintLeft_toRightOf="@+id/from_value_text"
-        app:layout_constraintRight_toLeftOf="@+id/to_value_text"
+        app:layout_constraintStart_toEndOf="@+id/from_value_text"
+        app:layout_constraintEnd_toStartOf="@+id/to_value_text"
         app:layout_constraintTop_toBottomOf="@+id/state_text" />
 
 
@@ -63,20 +63,20 @@
         android:id="@+id/from_value_text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp"
+        android:paddingStart="16dp"
         android:text="0"
         app:layout_constraintBottom_toBottomOf="@+id/nifty_slider2"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/nifty_slider2" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/to_value_text2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingRight="16dp"
+        android:paddingEnd="16dp"
         android:text="100"
         app:layout_constraintBottom_toBottomOf="@+id/nifty_slider2"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/nifty_slider2" />
 
     <com.litao.slider.NiftySlider
@@ -89,8 +89,8 @@
         android:valueFrom="0"
         android:valueTo="100"
         app:ticksVisible="true"
-        app:layout_constraintLeft_toRightOf="@+id/from_value_text2"
-        app:layout_constraintRight_toLeftOf="@+id/to_value_text2"
+        app:layout_constraintStart_toEndOf="@+id/from_value_text2"
+        app:layout_constraintEnd_toStartOf="@+id/to_value_text2"
         app:layout_constraintTop_toBottomOf="@+id/nifty_slider"
         android:hapticFeedbackEnabled="true"/>
 

@@ -82,6 +82,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     private val trackRectF = RectF()
+    private val inactiveTrackRectF = RectF()
     private val viewRectF = RectF()
     private var thumbOffset = 0
 
@@ -192,11 +193,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     abstract fun dispatchDrawInactiveTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
     abstract fun drawInactiveTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
 
-    abstract fun dispatchDrawTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
-    abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+    abstract fun dispatchDrawTrackBefore(
+        canvas: Canvas,
+        trackRect: RectF,
+        inactiveTrackRect: RectF,
+        yCenter: Float
+    ): Boolean
 
-    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
-    abstract fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+    abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, inactiveTrackRect: RectF, yCenter: Float)
+
+    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float): Boolean
+    abstract fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float)
 
     abstract fun dispatchDrawIndicatorsBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
     abstract fun dispatchDrawIndicatorBefore(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int): Boolean
@@ -509,7 +516,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         updateTrackRect(yCenter = yCenter, progress = percentValue(value))
 
-        if (!dispatchDrawTrackBefore(canvas, trackRectF, yCenter)) {
+        if (!dispatchDrawTrackBefore(canvas, trackRectF, inactiveTrackRectF, yCenter)) {
 
             val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
 
@@ -523,7 +530,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
-        drawTrackAfter(canvas, trackRectF, yCenter)
+        drawTrackAfter(canvas, trackRectF, inactiveTrackRectF, yCenter)
     }
 
     /**
@@ -534,7 +541,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         updateTrackRect(yCenter = yCenter, progress = percentValue(secondaryValue))
 
-        if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF, yCenter)) {
+        if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF,inactiveTrackRectF, yCenter)) {
             val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
 
             if (secondaryValue > valueFrom) {
@@ -547,13 +554,20 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
-        drawSecondaryTrackAfter(canvas, trackRectF, yCenter)
+        drawSecondaryTrackAfter(canvas, trackRectF,inactiveTrackRectF, yCenter)
     }
 
     /**
      * draw inactive track
      */
     private fun drawInactiveTrack(canvas: Canvas, width: Int, yCenter: Float) {
+        inactiveTrackRectF.set(
+            0f + paddingLeft + trackInnerHPadding,
+            yCenter - trackHeight / 2f,
+            width.toFloat() - paddingRight - trackInnerHPadding,
+            yCenter + trackHeight / 2f
+        )
+
         val progress = if (isRtl()) 0f else 1f
         updateTrackRect(yCenter = yCenter, progress = progress)
 

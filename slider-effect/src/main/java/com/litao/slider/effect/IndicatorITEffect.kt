@@ -8,6 +8,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.withTranslation
+import androidx.core.view.doOnAttach
 import com.litao.slider.NiftySlider
 import com.litao.slider.Utils
 import com.litao.slider.model.IndicatorIcon
@@ -42,6 +43,12 @@ class IndicatorITEffect(private val slider: NiftySlider) : BaseEffect() {
             strokeWidth = indicatorWidth
             style = Paint.Style.FILL
             color = Color.parseColor("#b0bed5")
+        }
+        slider.doOnAttach {
+            if (slider.isRtl()) {
+                iconDrawArray.reverse()
+                textDrawArray.reverse()
+            }
         }
     }
 

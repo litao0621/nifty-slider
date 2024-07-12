@@ -30,18 +30,18 @@ class ITEffect(private val slider: NiftySlider) : BaseEffect() {
     /**
      * Slider track 绘制结束后的额外绘制
      */
-    override fun drawTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, yCenter: Float) {
-        drawStartIcon(canvas,trackRect,yCenter)
-        drawEndIcon(canvas,trackRect,yCenter)
-        drawStartText(canvas,trackRect,yCenter)
-        drawEndText(canvas,trackRect,yCenter)
+    override fun drawTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF,inactiveTrackRect:RectF, yCenter: Float) {
+        drawStartIcon(canvas,inactiveTrackRect,yCenter)
+        drawEndIcon(canvas,inactiveTrackRect,yCenter)
+        drawStartText(canvas,inactiveTrackRect,yCenter)
+        drawEndText(canvas,inactiveTrackRect,yCenter)
     }
 
     /**
      * 绘制Slider起始位置图标
      */
     private fun drawStartIcon(canvas: Canvas, trackRect: RectF, yCenter: Float){
-        startIcon?.let {
+        getStartIconInRtl()?.let {
             canvas.withTranslation(
                 trackRect.left + startPadding,
                 yCenter - it.bounds.height() / 2f
@@ -55,7 +55,7 @@ class ITEffect(private val slider: NiftySlider) : BaseEffect() {
      * 绘制Slider结束位置图标
      */
     private fun drawEndIcon(canvas: Canvas, trackRect: RectF, yCenter: Float){
-        endIcon?.let {
+        getEndIconInRtl()?.let {
             canvas.withTranslation(
                 slider.trackWidth + trackRect.left - endPadding - it.bounds.width(),
                 yCenter - it.bounds.height() / 2f
@@ -69,7 +69,7 @@ class ITEffect(private val slider: NiftySlider) : BaseEffect() {
      * 绘制Slider起始位置文本
      */
     private fun drawStartText(canvas: Canvas, trackRect: RectF, yCenter: Float){
-        startText?.let {
+        getStartTextInRtl()?.let {
             startTintList?.let { colorList ->
                 textPaint.color = slider.getColorForState(colorList)
             }
@@ -89,7 +89,7 @@ class ITEffect(private val slider: NiftySlider) : BaseEffect() {
      * 绘制Slider结束位置文本
      */
     private fun drawEndText(canvas: Canvas, trackRect: RectF, yCenter: Float){
-        endText?.let {
+        getEndTextInRtl()?.let {
             endTintList?.let { colorList ->
                 textPaint.color = slider.getColorForState(colorList)
             }
@@ -260,9 +260,37 @@ class ITEffect(private val slider: NiftySlider) : BaseEffect() {
     private fun baseline(yCenter: Float) = yCenter - (textPaint.fontMetricsInt.bottom + textPaint.fontMetricsInt.top) / 2
 
 
+    private fun getStartIconInRtl(): Drawable? {
+        return if (slider.isRtl()) {
+            endIcon
+        } else {
+            startIcon
+        }
+    }
 
+    private fun getEndIconInRtl(): Drawable? {
+        return if (slider.isRtl()) {
+            startIcon
+        } else {
+            endIcon
+        }
+    }
 
+    private fun getStartTextInRtl(): String? {
+        return if (slider.isRtl()) {
+            endText
+        } else {
+            startText
+        }
+    }
 
+    private fun getEndTextInRtl(): String? {
+        return if (slider.isRtl()) {
+            startText
+        } else {
+            endText
+        }
+    }
 
 
 

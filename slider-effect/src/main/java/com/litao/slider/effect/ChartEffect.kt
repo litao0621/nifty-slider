@@ -7,6 +7,7 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import android.view.ViewGroup
+import androidx.core.view.doOnAttach
 import com.litao.slider.NiftySlider
 import com.litao.slider.anim.SliderValueAnimation
 import java.lang.Float.min
@@ -51,6 +52,13 @@ class ChartEffect(private val slider: NiftySlider) : BaseEffect() {
                 progress = getAnimatedValueAbsolute()
                 slider.invalidate()
             }
+        }
+
+        slider.doOnAttach {
+            if (slider.isRtl()) {
+                keyPoint.reverse()
+            }
+
         }
     }
 
