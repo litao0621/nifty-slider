@@ -513,6 +513,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             yCenter + trackHeight / 2f
         )
 
+        trackCompatRtl(trackRectF)
+
         if (!dispatchDrawTrackBefore(canvas, trackRectF, yCenter)) {
 
             val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
@@ -543,6 +545,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             ),
             yCenter + trackHeight / 2f
         )
+
+        trackCompatRtl(trackRectF)
 
         if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF, yCenter)) {
             val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
@@ -687,12 +691,22 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
+
+    private fun trackCompatRtl(rectF: RectF){
+        if (isRtl()) {
+            val right = rectF.right
+            rectF.left = right
+            rectF.right = width.toFloat() - paddingRight - trackInnerHPadding
+        }
+    }
+
     /**
      * Returns a number between 0 and 1 with [BaseSlider.value]
      * 通过value返回当前滑动百分比，0为最左、1为最右
      */
     fun percentValue(v: Float = value): Float {
-        return (v - valueFrom) / (valueTo - valueFrom)
+        val progress = (v - valueFrom) / (valueTo - valueFrom)
+        return if (isRtl()) 1 - progress else progress
     }
 
 
@@ -1469,7 +1483,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 通过当前坐标获取滑动位置百分比
      */
     private fun getTouchPosByX(touchX: Float): Float {
-        return MathUtils.clamp((touchX - paddingLeft - trackInnerHPadding) / trackWidth, 0f, 1f)
+        val progress = MathUtils.clamp((touchX - paddingLeft - trackInnerHPadding) / trackWidth, 0f, 1f)
+        return if(isRtl()) 1- progress else progress
     }
 
     /**
@@ -1730,6 +1745,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 throw IllegalStateException("Couldn't set RippleDrawable radius", e)
             }
         }
+    }
+
+
+    fun isRtl(): Boolean {
+        return layoutDirection == LAYOUT_DIRECTION_RTL
     }
 
     override fun onSaveInstanceState(): Parcelable? {
