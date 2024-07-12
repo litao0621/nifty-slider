@@ -407,9 +407,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         val width = measuredWidth
 
         viewRectF.set(
-            0f + paddingLeft + trackInnerHPadding,
+            0f + paddingStart + trackInnerHPadding,
             yCenter - trackHeight / 2f,
-            width.toFloat() - paddingRight - trackInnerHPadding,
+            width.toFloat() - paddingEnd - trackInnerHPadding,
             yCenter + trackHeight / 2f
         )
 
@@ -452,9 +452,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun drawDebugArea(canvas: Canvas, width: Int, yCenter: Float) {
         trackRectF.set(
-            0f + paddingLeft + trackInnerHPadding,
+            0f + paddingStart + trackInnerHPadding,
             yCenter - trackHeight / 2f,
-            width.toFloat() - paddingRight - trackInnerHPadding,
+            width.toFloat() - paddingEnd - trackInnerHPadding,
             yCenter + trackHeight / 2f
         )
         val offset = 1
@@ -506,14 +506,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 需要考虑如果使用半透明颜色时会与下层[trackColorInactive]颜色进行叠加，需注意叠加后的效果是否满足要求
      */
     private fun drawTrack(canvas: Canvas, width: Int, yCenter: Float) {
-        trackRectF.set(
-            0f + paddingLeft + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(value),
-            yCenter + trackHeight / 2f
-        )
 
-        trackCompatRtl(trackRectF)
+        updateTrackRect(yCenter = yCenter, progress = percentValue(value))
 
         if (!dispatchDrawTrackBefore(canvas, trackRectF, yCenter)) {
 
@@ -537,16 +531,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 需要考虑如果使用半透明颜色时会与下层[trackSecondaryColor]颜色进行叠加，需注意叠加后的效果是否满足要求
      */
     private fun drawSecondaryTrack(canvas: Canvas, width: Int, yCenter: Float) {
-        trackRectF.set(
-            0f + paddingLeft + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            paddingLeft + trackInnerHPadding + thumbOffset * 2 + (trackWidth - thumbOffset * 2) * percentValue(
-                secondaryValue
-            ),
-            yCenter + trackHeight / 2f
-        )
 
-        trackCompatRtl(trackRectF)
+        updateTrackRect(yCenter = yCenter, progress = percentValue(secondaryValue))
 
         if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF, yCenter)) {
             val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
@@ -568,12 +554,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * draw inactive track
      */
     private fun drawInactiveTrack(canvas: Canvas, width: Int, yCenter: Float) {
-        trackRectF.set(
-            0f + paddingLeft + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            width.toFloat() - paddingRight - trackInnerHPadding,
-            yCenter + trackHeight / 2f
-        )
+        val progress = if (isRtl()) 0f else 1f
+        updateTrackRect(yCenter = yCenter, progress = progress)
 
         if (!dispatchDrawInactiveTrackBefore(canvas, trackRectF, yCenter)) {
 
@@ -600,7 +582,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             val thumbDrawable = customThumbDrawable ?: defaultThumbDrawable
 
-            val cx = paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
+            val cx = paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
             val cy = yCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
             val tx = cx - thumbDrawable.bounds.width() / 2f
             if (!dispatchDrawThumbBefore(canvas, cx, yCenter)) {
@@ -633,7 +615,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private fun drawCompatHaloIfNeed(canvas: Canvas, width: Int, yCenter: Float) {
         if (shouldDrawCompatHalo() && enableDrawHalo) {
             val centerX =
-                paddingLeft + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
+                paddingStart + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
 
             //允许光环绘制到边界以外
             if (parent is ViewGroup) {
@@ -654,13 +636,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             val drawWidth = width - thumbOffset * 2 - tickRadius * 2
             val tickCount: Int = ((valueTo - valueFrom) / stepSize + 1).toInt()
             val stepWidth = drawWidth / (tickCount - 1).toFloat()
-            val activeWidth = percentValue(value) * width + paddingLeft + trackInnerHPadding + thumbOffset
+            val activeWidth = percentValue(value) * width + paddingStart + trackInnerHPadding + thumbOffset
 
 
             if (!dispatchDrawIndicatorsBefore(canvas, trackRectF, yCenter)) {
 
                 for (i in 0 until tickCount) {
-                    val starLeft = paddingLeft + trackInnerHPadding + thumbOffset + tickRadius
+                    val starLeft = paddingStart + trackInnerHPadding + thumbOffset + tickRadius
                     val cx = starLeft + i * stepWidth
 
                     val circlePaint = if (cx <= activeWidth) {
@@ -696,7 +678,24 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (isRtl()) {
             val right = rectF.right
             rectF.left = right
-            rectF.right = width.toFloat() - paddingRight - trackInnerHPadding
+            rectF.right = width.toFloat() - paddingEnd - trackInnerHPadding
+        }
+    }
+
+    private fun updateTrackRect(yCenter: Float,progress:Float){
+        val trackOffset = if(isRtl()) 0 else thumbOffset * 2
+
+        trackRectF.set(
+            0f + paddingStart + trackInnerHPadding,
+            yCenter - trackHeight / 2f,
+            paddingStart + trackInnerHPadding + trackOffset + (trackWidth - thumbOffset * 2) * progress,
+            yCenter + trackHeight / 2f
+        )
+
+        if (isRtl()) {
+            val right = trackRectF.right
+            trackRectF.left = right
+            trackRectF.right = width.toFloat() - paddingEnd - trackInnerHPadding
         }
     }
 
@@ -787,7 +786,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 更新滑轨真实绘制宽度，真实宽度不仅受左右padding影响，还会受内部[trackInnerHPadding]影响
      */
     fun updateTrackWidth(viewWidth: Int) {
-        trackWidth = max(viewWidth - paddingLeft - paddingRight - trackInnerHPadding * 2, 0)
+        trackWidth = max(viewWidth - paddingStart - paddingEnd - trackInnerHPadding * 2, 0)
     }
 
 
@@ -1416,7 +1415,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * Get the thumb center x-coordinates
      */
     fun getThumbCenterX(): Float {
-        return paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
+        return paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
     }
 
     /**
@@ -1483,7 +1482,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 通过当前坐标获取滑动位置百分比
      */
     private fun getTouchPosByX(touchX: Float): Float {
-        val progress = MathUtils.clamp((touchX - paddingLeft - trackInnerHPadding) / trackWidth, 0f, 1f)
+        val progress = MathUtils.clamp((touchX - paddingStart - trackInnerHPadding) / trackWidth, 0f, 1f)
         return if(isRtl()) 1- progress else progress
     }
 
@@ -1588,7 +1587,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             if (!shouldDrawCompatHalo() && measuredWidth > 0) {
                 if (background is RippleDrawable) {
                     val haloX =
-                        (paddingLeft + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
+                        (paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
                     val haloY = viewHeight / 2 + paddingDiff() / 2
 
                     DrawableCompat.setHotspotBounds(
