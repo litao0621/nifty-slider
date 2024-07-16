@@ -115,6 +115,12 @@ dependencies {
   [View Sample](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeChartDemoFragment.kt)
 <br/>
 
+### 10. Effect with issues [#13](https://github.com/litao0621/nifty-slider/issues/13)
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/effect_issues_13.gif" width="480">
+
+  [View Sample](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/IndicatorStyle1Fragment.kt)
+<br/>
+
 # Contributing
 You are welcome to send push requests (Just remember to add you name to the contributers list) or raise issues
 
@@ -147,4 +153,4 @@ If you feel this library has helped you, you can click the Star button to suppor
 [1]:https://github.com/litao0621/nifty-slider/wiki/Attribute&Method
 [2]:https://github.com/litao0621/nifty-slider/wiki
 [3]:https://github.com/litao0621/nifty-slider/blob/main/README-ZH.md
-[5]:https://github.com/litao0621/nifty-slider/blob/main/art/simple-debug.apk
+[5]:https://github.com/litao0621/nifty-slider/blob/main/art/sample-debug.apk
