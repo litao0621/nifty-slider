@@ -115,6 +115,12 @@ dependencies {
   [View Sample](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeChartDemoFragment.kt)
 <br/>
 
+### 10. Effect with issues [#13](https://github.com/litao0621/nifty-slider/issues/13)
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/effect_issues_13.gif" width="480">
+
+  [View Sample](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/IndicatorStyle1Fragment.kt)
+<br/>
+
 # Contributing
 You are welcome to send push requests (Just remember to add you name to the contributers list) or raise issues
 
