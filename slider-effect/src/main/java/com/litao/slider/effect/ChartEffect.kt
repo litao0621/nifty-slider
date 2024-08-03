@@ -74,10 +74,10 @@ class ChartEffect(private val slider: NiftySlider) : BaseEffect() {
         startAnim(true)
     }
 
-    override fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float) {
-        super.onDrawBefore(canvas, trackRect, yCenter)
+    override fun onDrawBefore(canvas: Canvas, trackRect: RectF, trackCenter: Float) {
+        super.onDrawBefore(canvas, trackRect, trackCenter)
         if (progress != 0f) {
-            createPath(trackRect, yCenter)
+            createPath(trackRect, trackCenter)
             canvas.drawPath(chartPath, chartPaint)
         }
     }

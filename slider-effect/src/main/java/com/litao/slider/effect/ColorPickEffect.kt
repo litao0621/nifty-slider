@@ -60,7 +60,7 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
         canvas: Canvas,
         trackRect: RectF,
         inactiveTrackRect:RectF,
-        yCenter: Float
+        trackCenter: Float
     ): Boolean {
         return true
     }
@@ -70,7 +70,7 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
         slider: NiftySlider,
         canvas: Canvas,
         trackRect: RectF,
-        yCenter: Float
+        trackCenter: Float
     ): Boolean {
         maybeCreateShader(trackRect)
 

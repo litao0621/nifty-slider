@@ -30,11 +30,11 @@ class ITEffect(private val slider: NiftySlider) : BaseEffect() {
     /**
      * Slider track 绘制结束后的额外绘制
      */
-    override fun drawTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF,inactiveTrackRect:RectF, yCenter: Float) {
-        drawStartIcon(canvas,inactiveTrackRect,yCenter)
-        drawEndIcon(canvas,inactiveTrackRect,yCenter)
-        drawStartText(canvas,inactiveTrackRect,yCenter)
-        drawEndText(canvas,inactiveTrackRect,yCenter)
+    override fun drawTrackAfter(slider: NiftySlider, canvas: Canvas, trackRect: RectF, inactiveTrackRect:RectF, trackCenter: Float) {
+        drawStartIcon(canvas,inactiveTrackRect,trackCenter)
+        drawEndIcon(canvas,inactiveTrackRect,trackCenter)
+        drawStartText(canvas,inactiveTrackRect,trackCenter)
+        drawEndText(canvas,inactiveTrackRect,trackCenter)
     }
 
     /**

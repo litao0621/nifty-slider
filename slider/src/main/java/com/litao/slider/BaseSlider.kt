@@ -193,30 +193,30 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     abstract fun onStartTacking()
     abstract fun onStopTacking()
 
-    abstract fun onDrawBefore(canvas: Canvas, trackRect: RectF, yCenter: Float)
-    abstract fun onDrawAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+    abstract fun onDrawBefore(canvas: Canvas, trackRect: RectF, trackCenter: Float)
+    abstract fun onDrawAfter(canvas: Canvas, trackRect: RectF, trackCenter: Float)
 
     abstract fun onValueChanged(value: Float, fromUser: Boolean)
 
-    abstract fun dispatchDrawInactiveTrackBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
-    abstract fun drawInactiveTrackAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+    abstract fun dispatchDrawInactiveTrackBefore(canvas: Canvas, trackRect: RectF, trackCenter: Float): Boolean
+    abstract fun drawInactiveTrackAfter(canvas: Canvas, trackRect: RectF, trackCenter: Float)
 
     abstract fun dispatchDrawTrackBefore(
         canvas: Canvas,
         trackRect: RectF,
         inactiveTrackRect: RectF,
-        yCenter: Float
+        trackCenter: Float
     ): Boolean
 
-    abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, inactiveTrackRect: RectF, yCenter: Float)
+    abstract fun drawTrackAfter(canvas: Canvas, trackRect: RectF, inactiveTrackRect: RectF, trackCenter: Float)
 
-    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float): Boolean
-    abstract fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF,inactiveTrackRect: RectF, yCenter: Float)
+    abstract fun dispatchDrawSecondaryTrackBefore(canvas: Canvas, trackRect: RectF, inactiveTrackRect: RectF, trackCenter: Float): Boolean
+    abstract fun drawSecondaryTrackAfter(canvas: Canvas, trackRect: RectF, inactiveTrackRect: RectF, trackCenter: Float)
 
-    abstract fun dispatchDrawIndicatorsBefore(canvas: Canvas, trackRect: RectF, yCenter: Float): Boolean
+    abstract fun dispatchDrawIndicatorsBefore(canvas: Canvas, trackRect: RectF, trackCenter: Float): Boolean
     abstract fun dispatchDrawIndicatorBefore(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int): Boolean
     abstract fun drawIndicatorAfter(canvas: Canvas, trackRect: RectF, indicatorPoint: PointF, index:Int)
-    abstract fun drawIndicatorsAfter(canvas: Canvas, trackRect: RectF, yCenter: Float)
+    abstract fun drawIndicatorsAfter(canvas: Canvas, trackRect: RectF, trackCenter: Float)
 
 
 
