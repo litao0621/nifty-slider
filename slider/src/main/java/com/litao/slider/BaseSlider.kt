@@ -98,7 +98,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var scaledTouchSlop = 0
     private var touchDownX = 0f
     private var touchDownY = 0f
-    private var touchDownDiffValue = 0f
+    private var touchDownDiff = 0f
     private var isDragging = false
     private var isTackingStart = false
 
@@ -660,7 +660,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
             }
             val cy = if (isVertical()) {
-                paddingStart + trackInnerVPadding + thumbOffset + ((1 - percentValue(value)) * (trackHeight - thumbOffset * 2))
+                paddingTop + trackInnerVPadding + thumbOffset + ((1 - percentValue(value)) * (trackHeight - thumbOffset * 2))
             } else {
                 trackCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
             }
@@ -1652,10 +1652,24 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Get x-coordinates based on progress
+     */
+    private fun getCoordinateXByValue(value:Float):Float{
+        return (paddingStart + trackInnerHPadding + trackWidth * (1f- (value - valueFrom)/(valueTo - valueFrom)))
+    }
+
+    /**
+     * Get y-coordinates based on progress
+     */
+    private fun getCoordinateYByValue(value:Float):Float{
+       return (paddingTop + trackInnerVPadding + trackHeight * (1f- (value - valueFrom)/(valueTo - valueFrom)))
+    }
+
+    /**
      * Get the current progress value by the touch position
      */
-    private fun getTouchValue(event: MotionEvent): Float {
-        val touchPos = if (isVertical()) getTouchPosByY(event.y) else getTouchPosByX(event.x)
+    private fun getTouchValue(x: Float, y: Float): Float {
+        val touchPos = if (isVertical()) getTouchPosByY(y) else getTouchPosByX(x)
         val touchValue = getValueByTouchPos(touchPos)
         return touchValue
     }
@@ -1778,9 +1792,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun trackTouchEvent(event: MotionEvent) {
         val touchValue = if (isConsecutiveProgress) {
-            getTouchValue(event) - touchDownDiffValue
+            getTouchValue(event.x,event.y - touchDownDiff)
         } else {
-            getTouchValue(event)
+            getTouchValue(event.x,event.y)
         }
 
         if (this.value != touchValue) {
@@ -1825,8 +1839,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 touchDownX = currentX
                 touchDownY = currentY
 
-                val startTouchValue = getTouchValue(event)
-                touchDownDiffValue = startTouchValue - this.value
+                touchDownDiff = if (isVertical()){
+                    touchDownY - getCoordinateYByValue(this.value)
+                }else{
+                    touchDownX - getCoordinateXByValue(this.value)
+                }
                 if (isInVerticalScrollingContainer()) {
                     //在纵向滑动布局中不处理down事件，优先外层滑动
                 } else {

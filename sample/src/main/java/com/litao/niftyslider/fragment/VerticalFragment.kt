@@ -1,14 +1,21 @@
 package com.litao.niftyslider.fragment
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
 import com.litao.niftyslider.Data
 import com.litao.niftyslider.databinding.FragmentVerticalSliderBinding
+import com.litao.niftyslider.dp
 import com.litao.niftyslider.fragment.M3StyleDemoFragment.Companion.TAG
+import com.litao.slider.NiftySlider
+import com.litao.slider.effect.AnimationEffect
 
 /**
  * @author : litao
@@ -33,10 +40,42 @@ class VerticalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            niftySlider2.apply {
-                addOnIntValueChangeListener { slider, value, fromUser ->
-                    setThumbText(Data.weReadFontSizeMap[value].toString())
+            val thumbColor = ColorUtils.compositeColors(ColorUtils.setAlphaComponent(Color.WHITE, 0x55), Color.BLACK)
+            val trackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
+            val inactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
+
+            val animEffect = AnimationEffect(niftySlider2).apply {
+                srcTrackHeight = 3.dp
+                srcThumbHeight = 6.dp
+                srcThumbWidth = 6.dp
+                srcThumbRadius = 3.dp
+                srcThumbColor = thumbColor
+                srcTrackColor = trackColor
+                srcInactiveTrackColor = inactiveColor
+
+                targetTrackHeight = 12.dp
+                targetThumbHeight = 16.dp
+                targetThumbWidth = 8.dp
+                targetThumbRadius = 5.dp
+                targetThumbColor = Color.WHITE
+                targetTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0xDD)
+                targetInactiveTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
+
+                animationListener = object : AnimationEffect.OnAnimationChangeListener {
+                    override fun onEnd(slider: NiftySlider) {
+//                        Toast.makeText(requireContext(), "do something on animation end", Toast.LENGTH_SHORT).show()
+                    }
                 }
+
+                setInterpolator(FastOutLinearInInterpolator())
+            }
+//
+            niftySlider2.apply {
+                effect = animEffect
+                setTrackTintList(ColorStateList.valueOf(trackColor))
+                setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))
+                setThumbTintList(ColorStateList.valueOf(thumbColor))
+                setThumbShadowColor(Color.BLACK)
             }
 
         }
