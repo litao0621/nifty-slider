@@ -97,6 +97,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var lastTouchEvent: MotionEvent? = null
     private var scaledTouchSlop = 0
     private var touchDownX = 0f
+    private var touchDownY = 0f
     private var touchDownDiffValue = 0f
     private var isDragging = false
     private var isTackingStart = false
@@ -389,10 +390,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(
-            widthMeasureSpec,
-            MeasureSpec.makeMeasureSpec(viewHeight, MeasureSpec.EXACTLY)
-        )
+        if (isVertical()) {
+            super.onMeasure(
+                MeasureSpec.makeMeasureSpec(viewWidth, MeasureSpec.EXACTLY),
+                heightMeasureSpec
+            )
+        }else{
+            super.onMeasure(
+                widthMeasureSpec,
+                MeasureSpec.makeMeasureSpec(viewHeight, MeasureSpec.EXACTLY)
+            )
+        }
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -1628,7 +1636,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     /**
-     * 通过当前坐标获取滑动位置百分比
+     * Get the sliding position percentage based on the current x-coordinates
      */
     private fun getTouchPosByX(touchX: Float): Float {
         val progress = MathUtils.clamp((touchX - paddingStart - trackInnerHPadding) / trackWidth, 0f, 1f)
@@ -1636,10 +1644,18 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Get the sliding position percentage based on the current y-coordinates
+     */
+    private fun getTouchPosByY(touchY: Float): Float {
+        val progress = MathUtils.clamp((touchY - paddingTop - trackInnerVPadding) / trackHeight, 0f, 1f)
+        return 1 - progress
+    }
+
+    /**
      * Get the current progress value by the touch position
      */
     private fun getTouchValue(event: MotionEvent): Float {
-        val touchPos = getTouchPosByX(event.x)
+        val touchPos = if (isVertical()) getTouchPosByY(event.y) else getTouchPosByX(event.x)
         val touchValue = getValueByTouchPos(touchPos)
         return touchValue
     }
@@ -1799,6 +1815,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         val currentX = event.x
+        val currentY = event.y
 
         //Disable progress change via clicks
         val disableClickTouch = sliderTouchMode == MODE_DISABLE_CLICK_TOUCH
@@ -1806,6 +1823,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 touchDownX = currentX
+                touchDownY = currentY
+
                 val startTouchValue = getTouchValue(event)
                 touchDownDiffValue = startTouchValue - this.value
                 if (isInVerticalScrollingContainer()) {
@@ -1822,7 +1841,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
 
             MotionEvent.ACTION_MOVE -> {
-                val isInvalidMove = abs(currentX - touchDownX) < scaledTouchSlop
+                val isInvalidMove = if (isVertical()){
+                    abs(currentY - touchDownY) < scaledTouchSlop
+                }else{
+                    abs(currentX - touchDownX) < scaledTouchSlop
+                }
 
                 if (isInvalidMove && disableClickTouch && !isDragging) {
                     //Do nothing in MODE_DISABLE_CLICK_TOUCH mode
