@@ -5,7 +5,18 @@
         <attr name="android:valueFrom" />
         <attr name="android:valueTo" />
         <attr name="android:stepSize" />
+        <attr name="android:orientation">
+            <!-- Defines an horizontal widget. -->
+            <enum name="horizontal" value="0" />
+            <!-- Defines a vertical widget. -->
+            <enum name="vertical" value="1" />
+        </attr>
         <attr name="android:layout_height" format="dimension">
+            <enum name="fill_parent" value="-1" />
+            <enum name="match_parent" value="-1" />
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <attr name="android:layout_width" format="dimension">
             <enum name="fill_parent" value="-1" />
             <enum name="match_parent" value="-1" />
             <enum name="wrap_content" value="-2" />
@@ -18,6 +29,7 @@
         <attr name="ticksVisible" format="boolean" />
         <attr name="tickRadius" format="dimension" />
         <attr name="trackHeight" format="dimension"/>
+        <attr name="trackThickness" format="dimension"/>
         <attr name="trackInnerHPadding" format="dimension"/>
         <attr name="enableAutoHPadding" format="boolean"/>
         <attr name="trackInnerVPadding" format="dimension"/>

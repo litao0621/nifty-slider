@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider2"
+        android:layout_width="100dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="64dp"
+        android:padding="16dp"
+        android:stepSize="10"
+        android:valueFrom="0"
+        android:valueTo="100"
+        app:ticksVisible="true"
+        android:orientation="vertical"
+        app:tipViewVisible="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:hapticFeedbackEnabled="true"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

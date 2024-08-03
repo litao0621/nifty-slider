@@ -70,6 +70,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_13 -> {
                 IndicatorStyle1Fragment.newInstance()
             }
+            Data.ID_14 -> {
+                VerticalFragment.newInstance()
+            }
             else -> {
                 null
             }

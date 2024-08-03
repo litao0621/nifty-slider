@@ -91,7 +91,7 @@ class ChartEffect(private val slider: NiftySlider) : BaseEffect() {
         }
         //转化为正式y坐标
         fun getRealY(y: Float): Float {
-            return yCenter - y * heightFraction - slider.trackHeight / 2f
+            return yCenter - y * heightFraction - slider.trackThickness / 2f
         }
 
 

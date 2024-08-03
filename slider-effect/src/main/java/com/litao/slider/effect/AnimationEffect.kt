@@ -117,7 +117,7 @@ class AnimationEffect(private val slider: NiftySlider) : BaseEffect() {
     private fun updateTrackHeight(value: Float) {
         if (targetTrackHeight != UNSET) {
             val height = getValueByFraction(srcTrackHeight, targetTrackHeight, value).toInt()
-            slider.trackHeight = height
+            slider.trackThickness = height
         }
     }
 

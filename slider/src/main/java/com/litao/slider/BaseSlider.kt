@@ -46,6 +46,8 @@ import kotlin.math.roundToInt
 abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     View(context, attrs, defStyleAttr) {
 
+    private var mOrientation = HORIZONTAL
+
     private var trackPaint: Paint
     private var trackSecondaryPaint: Paint
     private var ticksPaint: Paint
@@ -146,13 +148,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     var tickVisible = false
 
-    //用户设置的高度
+    //用户设置的宽高
     private var sourceViewHeight = 0
+    private var sourceViewWidth = 0
 
     //修正后的真实高度，会根据thumb、thumb shadow、track的高度来进行调整
     private var viewHeight = 0
+    private var viewWidth = 0
 
-    var trackHeight = 0
+    var trackThickness = 0
         set(@IntRange(from = 0) value) {
             if (value != field) {
                 field = value
@@ -160,6 +164,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
+    var trackHeight = 0
     var trackWidth = 0
 
     private var progressAnimator = ValueAnimator()
@@ -177,6 +182,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         private const val MODE_NORMAL = 0
         private const val MODE_DISABLE_TOUCH = 1
         private const val MODE_DISABLE_CLICK_TOUCH = 2
+
+        const val HORIZONTAL: Int = 0
+        const val VERTICAL: Int = 1
 
     }
 
@@ -285,6 +293,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun processAttributes(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int) {
         context.withStyledAttributes(attrs, R.styleable.NiftySlider, defStyleAttr, R.style.Widget_NiftySlider) {
+            mOrientation = getInt(R.styleable.NiftySlider_android_orientation, HORIZONTAL)
             valueFrom = getFloat(R.styleable.NiftySlider_android_valueFrom, 0.0f)
             valueTo = getFloat(R.styleable.NiftySlider_android_valueTo, 1.0f)
             value = getFloat(R.styleable.NiftySlider_android_value, 0.0f)
@@ -294,7 +303,14 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             enableHapticFeedback = getBoolean(R.styleable.NiftySlider_android_hapticFeedbackEnabled, false)
 
             sourceViewHeight = getLayoutDimension(R.styleable.NiftySlider_android_layout_height, 0)
-            trackHeight = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
+            sourceViewWidth = getLayoutDimension(R.styleable.NiftySlider_android_layout_width, 0)
+            trackThickness = getDimensionPixelOffset(R.styleable.NiftySlider_trackThickness, 0)
+
+            //Compat older versions
+            if (trackThickness <= 0){
+                trackThickness = getDimensionPixelOffset(R.styleable.NiftySlider_trackHeight, 0)
+            }
+
             enableProgressAnim = getBoolean(R.styleable.NiftySlider_enableProgressAnim, false)
             isConsecutiveProgress = getBoolean(R.styleable.NiftySlider_isConsecutiveProgress, false)
 
@@ -381,7 +397,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
-        updateTrackWidth(w)
+        updateTrackSize(w,h)
         updateHaloHotspot()
     }
 
@@ -400,8 +416,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         haloPaint.alpha = HALO_ALPHA
     }
 
-    fun paddingDiff() = paddingTop - paddingBottom
+    fun paddingVDiff() = paddingTop - paddingBottom
+    fun paddingHDiff() = paddingStart - paddingEnd
 
+    fun isVertical() = mOrientation == VERTICAL
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -410,32 +428,45 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             validateDirtyData()
         }
 
-        val yCenter = measuredHeight / 2f + paddingDiff() / 2f
+        val yCenter = measuredHeight / 2f + paddingVDiff() / 2f
+        val xCenter = measuredWidth / 2f + paddingHDiff() / 2f
+        val trackCenter = if (isVertical()) xCenter else yCenter
         val width = measuredWidth
 
-        viewRectF.set(
-            0f + paddingStart + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            width.toFloat() - paddingEnd - trackInnerHPadding,
-            yCenter + trackHeight / 2f
-        )
+        viewRectF.apply {
+            if (isVertical()){
+                set(
+                    trackCenter - trackThickness / 2f,
+                    0f + paddingTop + trackInnerVPadding,
+                    trackCenter + trackThickness / 2f,
+                    height.toFloat() - paddingBottom - trackInnerVPadding
+                )
+            }else{
+                set(
+                    0f + paddingStart + trackInnerHPadding,
+                    trackCenter - trackThickness / 2f,
+                    width.toFloat() - paddingEnd - trackInnerHPadding,
+                    trackCenter + trackThickness / 2f
+                )
+            }
+        }
 
-        onDrawBefore(canvas, viewRectF, yCenter)
-        drawDebugArea(canvas, width, yCenter)
+        onDrawBefore(canvas, viewRectF, trackCenter)
+        drawDebugArea(canvas, trackCenter)
 
 
-        drawInactiveTrack(canvas, width, yCenter)
-        drawSecondaryTrack(canvas, width, yCenter)
-        drawTrack(canvas, width, yCenter)
-        drawTicks(canvas, trackWidth, yCenter)
+        drawInactiveTrack(canvas, trackCenter)
+        drawSecondaryTrack(canvas, trackCenter)
+        drawTrack(canvas, trackCenter)
+        drawTicks(canvas, trackCenter)
 
         if ((isDragging || isFocused) && isEnabled) {
             //仅在v23以下版本启用此逻辑
-            drawCompatHaloIfNeed(canvas, trackWidth, yCenter)
+            drawCompatHaloIfNeed(canvas, trackCenter)
         }
 
-        drawThumb(canvas, trackWidth, yCenter)
-        onDrawAfter(canvas, viewRectF, yCenter)
+        drawThumb(canvas, trackCenter)
+        onDrawAfter(canvas, viewRectF, trackCenter)
     }
 
     override fun invalidateDrawable(drawable: Drawable) {
@@ -457,13 +488,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         super.onDetachedFromWindow()
     }
 
-    private fun drawDebugArea(canvas: Canvas, width: Int, yCenter: Float) {
-        trackRectF.set(
-            0f + paddingStart + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            width.toFloat() - paddingEnd - trackInnerHPadding,
-            yCenter + trackHeight / 2f
-        )
+    private fun drawDebugArea(canvas: Canvas, yCenter: Float) {
         val offset = 1
         if (DEBUG_MODE) {
             debugPaint.color = Color.RED
@@ -491,17 +516,31 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             )
             debugPaint.color = Color.GREEN
             canvas.drawLine(
-                trackRectF.left,
+                viewRectF.left,
                 0f,
-                trackRectF.left,
+                viewRectF.left,
                 canvas.height.toFloat(),
                 debugPaint
             )
             canvas.drawLine(
-                trackRectF.right,
+                viewRectF.right,
                 0f,
-                trackRectF.right,
+                viewRectF.right,
                 canvas.height.toFloat(),
+                debugPaint
+            )
+            canvas.drawLine(
+                0f,
+                viewRectF.top,
+                canvas.width.toFloat(),
+                viewRectF.top,
+                debugPaint
+            )
+            canvas.drawLine(
+                0f,
+                viewRectF.bottom,
+                canvas.width.toFloat(),
+                viewRectF.bottom,
                 debugPaint
             )
 
@@ -512,13 +551,13 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * draw active track
      * 需要考虑如果使用半透明颜色时会与下层[trackColorInactive]颜色进行叠加，需注意叠加后的效果是否满足要求
      */
-    private fun drawTrack(canvas: Canvas, width: Int, yCenter: Float) {
+    private fun drawTrack(canvas: Canvas, trackCenter: Float) {
 
-        updateTrackRect(yCenter = yCenter, progress = percentValue(value))
+        updateTrackRect(trackCenter = trackCenter, progress = percentValue(value))
 
-        if (!dispatchDrawTrackBefore(canvas, trackRectF, inactiveTrackRectF, yCenter)) {
+        if (!dispatchDrawTrackBefore(canvas, trackRectF, inactiveTrackRectF, trackCenter)) {
 
-            val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+            val cornerRadius = if (trackCornerRadius == -1) trackThickness / 2f else trackCornerRadius.toFloat()
 
             if (value > valueFrom) {
                 canvas.drawRoundRect(
@@ -530,19 +569,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
-        drawTrackAfter(canvas, trackRectF, inactiveTrackRectF, yCenter)
+        drawTrackAfter(canvas, trackRectF, inactiveTrackRectF, trackCenter)
     }
 
     /**
      * draw secondary track
      * 需要考虑如果使用半透明颜色时会与下层[trackSecondaryColor]颜色进行叠加，需注意叠加后的效果是否满足要求
      */
-    private fun drawSecondaryTrack(canvas: Canvas, width: Int, yCenter: Float) {
+    private fun drawSecondaryTrack(canvas: Canvas, trackCenter: Float) {
 
-        updateTrackRect(yCenter = yCenter, progress = percentValue(secondaryValue))
+        updateTrackRect(trackCenter = trackCenter, progress = percentValue(secondaryValue))
 
-        if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF,inactiveTrackRectF, yCenter)) {
-            val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+        if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF,inactiveTrackRectF, trackCenter)) {
+            val cornerRadius = if (trackCornerRadius == -1) trackThickness / 2f else trackCornerRadius.toFloat()
 
             if (secondaryValue > valueFrom) {
                 canvas.drawRoundRect(
@@ -554,26 +593,37 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
         }
 
-        drawSecondaryTrackAfter(canvas, trackRectF,inactiveTrackRectF, yCenter)
+        drawSecondaryTrackAfter(canvas, trackRectF,inactiveTrackRectF, trackCenter)
     }
 
     /**
      * draw inactive track
      */
-    private fun drawInactiveTrack(canvas: Canvas, width: Int, yCenter: Float) {
-        inactiveTrackRectF.set(
-            0f + paddingLeft + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            width.toFloat() - paddingRight - trackInnerHPadding,
-            yCenter + trackHeight / 2f
-        )
+    private fun drawInactiveTrack(canvas: Canvas, trackCenter: Float) {
+        inactiveTrackRectF.apply {
+            if (isVertical()){
+                set(
+                    trackCenter - trackThickness / 2f,
+                    0f + paddingTop + trackInnerVPadding,
+                    trackCenter + trackThickness / 2f,
+                    measuredHeight.toFloat() - paddingBottom - trackInnerVPadding
+                )
+            }else{
+                set(
+                    0f + paddingStart + trackInnerHPadding,
+                    trackCenter - trackThickness / 2f,
+                    measuredWidth.toFloat() - paddingEnd - trackInnerHPadding,
+                    trackCenter + trackThickness / 2f
+                )
+            }
+        }
 
-        val progress = if (isRtl()) 0f else 1f
-        updateTrackRect(yCenter = yCenter, progress = progress)
+        val progress = if (isRtl() && !isVertical()) 0f else 1f
+        updateTrackRect(trackCenter = trackCenter, progress = progress)
 
-        if (!dispatchDrawInactiveTrackBefore(canvas, trackRectF, yCenter)) {
+        if (!dispatchDrawInactiveTrackBefore(canvas, trackRectF, trackCenter)) {
 
-            val cornerRadius = if (trackCornerRadius == -1) trackHeight / 2f else trackCornerRadius.toFloat()
+            val cornerRadius = if (trackCornerRadius == -1) trackThickness / 2f else trackCornerRadius.toFloat()
 
             canvas.drawRoundRect(
                 trackRectF,
@@ -583,42 +633,72 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             )
         }
 
-        drawInactiveTrackAfter(canvas, trackRectF, yCenter)
+        drawInactiveTrackAfter(canvas, trackRectF, trackCenter)
     }
 
     /**
      * Draw thumb
      * 在[setThumbWithinTrackBounds]模式下，thumb会向内缩进[thumbRadius]距离
      */
-    private fun drawThumb(canvas: Canvas, width: Int, yCenter: Float) {
+    private fun drawThumb(canvas: Canvas, trackCenter: Float) {
 
         if (!thumbAnimation.isThumbHidden()) {
 
             val thumbDrawable = customThumbDrawable ?: defaultThumbDrawable
 
-            val cx = paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (width - thumbOffset * 2))
-            val cy = yCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
-            val tx = cx - thumbDrawable.bounds.width() / 2f
-            if (!dispatchDrawThumbBefore(canvas, cx, yCenter)) {
-                canvas.withTranslation(tx, cy) {
+            val cx = if (isVertical()) {
+                trackCenter - (thumbDrawable.bounds.width() / 2f)
+            } else {
+                paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
+            }
+            val cy = if (isVertical()) {
+                paddingStart + trackInnerVPadding + thumbOffset + ((1 - percentValue(value)) * (trackHeight - thumbOffset * 2))
+            } else {
+                trackCenter - (thumbDrawable.bounds.height() / 2f) + thumbVOffset
+            }
+
+            val tx = if (isVertical()) {
+                cx
+            } else {
+                cx - thumbDrawable.bounds.width() / 2f
+            }
+
+            val ty = if (isVertical()) {
+                cy - thumbDrawable.bounds.width() / 2f
+            } else {
+                cy
+            }
+
+
+            if (!dispatchDrawThumbBefore(canvas, cx, trackCenter)) {
+                canvas.withTranslation(tx, ty) {
                     thumbDrawable.draw(canvas)
+                }
+
+                val textX = if (isVertical()) {
+                    trackCenter
+                } else {
+                    cx
+                }
+                val textY = if (isVertical()) {
+                    cy - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
+                } else {
+                    trackCenter - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
                 }
 
                 //draw thumb text if needed
                 thumbText?.let {
-                    val baseline =
-                        yCenter - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
                     canvas.drawText(
                         it,
-                        cx,
-                        baseline,
+                        textX,
+                        textY,
                         thumbTextPaint
                     )
                 }
 
             }
 
-            drawThumbAfter(canvas, cx, yCenter)
+            drawThumbAfter(canvas, cx, trackCenter)
         }
     }
 
@@ -626,17 +706,24 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * Draw compat halo
      * 绘制滑块的光环效果
      */
-    private fun drawCompatHaloIfNeed(canvas: Canvas, width: Int, yCenter: Float) {
+    private fun drawCompatHaloIfNeed(canvas: Canvas, trackCenter: Float) {
         if (shouldDrawCompatHalo() && enableDrawHalo) {
-            val centerX =
-                paddingStart + trackInnerHPadding + thumbOffset + percentValue(value) * (width - thumbOffset * 2)
-
+            val cx = if (isVertical()){
+                trackCenter
+            }else{
+                paddingStart + trackInnerHPadding + thumbOffset + percentValue(value) * (trackWidth - thumbOffset * 2)
+            }
+            val cy = if (isVertical()){
+                paddingTop + trackInnerVPadding + thumbOffset + (1 - percentValue(value)) * (trackHeight - thumbOffset * 2)
+            }else{
+                trackCenter
+            }
             //允许光环绘制到边界以外
             if (parent is ViewGroup) {
                 (parent as ViewGroup).clipChildren = false
             }
 
-            canvas.drawCircle(centerX, yCenter, haloRadius.toFloat(), haloPaint)
+            canvas.drawCircle(cx, cy, haloRadius.toFloat(), haloPaint)
         }
     }
 
@@ -645,29 +732,46 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     /**
      * draw tick
      */
-    private fun drawTicks(canvas: Canvas, width: Int, yCenter: Float) {
+    private fun drawTicks(canvas: Canvas, trackCenter: Float) {
         if (enableStepMode() && tickVisible) {
-            val drawWidth = width - thumbOffset * 2 - tickRadius * 2
+
+            val trackSize = if (isVertical()) trackHeight else trackWidth
+            val drawSize = trackSize - thumbOffset * 2 - tickRadius * 2
+
             val tickCount: Int = ((valueTo - valueFrom) / stepSize + 1).toInt()
-            val stepWidth = drawWidth / (tickCount - 1).toFloat()
-            val activeWidth = percentValue(value) * width + paddingStart + trackInnerHPadding + thumbOffset
+            val stepSize = drawSize / (tickCount - 1).toFloat()
+            val activeSize = if (isVertical()){
+                percentValue(value) * height + paddingTop + trackInnerVPadding + thumbOffset
+            }else{
+                percentValue(value) * trackWidth + paddingStart + trackInnerHPadding + thumbOffset
+            }
 
-
-            if (!dispatchDrawIndicatorsBefore(canvas, trackRectF, yCenter)) {
+            if (!dispatchDrawIndicatorsBefore(canvas, trackRectF, trackCenter)) {
 
                 for (i in 0 until tickCount) {
-                    val starLeft = paddingStart + trackInnerHPadding + thumbOffset + tickRadius
-                    val cx = starLeft + i * stepWidth
 
-                    val circlePaint = if (cx <= activeWidth) {
+
+                    val start = if (isVertical()){
+                        paddingTop + trackInnerVPadding + thumbOffset + tickRadius
+                    } else{
+                        paddingStart + trackInnerHPadding + thumbOffset + tickRadius
+                    }
+                    val center = start + i * stepSize
+
+                    var circlePaint = if (center <= activeSize) {
                         ticksPaint
                     } else {
                         inactiveTicksPaint
                     }
 
                     tickPoint.apply {
-                        x = starLeft + i * stepWidth
-                        y = yCenter
+                        if (isVertical()){
+                            x = trackCenter
+                            y = start + i * stepSize
+                        }else{
+                            x = start + i * stepSize
+                            y = trackCenter
+                        }
                     }
 
                     if (!dispatchDrawIndicatorBefore(canvas, trackRectF, tickPoint,i)) {
@@ -683,7 +787,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 }
             }
 
-            drawIndicatorsAfter(canvas, trackRectF, yCenter)
+            drawIndicatorsAfter(canvas, trackRectF, trackCenter)
         }
     }
 
@@ -696,17 +800,26 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
     }
 
-    private fun updateTrackRect(yCenter: Float,progress:Float){
+    private fun updateTrackRect(trackCenter: Float, progress:Float){
         val trackOffset = if(isRtl()) 0 else thumbOffset * 2
-
-        trackRectF.set(
-            0f + paddingStart + trackInnerHPadding,
-            yCenter - trackHeight / 2f,
-            paddingStart + trackInnerHPadding + trackOffset + (trackWidth - thumbOffset * 2) * progress,
-            yCenter + trackHeight / 2f
-        )
-
-        if (isRtl()) {
+        trackRectF.apply {
+            if (isVertical()){
+                set(
+                    trackCenter - trackThickness / 2f,
+                    paddingTop + trackInnerVPadding + trackOffset + (trackHeight - thumbOffset * 2f) * (1 - progress),
+                    trackCenter + trackThickness / 2f,
+                    paddingTop + trackInnerVPadding + trackOffset + (trackHeight - thumbOffset * 2f)
+                )
+            }else{
+                set(
+                    0f + paddingStart + trackInnerHPadding,
+                    trackCenter - trackThickness / 2f,
+                    paddingStart + trackInnerHPadding + trackOffset + (trackWidth - thumbOffset * 2) * progress,
+                    trackCenter + trackThickness / 2f
+                )
+            }
+        }
+        if (isRtl() && !isVertical()) {
             val right = trackRectF.right
             trackRectF.left = right
             trackRectF.right = width.toFloat() - paddingEnd - trackInnerHPadding
@@ -765,7 +878,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     fun updateViewLayout() {
-        updateTrackWidth(width)
+        updateTrackSize(width,height)
         if (viewHeightChanged()) {
             requestLayout()
         } else {
@@ -779,28 +892,43 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * 检查高度是否发生变化，变化后更新当前记录高度
      */
     fun viewHeightChanged(): Boolean {
-        val topBottomPadding = paddingTop + paddingBottom
-        val minHeightWithTrack = topBottomPadding + trackHeight
-        val thumbHeight = customThumbDrawable?.bounds?.height() ?: defaultThumbDrawable.bounds.height()
+        var isChanged = false
 
-        val minHeightWithThumb = topBottomPadding + thumbHeight + trackInnerVPadding * 2
-
-        val tempHeight = max(minHeightWithTrack, minHeightWithThumb)
-
-        return if (tempHeight == viewHeight) {
-            false
-        } else {
-            viewHeight = max(tempHeight, sourceViewHeight)
-            true
+        val leftRightPadding = paddingStart + paddingEnd
+        val minWidthWithTrack = leftRightPadding + trackThickness
+        val thumbWidth = customThumbDrawable?.bounds?.width() ?: defaultThumbDrawable.bounds.width()
+        val minWidthWithThumb = leftRightPadding + thumbWidth + trackInnerHPadding * 2
+        val tempWidth = max(minWidthWithTrack, minWidthWithThumb)
+        if (tempWidth != viewWidth) {
+            viewWidth = max(tempWidth, sourceViewWidth)
+            isChanged = true
         }
+
+        val topBottomPadding = paddingTop + paddingBottom
+        val minHeightWithTrack = topBottomPadding + trackThickness
+        val thumbHeight = customThumbDrawable?.bounds?.height() ?: defaultThumbDrawable.bounds.height()
+        val minHeightWithThumb = topBottomPadding + thumbHeight + trackInnerVPadding * 2
+        val tempHeight = max(minHeightWithTrack, minHeightWithThumb)
+        if (tempHeight != viewHeight) {
+            viewHeight = max(tempHeight, sourceViewHeight)
+            isChanged = true
+        }
+
+        return isChanged
     }
 
     /**
      * update track real draw width
      * 更新滑轨真实绘制宽度，真实宽度不仅受左右padding影响，还会受内部[trackInnerHPadding]影响
      */
-    fun updateTrackWidth(viewWidth: Int) {
-        trackWidth = max(viewWidth - paddingStart - paddingEnd - trackInnerHPadding * 2, 0)
+    fun updateTrackSize(w: Int,h:Int) {
+        if (isVertical()){
+            trackWidth = trackThickness
+            trackHeight = max(h - paddingTop - paddingBottom - trackInnerVPadding * 2, 0)
+        }else {
+            trackWidth = max(w - paddingStart - paddingEnd - trackInnerHPadding * 2, 0)
+            trackHeight = trackThickness
+        }
     }
 
 
@@ -1424,19 +1552,26 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         return colorStateList.getColorForState(drawableState, colorStateList.defaultColor)
     }
 
-
     /**
      * Get the thumb center x-coordinates
      */
     fun getThumbCenterX(): Float {
-        return paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
+        return if (isVertical()) {
+            measuredWidth / 2f + paddingHDiff() / 2f
+        } else {
+            paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2))
+        }
     }
 
     /**
      * Get the thumb center y-coordinates
      */
     fun getThumbCenterY(): Float {
-        return measuredHeight / 2f + paddingDiff() / 2f + thumbVOffset
+        return if (isVertical()) {
+            paddingTop + trackInnerVPadding + thumbOffset + ((1 - percentValue(value)) * (trackHeight - thumbOffset * 2))
+        } else {
+            measuredHeight / 2f + paddingVDiff() / 2f + thumbVOffset
+        }
     }
 
     /**
@@ -1600,9 +1735,17 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (enableDrawHalo) {
             if (!shouldDrawCompatHalo() && measuredWidth > 0) {
                 if (background is RippleDrawable) {
-                    val haloX =
+                    val haloX = if (isVertical()){
+                        viewWidth / 2 + paddingHDiff()/2
+                    }else{
                         (paddingStart + trackInnerHPadding + thumbOffset + (percentValue(value) * (trackWidth - thumbOffset * 2)).toInt())
-                    val haloY = viewHeight / 2 + paddingDiff() / 2
+                    }
+
+                    val haloY = if (isVertical()){
+                        (paddingTop + trackInnerVPadding + thumbOffset + ((1 - percentValue(value)) * (trackHeight - thumbOffset * 2)).toInt())
+                    }else {
+                        viewHeight / 2 + paddingVDiff() / 2
+                    }
 
                     DrawableCompat.setHotspotBounds(
                         background,
