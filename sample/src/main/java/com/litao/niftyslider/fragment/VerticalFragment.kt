@@ -40,12 +40,12 @@ class VerticalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(binding) {
-            val thumbColor = ColorUtils.compositeColors(ColorUtils.setAlphaComponent(Color.WHITE, 0x55), Color.BLACK)
-            val trackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
-            val inactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
+            val thumbColor = Color.WHITE
+            val trackColor = Color.parseColor("#2962ff")
+            val inactiveColor = Color.parseColor("#EEEEEE")
 
-            val animEffect = AnimationEffect(niftySlider2).apply {
-                srcTrackHeight = 16.dp
+            val animEffect = AnimationEffect(niftySlider).apply {
+                srcTrackHeight = 6.dp
                 srcThumbHeight = 18.dp
                 srcThumbWidth = 18.dp
                 srcThumbRadius = 9.dp
@@ -54,12 +54,12 @@ class VerticalFragment : Fragment() {
                 srcInactiveTrackColor = inactiveColor
 
                 targetTrackHeight = 24.dp
-                targetThumbHeight = 28.dp
-                targetThumbWidth = 28.dp
-                targetThumbRadius = 14.dp
-                targetThumbColor = Color.WHITE
-                targetTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0xDD)
-                targetInactiveTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
+                targetThumbHeight = 22.dp
+                targetThumbWidth = 22.dp
+                targetThumbRadius = 11.dp
+                targetThumbColor = thumbColor
+                targetTrackColor = trackColor
+                targetInactiveTrackColor = inactiveColor
 
                 animationListener = object : AnimationEffect.OnAnimationChangeListener {
                     override fun onEnd(slider: NiftySlider) {
@@ -70,7 +70,7 @@ class VerticalFragment : Fragment() {
                 setInterpolator(FastOutLinearInInterpolator())
             }
 //
-            niftySlider2.apply {
+            niftySlider.apply {
                 effect = animEffect
                 setTrackTintList(ColorStateList.valueOf(trackColor))
                 setTrackInactiveTintList(ColorStateList.valueOf(inactiveColor))

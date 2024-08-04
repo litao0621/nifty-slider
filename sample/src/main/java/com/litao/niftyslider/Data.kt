@@ -38,7 +38,7 @@ object Data {
         StyleModel(ID_10, "YouTube Style"),
         StyleModel(ID_11,"YouTube Chart Style"),
         StyleModel(ID_13,"Indicator Style 1"),
-        StyleModel(ID_14,"Vertical"),
+        StyleModel(ID_14,"Vertical Mode"),
 
 //        StyleModel(ID_12,"Custom Thumb Drawable2")
 
