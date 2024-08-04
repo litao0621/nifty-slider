@@ -129,6 +129,13 @@ dependencies {
   [查看样例](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/IndicatorStyle1Fragment.kt)
 <br/>
 
+### 11. 纵向模式
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/vertical%20mode.gif" width="480">
+
+  [View Sample](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/VerticalFragment.kt)
+<br/>
+
+
 
 # 参与项目
 欢迎共同完善项目，有问题随时提交Issues
