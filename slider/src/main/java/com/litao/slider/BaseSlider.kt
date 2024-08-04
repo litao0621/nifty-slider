@@ -748,8 +748,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             val tickCount: Int = ((valueTo - valueFrom) / stepSize + 1).toInt()
             val stepSize = drawSize / (tickCount - 1).toFloat()
-            val activeSize = if (isVertical()){
-                percentValue(value) * height + paddingTop + trackInnerVPadding + thumbOffset
+
+            val thumbPos = if (isVertical()){
+                (1 - percentValue(value)) * height + paddingTop + trackInnerVPadding + thumbOffset
             }else{
                 percentValue(value) * trackWidth + paddingStart + trackInnerHPadding + thumbOffset
             }
@@ -766,10 +767,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     }
                     val center = start + i * stepSize
 
-                    var circlePaint = if (center <= activeSize) {
-                        ticksPaint
+                    var circlePaint = if (center <= thumbPos) {
+                        if (isVertical()) inactiveTicksPaint else ticksPaint
                     } else {
-                        inactiveTicksPaint
+                        if (isVertical()) ticksPaint else inactiveTicksPaint
                     }
 
                     tickPoint.apply {
