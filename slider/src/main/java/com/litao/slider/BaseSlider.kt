@@ -814,7 +814,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             if (isVertical()){
                 set(
                     trackCenter - trackThickness / 2f,
-                    paddingTop + trackInnerVPadding + trackOffset + (trackHeight - thumbOffset * 2f) * (1 - progress),
+                    paddingTop + trackInnerVPadding + ((1 - progress) * (trackHeight - thumbOffset * 2)),
                     trackCenter + trackThickness / 2f,
                     paddingTop + trackInnerVPadding + trackOffset + (trackHeight - thumbOffset * 2f)
                 )
@@ -988,6 +988,38 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     }
 
     /**
+     * Sets whether the auto changed horizontal inner padding when no values are set
+     *
+     * @see R.attr.enableAutoHPadding
+     */
+    fun setEnableAutoHPadding(enable: Boolean) {
+        this.enableAutoHPadding = enable
+    }
+
+    /**
+     * Sets the vertical inner padding of the track.
+     * 主要处理thumb阴影超出部分的视图，使thumb展示正常
+     *
+     * @see R.attr.trackInnerVPadding
+     *
+     * @param padding track左右的padding值，
+     */
+    fun setTrackInnerVPadding(padding: Int) {
+        val innerVPadding = if (padding == -1) {
+            ceil(thumbElevation).toInt()
+        } else {
+            padding
+        }
+
+        if (innerVPadding == trackInnerVPadding) {
+            return
+        }
+
+        trackInnerVPadding = innerVPadding
+        updateViewLayout()
+    }
+
+    /**
      * Sets the horizontal inner padding of the track.
      * 主要处理thumb超出部分的视图，使thumb展示正常
      * 也可以使用 [BaseSlider.setThumbWithinTrackBounds] 来将thumb直接控制在track内部
@@ -1018,39 +1050,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         }
 
         trackInnerHPadding = innerHPadding
-        updateViewLayout()
-    }
-
-
-    /**
-     * Sets whether the auto changed horizontal inner padding when no values are set
-     *
-     * @see R.attr.enableAutoHPadding
-     */
-    fun setEnableAutoHPadding(enable: Boolean) {
-        this.enableAutoHPadding = enable
-    }
-
-    /**
-     * Sets the vertical inner padding of the track.
-     * 主要处理thumb阴影超出部分的视图，使thumb展示正常
-     *
-     * @see R.attr.trackInnerVPadding
-     *
-     * @param padding track左右的padding值，
-     */
-    fun setTrackInnerVPadding(padding: Int) {
-        val innerVPadding = if (padding == -1) {
-            ceil(thumbElevation).toInt()
-        } else {
-            padding
-        }
-
-        if (innerVPadding == trackInnerVPadding) {
-            return
-        }
-
-        trackInnerVPadding = innerVPadding
         updateViewLayout()
     }
 
@@ -1655,7 +1654,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * Get x-coordinates based on progress
      */
     private fun getCoordinateXByValue(value:Float):Float{
-        return (paddingStart + trackInnerHPadding + trackWidth * (1f- (value - valueFrom)/(valueTo - valueFrom)))
+        return (paddingStart + trackInnerHPadding + trackWidth * ((value - valueFrom)/(valueTo - valueFrom)))
     }
 
     /**
@@ -1792,7 +1791,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
     private fun trackTouchEvent(event: MotionEvent) {
         val touchValue = if (isConsecutiveProgress) {
-            getTouchValue(event.x,event.y - touchDownDiff)
+            getTouchValue(event.x - touchDownDiff,event.y - touchDownDiff)
         } else {
             getTouchValue(event.x,event.y)
         }

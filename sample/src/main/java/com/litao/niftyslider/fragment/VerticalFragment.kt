@@ -45,18 +45,18 @@ class VerticalFragment : Fragment() {
             val inactiveColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x11)
 
             val animEffect = AnimationEffect(niftySlider2).apply {
-                srcTrackHeight = 3.dp
-                srcThumbHeight = 6.dp
-                srcThumbWidth = 6.dp
-                srcThumbRadius = 3.dp
+                srcTrackHeight = 16.dp
+                srcThumbHeight = 18.dp
+                srcThumbWidth = 18.dp
+                srcThumbRadius = 9.dp
                 srcThumbColor = thumbColor
                 srcTrackColor = trackColor
                 srcInactiveTrackColor = inactiveColor
 
-                targetTrackHeight = 12.dp
-                targetThumbHeight = 16.dp
-                targetThumbWidth = 8.dp
-                targetThumbRadius = 5.dp
+                targetTrackHeight = 24.dp
+                targetThumbHeight = 28.dp
+                targetThumbWidth = 28.dp
+                targetThumbRadius = 14.dp
                 targetThumbColor = Color.WHITE
                 targetTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0xDD)
                 targetInactiveTrackColor = ColorUtils.setAlphaComponent(Color.WHITE, 0x33)
