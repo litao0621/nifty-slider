@@ -123,6 +123,13 @@ dependencies {
   [查看样例](https://github.com/litao0621/nifty-slider/blob/main/simple/src/main/java/com/litao/niftyslider/fragment/YouTubeChartDemoFragment.kt)
 <br/>
 
+### 10. Effect with issues [#13](https://github.com/litao0621/nifty-slider/issues/13)
+<img src="https://github.com/litao0621/nifty-slider/blob/main/art/effect_issues_13.gif" width="480">
+
+  [查看样例](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/IndicatorStyle1Fragment.kt)
+<br/>
+
+
 # 参与项目
 欢迎共同完善项目，有问题随时提交Issues
 
