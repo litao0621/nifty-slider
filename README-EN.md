@@ -121,7 +121,7 @@ dependencies {
   [View Sample](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/IndicatorStyle1Fragment.kt)
 <br/>
 
-### 10. Vertical Mode
+### 11. Vertical Mode
 <img src="https://github.com/litao0621/nifty-slider/blob/main/art/vertical%20mode.gif" width="480">
 
   [View Sample](https://github.com/litao0621/nifty-slider/blob/main/sample/src/main/java/com/litao/niftyslider/fragment/VerticalFragment.kt)
