@@ -11,6 +11,8 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.core.graphics.minus
+import androidx.core.graphics.toRect
 import com.litao.slider.Utils
 import kotlin.math.min
 
@@ -65,6 +67,9 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
 
     var elevation = 0f
 
+    var thumbIcon: Drawable? = null
+    var thumbIconSize = -1
+
     init {
         thumbPaint.apply {
             style = Paint.Style.FILL
@@ -113,8 +118,36 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
         if (isSupportStroke()) {
             canvas.drawRoundRect(rectF, radius, radius, strokePaint)
         }
+
+        drawIconIfNeed(canvas)
     }
 
+    private fun drawTextIfNeed(canvas: Canvas){
+
+    }
+
+    private fun drawIconIfNeed(canvas: Canvas) {
+        if (thumbIcon != null) {
+            val iconRect = rectF.toRect()
+            val sizeLimit = min(iconRect.width(), iconRect.height())
+            var iconSize = if (thumbIconSize == -1) sizeLimit / 2 else thumbIconSize
+
+            if (iconSize > sizeLimit) {
+                iconSize = sizeLimit
+            } else {
+                val offset = (sizeLimit - iconSize) / 2
+                iconRect.set(
+                    iconRect.left + offset,
+                    iconRect.top + offset,
+                    iconRect.right - offset,
+                    iconRect.bottom - offset
+                )
+            }
+
+            thumbIcon?.bounds = iconRect
+            thumbIcon?.draw(canvas)
+        }
+    }
 
     /**
      * If the drawable size is too small, it may cause display issues.

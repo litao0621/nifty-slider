@@ -75,6 +75,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
     private var thumbText: String? = null
+    private var thumbIcon: Drawable? = null
+    private var thumbIconSize = UNSET
     private val thumbAnimation = ThumbValueAnimation()
 
     private var enableDrawHalo = true
@@ -372,6 +374,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbStrokeColor(getColorStateList(R.styleable.NiftySlider_thumbStrokeColor))
             setThumbStrokeWidth(getDimension(R.styleable.NiftySlider_thumbStrokeWidth, 0f))
             setThumbText(getString(R.styleable.NiftySlider_thumbText) ?: "")
+            setThumbIcon(getDrawable(R.styleable.NiftySlider_thumbIcon))
+            setThumbIconSize(getDimensionPixelOffset(R.styleable.NiftySlider_thumbIconSize, UNSET))
             setThumbTextTintList(
                 getColorStateList(R.styleable.NiftySlider_thumbTextColor) ?: ColorStateList.valueOf(
                     Color.WHITE
@@ -1174,6 +1178,32 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     fun setThumbText(text: String?) {
         if (this.thumbText != text) {
             this.thumbText = text
+            postInvalidate()
+        }
+    }
+
+    /**
+     * Sets the icon of the thumb
+     *
+     * @see R.attr.thumbIcon
+     */
+    fun setThumbIcon(icon: Drawable?) {
+        if (this.thumbIcon != icon) {
+            this.thumbIcon = icon
+            defaultThumbDrawable.thumbIcon = icon
+            postInvalidate()
+        }
+    }
+
+    /**
+     * Sets the icon size of the thumb
+     *
+     * @see R.attr.thumbIconSize
+     */
+    fun setThumbIconSize(size: Int) {
+        if (this.thumbIconSize != size) {
+            this.thumbIconSize = size
+            defaultThumbDrawable.thumbIconSize = size
             postInvalidate()
         }
     }
