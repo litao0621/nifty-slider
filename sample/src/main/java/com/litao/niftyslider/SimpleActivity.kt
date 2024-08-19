@@ -73,6 +73,9 @@ class SimpleActivity : AppCompatActivity() {
             Data.ID_14 -> {
                 VerticalFragment.newInstance()
             }
+            Data.ID_15 -> {
+                SlidingVerificationDemoFragment.newInstance()
+            }
             else -> {
                 null
             }

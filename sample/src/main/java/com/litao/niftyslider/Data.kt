@@ -23,6 +23,7 @@ object Data {
     const val ID_12 = 12
     const val ID_13 = 13
     const val ID_14 = 14
+    const val ID_15 = 15
 
     val styleList = mutableListOf(
         StyleModel(ID_1, "Basics Demo"),
@@ -39,6 +40,7 @@ object Data {
         StyleModel(ID_11,"YouTube Chart Style"),
         StyleModel(ID_13,"Indicator Style 1"),
         StyleModel(ID_14,"Vertical Mode"),
+        StyleModel(ID_15,"Sliding Verification"),
 
 //        StyleModel(ID_12,"Custom Thumb Drawable2")
 

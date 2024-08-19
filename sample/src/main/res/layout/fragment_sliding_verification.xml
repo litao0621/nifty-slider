@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
+
+
+
+    <com.litao.slider.NiftySlider
+        android:id="@+id/nifty_slider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:value="0.0"
+        app:trackHeight="48dp"
+        app:thumbRadius="8dp"
+        app:thumbWidth="48dp"
+        app:thumbHeight="48dp"
+        app:trackCornersRadius="8dp"
+        app:thumbWithinTrackBounds="true"
+        app:trackColorInactive="#EEEEEE"
+        app:sliderTouchMode="disableClickTouch"
+        app:trackColor="#3D5AFE"
+        app:enableDrawHalo="false"
+        app:thumbColor="@color/white"
+        app:thumbIcon="@drawable/avg_arrow_next_right"
+        app:thumbIconTintColor="#AAAAAA"
+        app:thumbIconSize="24dp"
+        app:thumbShadowColor="@color/we_read_thumb_shadow_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
