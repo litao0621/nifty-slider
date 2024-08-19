@@ -69,8 +69,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private val defaultThumbDrawable = DefaultThumbDrawable()
     private var customThumbDrawable: Drawable? = null
 
-    private var thumbWidth = -1
-    private var thumbHeight = -1
+    private var thumbWidth = UNSET
+    private var thumbHeight = UNSET
     private var thumbVOffset = 0
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
@@ -91,7 +91,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var trackInnerHPadding = 0
     private var enableAutoHPadding = true
     private var trackInnerVPadding = 0
-    private var trackCornerRadius = -1
+    private var trackCornerRadius = UNSET
 
 
     private var lastTouchEvent: MotionEvent? = null
@@ -180,6 +180,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     companion object {
         var DEBUG_MODE = false
 
+        const val UNSET = -1
+
         private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
 
         private const val HALO_ALPHA = 63
@@ -191,6 +193,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         const val HORIZONTAL: Int = 0
         const val VERTICAL: Int = 1
+
+
 
     }
 
@@ -354,8 +358,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             )
 
 
-            val thumbW = getDimensionPixelOffset(R.styleable.NiftySlider_thumbWidth, -1)
-            val thumbH = getDimensionPixelOffset(R.styleable.NiftySlider_thumbHeight, -1)
+            val thumbW = getDimensionPixelOffset(R.styleable.NiftySlider_thumbWidth, UNSET)
+            val thumbH = getDimensionPixelOffset(R.styleable.NiftySlider_thumbHeight, UNSET)
 
             setThumbTintList(getColorStateListOrThrow(R.styleable.NiftySlider_thumbColor))
             thumbRadius = getDimensionPixelOffset(R.styleable.NiftySlider_thumbRadius, 0)
@@ -377,9 +381,9 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbTextBold(getBoolean(R.styleable.NiftySlider_thumbTextBold, false))
 
             setEnableAutoHPadding(getBoolean(R.styleable.NiftySlider_enableAutoHPadding, true))
-            setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, -1))
-            setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding, -1))
-            setTrackCornersRadius(getDimensionPixelOffset(R.styleable.NiftySlider_trackCornersRadius, -1))
+            setTrackInnerHPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerHPadding, UNSET))
+            setTrackInnerVPadding(getDimensionPixelOffset(R.styleable.NiftySlider_trackInnerVPadding, UNSET))
+            setTrackCornersRadius(getDimensionPixelOffset(R.styleable.NiftySlider_trackCornersRadius, UNSET))
             setEnableDrawHalo(getBoolean(R.styleable.NiftySlider_enableDrawHalo, true))
             setHaloTintList(getColorStateListOrThrow(R.styleable.NiftySlider_haloColor))
             setHaloRadius(getDimensionPixelOffset(R.styleable.NiftySlider_haloRadius, 0))
@@ -571,7 +575,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         if (!dispatchDrawTrackBefore(canvas, trackRectF, inactiveTrackRectF, trackCenter)) {
 
-            val cornerRadius = if (trackCornerRadius == -1) trackThickness / 2f else trackCornerRadius.toFloat()
+            val cornerRadius = if (trackCornerRadius == UNSET) trackThickness / 2f else trackCornerRadius.toFloat()
 
             if (value > valueFrom) {
                 canvas.drawRoundRect(
@@ -595,7 +599,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         updateTrackRect(trackCenter = trackCenter, progress = percentValue(secondaryValue))
 
         if (!dispatchDrawSecondaryTrackBefore(canvas, trackRectF,inactiveTrackRectF, trackCenter)) {
-            val cornerRadius = if (trackCornerRadius == -1) trackThickness / 2f else trackCornerRadius.toFloat()
+            val cornerRadius = if (trackCornerRadius == UNSET) trackThickness / 2f else trackCornerRadius.toFloat()
 
             if (secondaryValue > valueFrom) {
                 canvas.drawRoundRect(
@@ -637,7 +641,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         if (!dispatchDrawInactiveTrackBefore(canvas, trackRectF, trackCenter)) {
 
-            val cornerRadius = if (trackCornerRadius == -1) trackThickness / 2f else trackCornerRadius.toFloat()
+            val cornerRadius = if (trackCornerRadius == UNSET) trackThickness / 2f else trackCornerRadius.toFloat()
 
             canvas.drawRoundRect(
                 trackRectF,
@@ -1012,7 +1016,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @param padding track左右的padding值，
      */
     fun setTrackInnerVPadding(padding: Int) {
-        val innerVPadding = if (padding == -1) {
+        val innerVPadding = if (padding == UNSET) {
             ceil(thumbElevation).toInt()
         } else {
             padding
@@ -1035,8 +1039,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      *
      * @param padding track左右的padding值，
      */
-    fun setTrackInnerHPadding(padding: Int = -1) {
-        val innerHPadding = if (padding == -1) {
+    fun setTrackInnerHPadding(padding: Int = UNSET) {
+        val innerHPadding = if (padding == UNSET) {
             if (enableAutoHPadding) {
                 if (isThumbWithinTrackBounds) {
                     //thumb with in track bounds 模式下只需要要考虑超出阴影视图
@@ -1268,7 +1272,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
         val offset = if (isInBounds) {
             //启用状态下直接使用thumb的半径做为向内偏移的具体数值
-            thumbRadius
+            if (isVertical()) {
+                if (thumbHeight != UNSET) thumbHeight / 2 else thumbRadius
+            } else {
+                if (thumbWidth != UNSET) thumbWidth / 2 else thumbRadius
+            }
         } else {
             0
         }
@@ -1728,7 +1736,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     ) {
         val originalWidth = drawable.intrinsicWidth
         val originalHeight = drawable.intrinsicHeight
-        if (originalWidth == -1 && originalHeight == -1) {
+        if (originalWidth == UNSET && originalHeight == UNSET) {
             drawable.setBounds(0, 0, width, height)
         } else {
             val scaleRatio = max(width, height).toFloat() / max(originalWidth, originalHeight)
