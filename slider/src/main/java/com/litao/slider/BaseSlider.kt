@@ -108,6 +108,11 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var hasDirtyData = false
 
     var enableHapticFeedback = false
+
+    /**
+     * Ignore the global setting for whether to perform haptic feedback.Only effective below API 33
+     */
+    var ignoreGlobalHapticFeedbackSetting = false
     var enableProgressAnim = false
 
     /**
@@ -302,6 +307,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
             tickVisible = getBoolean(R.styleable.NiftySlider_ticksVisible, false)
             enableHapticFeedback = getBoolean(R.styleable.NiftySlider_android_hapticFeedbackEnabled, false)
+            ignoreGlobalHapticFeedbackSetting = getBoolean(R.styleable.NiftySlider_ignoreGlobalHapticFeedbackSetting,false)
 
             sourceViewHeight = getLayoutDimension(R.styleable.NiftySlider_android_layout_height, 0)
             sourceViewWidth = getLayoutDimension(R.styleable.NiftySlider_android_layout_width, 0)

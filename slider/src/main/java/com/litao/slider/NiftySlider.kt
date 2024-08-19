@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.HapticFeedbackConstants
 import kotlin.math.roundToInt
@@ -75,7 +76,14 @@ open class NiftySlider @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun onValueChanged(value: Float, fromUser: Boolean) {
         if (enableHapticFeedback && fromUser && enableStepMode()) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            if (ignoreGlobalHapticFeedbackSetting && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+                performHapticFeedback(
+                    HapticFeedbackConstants.VIRTUAL_KEY,
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                )
+            } else {
+                performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+            }
         }
 
         val intValue = value.roundToInt()

@@ -37,6 +37,7 @@
         app:thumbTextSize="14sp"
         app:thumbText="22"
         android:hapticFeedbackEnabled="true"
+        app:ignoreGlobalHapticFeedbackSetting="true"
         app:thumbTextColor="@color/we_read_theme_color"
         app:thumbColor="@color/we_read_thumb_color"
         app:thumbShadowColor="@color/we_read_thumb_shadow_color"
