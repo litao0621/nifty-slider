@@ -11,6 +11,9 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.minus
 import androidx.core.graphics.toRect
 import com.litao.slider.Utils
@@ -70,6 +73,8 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
     var thumbIcon: Drawable? = null
     var thumbIconSize = -1
 
+    @ColorInt var thumbIconTintColor = -1
+
     init {
         thumbPaint.apply {
             style = Paint.Style.FILL
@@ -127,7 +132,7 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
     }
 
     private fun drawIconIfNeed(canvas: Canvas) {
-        if (thumbIcon != null) {
+        thumbIcon?.let {
             val iconRect = rectF.toRect()
             val sizeLimit = min(iconRect.width(), iconRect.height())
             var iconSize = if (thumbIconSize == -1) sizeLimit / 2 else thumbIconSize
@@ -143,9 +148,12 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
                     iconRect.bottom - offset
                 )
             }
+            it.bounds = iconRect
 
-            thumbIcon?.bounds = iconRect
-            thumbIcon?.draw(canvas)
+            if (thumbIconTintColor != -1){
+                DrawableCompat.setTint(it,thumbIconTintColor)
+            }
+            it.draw(canvas)
         }
     }
 

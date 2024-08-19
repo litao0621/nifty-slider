@@ -50,6 +50,7 @@
         <attr name="thumbTextBold" format="boolean"/>
         <attr name="thumbIcon" format="reference"/>
         <attr name="thumbIconSize" format="dimension"/>
+        <attr name="thumbIconTintColor" format="color"/>
         <attr name="enableDrawHalo" format="boolean"/>
         <attr name="haloColor" format="color"/>
         <attr name="haloRadius" format="dimension"/>

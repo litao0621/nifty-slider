@@ -77,6 +77,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var thumbText: String? = null
     private var thumbIcon: Drawable? = null
     private var thumbIconSize = UNSET
+    private var thumbIconTintColor = UNSET
     private val thumbAnimation = ThumbValueAnimation()
 
     private var enableDrawHalo = true
@@ -376,6 +377,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             setThumbText(getString(R.styleable.NiftySlider_thumbText) ?: "")
             setThumbIcon(getDrawable(R.styleable.NiftySlider_thumbIcon))
             setThumbIconSize(getDimensionPixelOffset(R.styleable.NiftySlider_thumbIconSize, UNSET))
+            setThumbIconTintColor(getColor(R.styleable.NiftySlider_thumbIconTintColor, UNSET))
             setThumbTextTintList(
                 getColorStateList(R.styleable.NiftySlider_thumbTextColor) ?: ColorStateList.valueOf(
                     Color.WHITE
@@ -1204,6 +1206,19 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (this.thumbIconSize != size) {
             this.thumbIconSize = size
             defaultThumbDrawable.thumbIconSize = size
+            postInvalidate()
+        }
+    }
+
+    /**
+     * Sets the icon tint color of the thumb
+     *
+     * @see R.attr.thumbIconTintColor
+     */
+    fun setThumbIconTintColor(color: Int) {
+        if (this.thumbIconTintColor != color) {
+            this.thumbIconTintColor = color
+            defaultThumbDrawable.thumbIconTintColor = color
             postInvalidate()
         }
     }
