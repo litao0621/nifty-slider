@@ -678,7 +678,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             }
 
             val ty = if (isVertical()) {
-                cy - thumbDrawable.bounds.width() / 2f
+                cy - thumbDrawable.bounds.height() / 2f
             } else {
                 cy
             }
