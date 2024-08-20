@@ -26,11 +26,14 @@ import kotlin.math.min
  */
 class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
 
-    private val thumbPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
 
-    private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
+    private val thumbPaint = Paint(HIGH_QUALITY_FLAGS)
 
-    private val shadowPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG)
+    private val strokePaint = Paint(HIGH_QUALITY_FLAGS)
+
+    private val shadowPaint = Paint(HIGH_QUALITY_FLAGS)
+
+    private var thumbTextPaint = Paint(HIGH_QUALITY_FLAGS)
 
     /**
      * thumb bounds rect
@@ -70,10 +73,31 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
 
     var elevation = 0f
 
+    var thumbText: String? = null
+    @ColorInt var thumbTextColor = 0
+        set(value) {
+            field = value
+            thumbTextPaint.color = value
+        }
+    var thumbTextSize = Utils.dpToPx(14).toFloat()
+        set(value) {
+            field = value
+            thumbTextPaint.textSize = value
+        }
+    var isThumbTextBold = false
+        set(value) {
+            field = value
+            thumbTextPaint.isFakeBoldText = value
+        }
+
     var thumbIcon: Drawable? = null
     var thumbIconSize = -1
 
     @ColorInt var thumbIconTintColor = -1
+
+    companion object{
+        private const val HIGH_QUALITY_FLAGS = Paint.ANTI_ALIAS_FLAG or Paint.DITHER_FLAG
+    }
 
     init {
         thumbPaint.apply {
@@ -85,6 +109,10 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
         shadowPaint.apply {
             isAntiAlias = true
             xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
+        }
+        thumbTextPaint.apply {
+            style = Paint.Style.FILL
+            textAlign = Paint.Align.CENTER
         }
         updateColorsForState(state)
     }
@@ -124,11 +152,19 @@ class DefaultThumbDrawable : Drawable(), IBaseThumbDrawable {
             canvas.drawRoundRect(rectF, radius, radius, strokePaint)
         }
 
+        drawTextIfNeed(canvas)
         drawIconIfNeed(canvas)
     }
 
-    private fun drawTextIfNeed(canvas: Canvas){
-
+    private fun drawTextIfNeed(canvas: Canvas) {
+        thumbText?.let {
+            canvas.drawText(
+                it,
+                rectF.width() / 2,
+                rectF.height() / 2 - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2,
+                thumbTextPaint
+            )
+        }
     }
 
     private fun drawIconIfNeed(canvas: Canvas) {
