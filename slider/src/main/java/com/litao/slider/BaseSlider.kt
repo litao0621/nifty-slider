@@ -53,7 +53,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var ticksPaint: Paint
     private var inactiveTicksPaint: Paint
     private var inactiveTrackPaint: Paint
-    private var thumbTextPaint: Paint
     private var haloPaint: Paint
     private var debugPaint: Paint
 
@@ -74,10 +73,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
     private var thumbVOffset = 0
     private var thumbElevation = 0f
     private var isThumbWithinTrackBounds = false
-    private var thumbText: String? = null
-    private var thumbIcon: Drawable? = null
-    private var thumbIconSize = UNSET
-    private var thumbIconTintColor = UNSET
     private val thumbAnimation = ThumbValueAnimation()
 
     private var enableDrawHalo = true
@@ -258,11 +253,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             style = Paint.Style.FILL
         }
 
-        thumbTextPaint = Paint(HIGH_QUALITY_FLAGS).apply {
-            style = Paint.Style.FILL
-            textAlign = Paint.Align.CENTER
-        }
-
         haloPaint = Paint(HIGH_QUALITY_FLAGS).apply {
             style = Paint.Style.FILL
         }
@@ -435,7 +425,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
         if (defaultThumbDrawable.isStateful) {
             defaultThumbDrawable.state = drawableState
         }
-        thumbTextPaint.color = getColorForState(thumbTextColor)
+        defaultThumbDrawable.thumbTextColor = getColorForState(thumbTextColor)
         haloPaint.color = getColorForState(haloColor)
         haloPaint.alpha = HALO_ALPHA
     }
@@ -698,28 +688,6 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 canvas.withTranslation(tx, ty) {
                     thumbDrawable.draw(canvas)
                 }
-
-                val textX = if (isVertical()) {
-                    trackCenter
-                } else {
-                    cx
-                }
-                val textY = if (isVertical()) {
-                    cy - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
-                } else {
-                    trackCenter - (thumbTextPaint.fontMetricsInt.bottom + thumbTextPaint.fontMetricsInt.top) / 2
-                }
-
-                //draw thumb text if needed
-                thumbText?.let {
-                    canvas.drawText(
-                        it,
-                        textX,
-                        textY,
-                        thumbTextPaint
-                    )
-                }
-
             }
 
             drawThumbAfter(canvas, cx, trackCenter)
@@ -1178,8 +1146,8 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbText
      */
     fun setThumbText(text: String?) {
-        if (this.thumbText != text) {
-            this.thumbText = text
+        if (defaultThumbDrawable.thumbText != text) {
+            defaultThumbDrawable.thumbText = text
             postInvalidate()
         }
     }
@@ -1190,8 +1158,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbIcon
      */
     fun setThumbIcon(icon: Drawable?) {
-        if (this.thumbIcon != icon) {
-            this.thumbIcon = icon
+        if (defaultThumbDrawable.thumbIcon != icon) {
             defaultThumbDrawable.thumbIcon = icon
             postInvalidate()
         }
@@ -1203,8 +1170,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbIconSize
      */
     fun setThumbIconSize(size: Int) {
-        if (this.thumbIconSize != size) {
-            this.thumbIconSize = size
+        if (defaultThumbDrawable.thumbIconSize != size) {
             defaultThumbDrawable.thumbIconSize = size
             postInvalidate()
         }
@@ -1216,8 +1182,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbIconTintColor
      */
     fun setThumbIconTintColor(color: Int) {
-        if (this.thumbIconTintColor != color) {
-            this.thumbIconTintColor = color
+        if (defaultThumbDrawable.thumbIconTintColor != color) {
             defaultThumbDrawable.thumbIconTintColor = color
             postInvalidate()
         }
@@ -1358,7 +1323,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                 return
             }
             thumbTextColor = color
-            thumbTextPaint.color = getColorForState(thumbTextColor)
+            defaultThumbDrawable.thumbTextColor = getColorForState(thumbTextColor)
             invalidate()
         }
     }
@@ -1369,15 +1334,15 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * @see R.attr.thumbTextSize
      */
     fun setThumbTextSize(size: Float) {
-        if (thumbTextPaint.textSize != size) {
-            thumbTextPaint.textSize = size
+        if (defaultThumbDrawable.thumbTextSize != size) {
+            defaultThumbDrawable.thumbTextSize = size
             invalidate()
         }
     }
 
     fun setThumbTextBold(isBold: Boolean) {
-        if (thumbTextPaint.isFakeBoldText != isBold) {
-            thumbTextPaint.isFakeBoldText = isBold
+        if (defaultThumbDrawable.isThumbTextBold != isBold) {
+            defaultThumbDrawable.isThumbTextBold = isBold
             invalidate()
         }
     }
