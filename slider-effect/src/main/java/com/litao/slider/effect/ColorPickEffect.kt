@@ -86,15 +86,28 @@ class ColorPickEffect(private val slider: NiftySlider) : BaseEffect() {
 
     private fun maybeCreateShader(trackRect: RectF) {
         if (colorShader == null) {
-            colorShader = LinearGradient(
-                0f,
-                0f,
-                trackRect.width(),
-                0f,
-                colors,
-                null,
-                Shader.TileMode.CLAMP
-            )
+            val isVertical = slider.isVertical()
+            colorShader = if (isVertical){
+                LinearGradient(
+                    trackRect.width()/2,
+                    trackRect.bottom,
+                    trackRect.width()/2,
+                    trackRect.top,
+                    colors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
+            }else {
+                LinearGradient(
+                    0f,
+                    0f,
+                    trackRect.width(),
+                    0f,
+                    colors,
+                    null,
+                    Shader.TileMode.CLAMP
+                )
+            }
 
             colorTrackPaint.shader = colorShader
         }
