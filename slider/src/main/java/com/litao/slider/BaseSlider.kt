@@ -5,10 +5,13 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.RectF
+import android.graphics.Shader
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.os.Parcel
@@ -26,6 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.getColorStateListOrThrow
 import androidx.core.content.withStyledAttributes
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.graphics.withTranslation
 import androidx.core.math.MathUtils
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator
@@ -58,6 +62,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
 
 
     private lateinit var trackColor: ColorStateList
+    private  var trackStartColor: ColorStateList?=null
+    private  var trackEndColor: ColorStateList?=null
+    private  var trackCenterColor: ColorStateList?=null
+
     private lateinit var trackSecondaryColor: ColorStateList
     private lateinit var trackColorInactive: ColorStateList
     private lateinit var ticksColor: ColorStateList
@@ -330,6 +338,10 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
                     R.color.default_track_color
                 )
             )
+            trackStartColor = getColorStateList(R.styleable.NiftySlider_trackStartColor)
+            trackEndColor = getColorStateList(R.styleable.NiftySlider_trackEndColor)
+            trackCenterColor = getColorStateList(R.styleable.NiftySlider_trackCenterColor)
+
             setTrackInactiveTintList(
                 getColorStateList(R.styleable.NiftySlider_trackColorInactive) ?: AppCompatResources.getColorStateList(
                     context,
@@ -574,6 +586,28 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
             val cornerRadius = if (trackCornerRadius == UNSET) trackThickness / 2f else trackCornerRadius.toFloat()
 
             if (value > valueFrom) {
+
+                if (trackStartColor == null || trackEndColor == null) {
+                    //渐变必须要开始和结束颜色,其中有一个则跳过设置画笔为渐变
+                    //require start color and end color
+                } else {
+                    val startColor = getColorForState(trackStartColor!!)
+                    val endColor = getColorForState(trackEndColor!!)
+                    val colors = if (trackCenterColor == null) {
+                        intArrayOf(startColor,endColor)
+                    } else {
+                        val centerColor = getColorForState(trackCenterColor!!)
+                        intArrayOf(startColor,centerColor,endColor)
+                    }
+
+                    trackPaint.shader = LinearGradient(
+                        0f, 0f, trackRectF.width(), trackRectF.height(),
+                        colors,
+                        null,
+                        Shader.TileMode.CLAMP
+                    )
+                }
+
                 canvas.drawRoundRect(
                     trackRectF,
                     cornerRadius,
@@ -1686,7 +1720,7 @@ abstract class BaseSlider constructor(context: Context, attrs: AttributeSet? = n
      * Get y-coordinates based on progress
      */
     private fun getCoordinateYByValue(value:Float):Float{
-       return (paddingTop + trackInnerVPadding + trackHeight * (1f- (value - valueFrom)/(valueTo - valueFrom)))
+        return (paddingTop + trackInnerVPadding + trackHeight * (1f- (value - valueFrom)/(valueTo - valueFrom)))
     }
 
     /**

@@ -22,6 +22,9 @@
             <enum name="wrap_content" value="-2" />
         </attr>
         <attr name="trackColor" format="color" />
+        <attr name="trackStartColor" format="color" />
+        <attr name="trackCenterColor" format="color" />
+        <attr name="trackEndColor" format="color" />
         <attr name="trackSecondaryColor" format="color"/>
         <attr name="trackColorInactive" format="color" />
         <attr name="ticksColor" format="color" />
